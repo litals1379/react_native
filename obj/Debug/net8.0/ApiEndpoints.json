@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "Server_Side.Controllers.UserController",
+    "Method": "RegisterUser",
+    "RelativePath": "api/User/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "Server_Side.BL.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
