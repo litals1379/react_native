@@ -9,7 +9,7 @@ namespace Server_Side.BL
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה אוטומטי
 
         public string Email { get; set; }
         public string Password { get; set; }
@@ -20,6 +20,10 @@ namespace Server_Side.BL
 
     public class ParentDetail
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה ייחודי לכל הורה
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
@@ -27,6 +31,10 @@ namespace Server_Side.BL
 
     public class Child
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה ייחודי לכל ילד
+
         [BsonElement("childID")]
         public string ChildID { get; set; }
 
@@ -44,6 +52,10 @@ namespace Server_Side.BL
 
     public class ReadingHistoryEntry
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מזהה ייחודי לכל היסטוריית קריאה
+
         public string StoryID { get; set; }
         public string FeedbackID { get; set; }
     }

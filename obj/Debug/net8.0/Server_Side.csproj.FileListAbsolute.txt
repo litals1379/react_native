@@ -74,3 +74,4 @@ C:\Users\user\Desktop\Story_Time_Server_Side\Server_Side\obj\Debug\net8.0\refint
 C:\Users\user\Desktop\Story_Time_Server_Side\Server_Side\obj\Debug\net8.0\Server_Side.pdb
 C:\Users\user\Desktop\Story_Time_Server_Side\Server_Side\obj\Debug\net8.0\Server_Side.genruntimeconfig.cache
 C:\Users\user\Desktop\Story_Time_Server_Side\Server_Side\obj\Debug\net8.0\ref\Server_Side.dll
+C:\Users\user\Desktop\Story_Time_Server_Side\Server_Side\obj\Debug\net8.0\Server_Side.sourcelink.json

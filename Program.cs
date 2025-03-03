@@ -32,6 +32,7 @@ namespace Server_Side
                 app.UseSwaggerUI();
             }
 
+
             app.UseHttpsRedirection();
             app.UseCors("corspolicy");
             app.UseAuthorization();
