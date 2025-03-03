@@ -56,5 +56,24 @@ namespace Server_Side.Controllers
                 return BadRequest(new { message = "Email needs to be unique" });
             }
         }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetUsersAsync()
+        {
+            try
+            {
+                List<User> users = await _dbServices.GetUsersAsync();
+                if (users == null || users.Count == 0)
+                {
+                    return NotFound(new { message = "No users found" });
+                }
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving users", error = ex.Message });
+            }
+        }
+
     }
 }

@@ -1,6 +1,16 @@
 [
   {
     "ContainingType": "Server_Side.Controllers.UserController",
+    "Method": "GetUsersAsync",
+    "RelativePath": "api/User/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.UserController",
     "Method": "RegisterUser",
     "RelativePath": "api/User/register",
     "HttpMethod": "POST",
