@@ -20,7 +20,7 @@ namespace Server_Side
                     build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
             builder.Services.AddSingleton<IMongoClient>(sp =>
-                new MongoClient(builder.Configuration.GetConnectionString("MongoDb")));
+                new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
 
             builder.Services.AddScoped<DBservices>();
 
