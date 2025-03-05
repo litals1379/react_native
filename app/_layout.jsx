@@ -3,11 +3,18 @@ import React, { useState } from 'react';
 import { Stack, useRouter } from "expo-router";
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-//import Drawer from './drawer'
+import { Link } from 'expo-router'; 
+
 
 const colorsList = [
-  '#FF0000', '#0000FF', '#008000', '#FFFF00',
-  '#FFC0CB', '#87CEEB', '#000000', '#FFFFFF',
+  '#FFB6C1', // ורוד פסטל (במקום אדום)
+  '#ADD8E6', // כחול פסטל (במקום כחול)
+  '#90EE90', // ירוק פסטל (במקום ירוק)
+  '#FFFFE0', // צהוב פסטל (במקום צהוב)
+  '#E6E6FA', // לבנדר (במקום ורוד מקורי)
+  '#87CEEB', // תכלת (נשאר)
+  '#D3D3D3', // אפור פסטל (במקום שחור)
+  '#FFFFFF', // לבן (נשאר)
 ];
 
 // קומפוננטת Header מותאמת אישית
@@ -17,7 +24,10 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        
+        {/* Link to the "options" screen */}
+        <Link href="/DrawerDir/options" style={styles.link}>
+          <Ionicons name="menu" size={30} color="#6200ea" />
+        </Link>
         {/* כפתור חזור */}
         {router.canGoBack() && (
          <TouchableOpacity
@@ -28,8 +38,12 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor }) => {
           </TouchableOpacity>
 )}
 
-        <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-        <Text style={styles.headerText}>Story Time</Text>
+          <View style={styles.logoContainer}>
+            <Image source={require('../assets/images/logo.png')} style={styles.logo} />
+            <Text style={styles.storyText}>Story Time</Text>
+          </View>
+
+        
 
         {/* כפתור לפתיחת פלטת הצבעים */}
         <TouchableOpacity
@@ -98,7 +112,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   safeArea: { backgroundColor: "#B3E7F2" },
   header: {
-    height: 80,
+    height: 120,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -112,20 +126,38 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: 'center',
   },
-  logo: {
-    width: 200,
-    height: 50,
+  logoContainer: {
+    position: 'relative', // מוודא שהתוכן נשאר בתוך המסגרת
+    alignItems: 'center', // ממקם את התמונה והטקסט במרכז
+},
+logo: {
+    width: 300, // שומר על הגודל הנוכחי של הלוגו
+    height: 80,
     resizeMode: 'contain',
     marginVertical: 5,
-    marginTop:30,
-  },
+    marginTop: 0,
+    alignSelf: 'flex-end',
+},
+storyText: {
+  position: 'absolute', 
+  top: '70%', // מוריד את הטקסט קצת למטה
+  left: '29%', // מזיז טיפה שמאלה
+  transform: [{ translateX: -50 }, { translateY: -10 }], // מאזנים את המיקום למרכז
+  fontSize: 14, 
+  fontWeight: 'bold',
+  color: '#65558F', 
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  paddingHorizontal: 1, // קצת יותר ריווח
+  paddingVertical: 1,  
+  borderRadius: 5,
+},
   colorButton: {
     padding: 10,
     borderRadius: 20,
     backgroundColor: "#B3E7F2",
-    marginTop: 10,
+    marginTop: 0,
     alignSelf: 'flex-end', 
-    marginRight: 20, 
+    marginRight: 10, 
   },
 
   colorButtonText: {
@@ -150,4 +182,12 @@ const styles = StyleSheet.create({
     padding: 5,
     zIndex: 1,
   },
+  link: {
+    padding: 10,
+    borderRadius: 5,
+    position: 'absolute', // מוודא שה- link ממוקם באופן מוחלט
+    left: 10, // מיקום 10% מהקצה השמאלי של המסך
+    top: 10, // אתה יכול לשנות את ה- top אם תרצה לשנות את המיקום האנכי
+},
+
 });
