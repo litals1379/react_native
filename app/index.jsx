@@ -104,6 +104,7 @@ export default function HomeScreen() {
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
 
+          
         
         </>
       )}

@@ -89,6 +89,7 @@ export default function RootLayout() {
         <Stack.Screen name="characters" />
         <Stack.Screen name="subjects" />
         <Stack.Screen name="options" />
+        <Stack.Screen name="story" options={{ headerShown: false }} />  
       </Stack>
     </View>
   );

@@ -9,12 +9,11 @@ export default function Login() {
 
   const handleSubmit = () => {
     if (username && password) {
-      router.push('./characters');
+      router.push('/userProfile'); // 🔹 מעבר לדף 'userProfile'
     } else {
       Alert.alert('שגיאה', 'אנא מלא את כל השדות.');
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}

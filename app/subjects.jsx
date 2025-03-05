@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
+import { useRouter } from 'expo-router';
 
 // נתוני נושאים
 const subjectsData = [
@@ -26,6 +27,8 @@ const colorsList = [
 ];
 
 export default function Subjects() {
+  const router = useRouter();
+  
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
   const [showPicker, setShowPicker] = useState(false); // מציג/מסתיר את פלטת הצבעים
 
@@ -77,9 +80,7 @@ export default function Subjects() {
         numColumns={3} // פריסת 3 עמודות
         contentContainerStyle={styles.subjectGrid}
       />
-
-      {/* כפתור הבא */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('./story')}>
         <Text style={styles.buttonText}>צור סיפור</Text>
       </TouchableOpacity>
     </View>
