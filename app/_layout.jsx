@@ -140,8 +140,8 @@ logo: {
 },
 storyText: {
   position: 'absolute', 
-  top: '70%', // מוריד את הטקסט קצת למטה
-  left: '29%', // מזיז טיפה שמאלה
+  top: '80%', // מוריד את הטקסט קצת למטה
+  left: '41%', // מזיז טיפה שמאלה
   transform: [{ translateX: -50 }, { translateY: -10 }], // מאזנים את המיקום למרכז
   fontSize: 14, 
   fontWeight: 'bold',
