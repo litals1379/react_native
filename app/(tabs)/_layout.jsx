@@ -15,6 +15,7 @@ export default function TabsLayout() {
         name="userProfile"
         options={{
           title: 'Profile',
+          headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="user" size={size} color={color} />,
         }}
       />
@@ -22,6 +23,7 @@ export default function TabsLayout() {
         name="library"
         options={{
           title: 'Library',
+          headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="book" size={size} color={color} />,
         }}
       />
@@ -29,6 +31,7 @@ export default function TabsLayout() {
         name="search"
         options={{
           title: 'Search',
+          headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="search" size={size} color={color} />,
         }}
       />

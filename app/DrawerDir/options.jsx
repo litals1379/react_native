@@ -6,10 +6,7 @@ export default function Options() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image 
-          source={require('../assets/images/logo.png')} // נתיב ללוגו שלכם
-          style={styles.logo} 
-        />
+        
       </View>
 
       <Text style={styles.title}>אפשרויות</Text>

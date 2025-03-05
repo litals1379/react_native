@@ -9,7 +9,7 @@ export default function Login() {
 
   const handleSubmit = () => {
     if (username && password) {
-      router.push('/userProfile'); // 🔹 מעבר לדף 'userProfile'
+      router.push('/userProfile'); 
     } else {
       Alert.alert('שגיאה', 'אנא מלא את כל השדות.');
     }

@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Link } from 'expo-router'; 
 
 export default function UserProfile() {
   const userData = {
@@ -17,6 +18,10 @@ export default function UserProfile() {
 
   return (
     <View style={styles.container}>
+      {/* Link to the "options" screen */}
+      <Link href="/DrawerDir/options" style={styles.link}>
+        <Ionicons name="menu" size={30} color="#6200ea" />
+      </Link>
       <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
       <Text style={styles.name}>{userData.firstName} {userData.lastName}</Text>
       <View style={styles.infoContainer}>
@@ -57,6 +62,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
+  },
+  link: {
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 5,
   },
   profileImage: {
     width: 120,
