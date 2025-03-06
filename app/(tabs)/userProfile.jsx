@@ -38,10 +38,6 @@ export default function UserProfile() {
           <FontAwesome name="edit" size={16} color="white" />
           <Text style={styles.buttonText}> עדכון פרטים</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, userData.favorite_game ? {} : styles.disabledButton]}>
-          <FontAwesome name="gamepad" size={16} color="white" />
-          <Text style={styles.buttonText}>{userData.favorite_game ? ' למשחק' : 'אין משחק מועדף'}</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={styles.logoutButton}>
           <FontAwesome name="sign-out" size={16} color="white" />
           <Text style={styles.buttonText}> התנתקות</Text>
