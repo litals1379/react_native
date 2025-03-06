@@ -100,10 +100,10 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
+    color: '#65558F',
+    marginBottom: 20,
   },
   colorButton: {
     backgroundColor: '#65558F',
