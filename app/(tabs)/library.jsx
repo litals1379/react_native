@@ -15,7 +15,6 @@ export default function library() {
 }
 
 const styles = StyleSheet.create({
-
     button: {
         backgroundColor: '#B3E7F2',
         borderWidth: 1,

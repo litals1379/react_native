@@ -14,7 +14,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="userProfile"
         options={{
-          title: 'Profile',
+          title: 'פרופיל',
           headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="user" size={size} color={color} />,
         }}
@@ -22,7 +22,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="library"
         options={{
-          title: 'Library',
+          title: 'ספריה',
           headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="book" size={size} color={color} />,
         }}
@@ -30,7 +30,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Search',
+          title: 'חיפוש',
           headerShown:false,
           tabBarIcon: ({ color, size }) => <Icon name="search" size={size} color={color} />,
         }}
