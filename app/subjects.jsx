@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity,FlatList} from 'react-native';
 import { useRouter } from 'expo-router';
 
 // נתוני נושאים
@@ -15,23 +15,9 @@ const subjectsData = [
     { id: 9, name: 'אוכל', image: require('../assets/images/food.png') },
 ];
 
-const colorsList = [
-  '#FF0000', // אדום
-  '#0000FF', // כחול
-  '#008000', // ירוק
-  '#FFFF00', // צהוב
-  '#FFC0CB', // ורוד
-  '#87CEEB', // תכלת
-  '#000000', // שחור
-  '#FFFFFF', // לבן
-];
-
 export default function Subjects() {
   const router = useRouter();
   
-  const [selectedColor, setSelectedColor] = useState('#FFFFFF');
-  const [showPicker, setShowPicker] = useState(false); // מציג/מסתיר את פלטת הצבעים
-
   const renderSubject = ({ item }) => (
     <TouchableOpacity style={styles.subjectButton}>
       <Image source={item.image} style={styles.subjectImage} />
@@ -39,38 +25,11 @@ export default function Subjects() {
     </TouchableOpacity>
   );
 
-  const renderColorOption = (color) => (
-    <TouchableOpacity
-      style={[styles.colorOption, { backgroundColor: color }]}
-      onPress={() => setSelectedColor(color)}
-    />
-  );
-
   return (
-    <View style={[styles.container, { backgroundColor: selectedColor }]}>
+    <View style={[styles.container]}>
       {/* כותרת */}
       <Text style={styles.title}>בחר נושא לסיפור</Text>
 
-      {/* כפתור לפתיחת פלטת הצבעים */}
-      <TouchableOpacity
-        style={styles.colorButton}
-        onPress={() => setShowPicker(!showPicker)}
-      >
-        <Text style={styles.colorButtonText}>
-          {showPicker ? "סגור פלטת צבעים 🎨" : "בחר צבע רקע 🎨"}
-        </Text>
-      </TouchableOpacity>
-
-      {/* פלטת צבעים */}
-      {showPicker && (
-        <FlatList
-          data={colorsList}
-          renderItem={({ item }) => renderColorOption(item)}
-          keyExtractor={(item, index) => index.toString()}
-          horizontal
-          contentContainerStyle={styles.colorsList}
-        />
-      )}
 
       {/* רשימת נושאים */}
       <FlatList
@@ -98,27 +57,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 10,
-  },
-  colorButton: {
-    backgroundColor: '#65558F',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
-  colorButtonText: {
-    fontSize: 16,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  colorsList: {
-    marginBottom: 20,
-  },
-  colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    marginHorizontal: 5,
   },
   subjectGrid: {
     flexGrow: 1,
