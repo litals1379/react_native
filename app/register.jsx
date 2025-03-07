@@ -2,14 +2,54 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function register() {
+export default function Register() {
     const router = useRouter();
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [children, setChildren] = useState([]);
 
-    const handlePasswordChange = (text) => {
-        setPassword(text);
+    const handleRegister = async () => {
+        const userData = {
+            parentDetails: {
+                firstName,
+                lastName,
+                phoneNumber
+            },
+            email,
+            username,
+            password,
+            children
+        };
+
+        try {
+            const response = await fetch('https://localhost:7209/api/User/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (response.ok) {
+                router.push('./login');
+            } else {
+                console.error("Registration failed");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    const handleAddChild = (childData) => {
+        setChildren(prevChildren => [...prevChildren, childData]);
+        router.push('/register');  // חוזר למסך הרשמה אחרי הוספת הילד
     };
 
     return (
@@ -20,18 +60,50 @@ export default function register() {
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                     <View style={styles.container}>
-                    
-                        {/* כותרת ראשית */}
                         <Text style={styles.title}>הרשמה</Text>
+                        {/* פרטי ההורה */}
+                        <Text style={styles.label}>שם פרטי:</Text>
+                        <TextInput
+                            placeholder="הזן את שם הפרטי"
+                            style={styles.input}
+                            value={firstName}
+                            onChangeText={setFirstName}
+                        />
 
-                        {/* שדה שם משתמש */}
+                        <Text style={styles.label}>שם משפחה:</Text>
+                        <TextInput
+                            placeholder="הזן את שם המשפחה"
+                            style={styles.input}
+                            value={lastName}
+                            onChangeText={setLastName}
+                        />
+
+                        <Text style={styles.label}>מספר טלפון:</Text>
+                        <TextInput
+                            placeholder="הזן את מספר הטלפון"
+                            style={styles.input}
+                            keyboardType="phone-pad"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                        />
+
+                        <Text style={styles.label}>כתובת מייל:</Text>
+                        <TextInput
+                            placeholder="הזן את כתובת המייל"
+                            style={styles.input}
+                            keyboardType="email-address"
+                            value={email}
+                            onChangeText={setEmail}
+                        />
+
                         <Text style={styles.label}>שם משתמש:</Text>
                         <TextInput
                             placeholder="הזן את שם המשתמש"
                             style={styles.input}
+                            value={username}
+                            onChangeText={setUsername}
                         />
 
-                        {/* שדה סיסמה */}
                         <Text style={styles.label}>סיסמה:</Text>
                         <View style={styles.passwordContainer}>
                             <TextInput
@@ -39,12 +111,10 @@ export default function register() {
                                 secureTextEntry={!passwordVisible}
                                 style={styles.input}
                                 value={password}
-                                onChangeText={handlePasswordChange}
+                                onChangeText={setPassword}
                             />
                             <TouchableOpacity
-                                onPress={() => {
-                                    setPasswordVisible(!passwordVisible);
-                                }}
+                                onPress={() => setPasswordVisible(!passwordVisible)}
                                 style={styles.eyeIconContainer}
                             >
                                 <Ionicons
@@ -55,32 +125,15 @@ export default function register() {
                             </TouchableOpacity>
                         </View>
 
-                        {/* שדה שם פרטי */}
-                        <Text style={styles.label}>שם פרטי:</Text>
-                        <TextInput
-                            placeholder="הזן את שם הפרטי"
-                            style={styles.input}
-                        />
+                        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('./addChild')}>
+                            <Icon name="user-plus" size={30} color="#333" style={styles.optionIcon} />
+                            <Text style={styles.optionText}>הוספת ילד</Text>
+                        </TouchableOpacity>
 
-                        {/* שדה שם משפחה */}
-                        <Text style={styles.label}>שם משפחה:</Text>
-                        <TextInput
-                            placeholder="הזן את שם המשפחה"
-                            style={styles.input}
-                        />
-
-                        {/* שדה כתובת מייל */}
-                        <Text style={styles.label}>כתובת מייל:</Text>
-                        <TextInput
-                            placeholder="הזן את כתובת המייל"
-                            style={styles.input}
-                            keyboardType="email-address"
-                        />
-
-                        {/* כפתור הירשם */}
-                        <TouchableOpacity style={styles.button} onPress={() => router.push('./login')}>
+                        <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>הרשמה</Text>
                         </TouchableOpacity>
+
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
@@ -161,4 +214,24 @@ const styles = StyleSheet.create({
         color: '#65558F',
         fontWeight: 'bold',
     },
+    optionButton: {
+        backgroundColor: 'white',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        elevation: 2, // Android shadow
+        shadowColor: '#000', // iOS shadow
+        shadowOffset: { width: 0, height: 2 }, // iOS shadow
+        shadowOpacity: 0.2, // iOS shadow
+        shadowRadius: 2, // iOS shadow
+      },
+      optionIcon: {
+        marginRight: 10,
+      },
+      optionText: {
+        fontSize: 18,
+        color: '#333',
+      },
 });

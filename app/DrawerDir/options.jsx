@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // או ספריית אייקונים אחרת
-
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 export default function Options() {
   return (
     <View style={styles.container}>
