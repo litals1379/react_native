@@ -1,57 +1,93 @@
-import React from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
-export default function addChild() {
-  return (
-    <View style={styles.container}>
-      {/* לוגו עם כותרת */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../assets/images/logo.png')}
-          style={styles.logo}
-        />
-        <Text style={styles.logoText}>Story Time</Text>
-      </View>
+export default function AddChild({ route }) {
+    const { handleAddChild } = useLocalSearchParams(); // מקבל את הפונקציה מהפרמטרים
+    const router = useRouter();
+    const [childFirstName, setChildFirstName] = useState('');
+    const [childLastName, setChildLastName] = useState('');
+    const [childUsername, setChildUsername] = useState('');
+    const [childPassword, setChildPassword] = useState('');
+    const [birthDate, setBirthDate] = useState('');
+    const [readingLevel, setReadingLevel] = useState('');
+    const [readingHistory, setReadingHistory] = useState([]);
 
-      {/* כותרת ראשית */}
-      <Text style={styles.title}>הוספת ילד</Text>
+    const handleAdd = () => {
+      if (handleAddChild) {
+          handleAddChild({
+              firstName: childFirstName,
+              lastName: childLastName,
+              username: childUsername,
+              password: childPassword,
+              birthDate,
+              readingLevel: 1,
+              readingHistory: []
+          });
+      } else {
+          console.error("handleAddChild לא הועבר כפרמטר");
+      }
+  };
 
-     {/* שדה שם פרטי */}
-      <Text style={styles.label}>שם פרטי:</Text>
-      <TextInput
-        placeholder="הזן את שם הפרטי"
-        style={styles.input}
-      />
-      {/* שדה שם משתמש */}
-      <Text style={styles.label}>שם משתמש:</Text>
-      <TextInput
-        placeholder="הזן את שם המשתמש"
-        style={styles.input}
-      />
-      {/* שדה סיסמה */}
-      <Text style={styles.label}>סיסמה:</Text>
-      <View style={styles.passwordContainer}>
-        <TextInput
-          placeholder="הזן סיסמה"
-          secureTextEntry
-          style={styles.input}
-        />
-      </View>
-      {/* Birthdate input */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>תאריך לידה:</Text>
-        <TextInput
-          placeholder="dd/mm/yyyy"
-          style={styles.input}
-        />
-      </View>
-      {/* כפתור הירשם */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>הוסף</Text>
-      </TouchableOpacity>
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>הוספת ילד</Text>
+            <Text style={styles.label}>שם פרטי:</Text>
+            <TextInput
+                placeholder="הזן את שם הילד"
+                style={styles.input}
+                value={childFirstName}
+                onChangeText={setChildFirstName}
+            />
 
-    </View>
-  );
+            <Text style={styles.label}>שם משפחה:</Text>
+            <TextInput
+                placeholder="הזן את שם המשפחה"
+                style={styles.input}
+                value={childLastName}
+                onChangeText={setChildLastName}
+            />
+
+            <Text style={styles.label}>שם משתמש:</Text>
+            <TextInput
+                placeholder="הזן את שם המשתמש"
+                style={styles.input}
+                value={childUsername}
+                onChangeText={setChildUsername}
+            />
+
+            <Text style={styles.label}>סיסמה:</Text>
+            <TextInput
+                placeholder="הזן סיסמה"
+                secureTextEntry
+                style={styles.input}
+                value={childPassword}
+                onChangeText={setChildPassword}
+            />
+
+            <Text style={styles.label}>תאריך לידה:</Text>
+            <TextInput
+                placeholder="yyyy-mm-dd"
+                style={styles.input}
+                value={birthDate}
+                onChangeText={setBirthDate}
+            />
+
+            <Text style={styles.label}>רמת קריאה:</Text>
+            <TextInput
+                placeholder="הזן רמת קריאה"
+                style={styles.input}
+                value={readingLevel}
+                keyboardType="numeric"
+                onChangeText={setReadingLevel}
+            />
+
+            <TouchableOpacity style={styles.button} onPress={handleAddChild}>
+                <Text style={styles.buttonText}>הוסף ילד</Text>
+            </TouchableOpacity>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
@@ -59,38 +95,23 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#F8F8F8', // Light gray background
+    backgroundColor: '#F8F8F8', 
     direction: 'rtl', 
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  logo: {
-    width: 60,
-    height: 50,
-    marginRight: 8,
-  },
-  logoText: {
-    fontSize: 16, // Slightly larger logo text
-    fontWeight: 'bold',
-    color: '#65558F', // Purple color
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#65558F', // Purple color
+    color: '#65558F', 
     marginBottom: 20,
   },
   label: {
-    alignSelf: 'flex-start', // Align labels to the right
+    alignSelf: 'flex-start',
     fontSize: 16,
-    color: '#65558F', // Purple color
+    color: '#65558F', 
     marginBottom: 5,
-    marginRight: 10, // Add some space between label and input
+    marginRight: 10, 
     textAlign: 'right',
-    width: '100%', // Make sure labels take full width
+    width: '100%', 
     writingDirection: 'rtl',
   },
   input: {
@@ -99,31 +120,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD',
     borderRadius: 8,
-    backgroundColor: '#EEE', // Light gray background for inputs
+    backgroundColor: '#EEE', 
     paddingHorizontal: 10,
     marginBottom: 20,
     textAlign: 'right',
     writingDirection: 'rtl',
   },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-  },
   button: {
-    backgroundColor: '#B3E7F2', // Light blue button
+    backgroundColor: '#B3E7F2', 
     borderWidth: 1,
-    borderColor: '#65558F', // Purple border
+    borderColor: '#65558F', 
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 30,
     marginVertical: 10,
-    width: '100%', // Make button full width
-    alignItems: 'center', // Center text horizontally in button
+    width: '100%', 
+    alignItems: 'center', 
   },
   buttonText: {
     fontSize: 18,
-    color: '#65558F', // Purple text
+    color: '#65558F', 
     fontWeight: 'bold',
   },
 });
