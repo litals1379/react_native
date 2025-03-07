@@ -19,10 +19,13 @@ namespace Server_Side
                 p.AddPolicy("corspolicy", build =>
                     build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
+            // רישום MongoDB Client
             builder.Services.AddSingleton<IMongoClient>(sp =>
                 new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
 
+            // רישום של DBservices ו- UserDBservices
             builder.Services.AddScoped<DBservices>();
+            builder.Services.AddScoped<UserDBservices>(); 
 
             var app = builder.Build();
 
@@ -31,7 +34,6 @@ namespace Server_Side
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
 
             app.UseHttpsRedirection();
             app.UseCors("corspolicy");

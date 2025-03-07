@@ -11,24 +11,35 @@ namespace Server_Side.BL
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה אוטומטי
 
+        [BsonElement("parentDetails")]
+        public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>();
+
         [BsonElement("email")]
         public string Email { get; set; }
+
+        [BsonElement("username")]
+        public string Username { get; set; } 
 
         [BsonElement("password")]
         public string Password { get; set; }
 
-        [BsonElement("parentDetails")]
-        public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>(); // הוספת BsonElement עבור parentDetails
 
         [BsonElement("children")]
         public List<Child> Children { get; set; } = new List<Child>();
+
+        // בנאי
+        public User(string email, string username, string password)
+        {
+            ParentDetails = new List<ParentDetail>();
+            Email = email;
+            Username = username;
+            Password = password;
+            Children = new List<Child>();
+        }
     }
 
     public class ParentDetail
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה ייחודי לכל הורה
 
         [BsonElement("firstName")]
         public string FirstName { get; set; }
@@ -38,16 +49,21 @@ namespace Server_Side.BL
 
         [BsonElement("phoneNumber")]
         public string PhoneNumber { get; set; }
+
+        // בנאי
+        public ParentDetail(string firstName, string lastName, string phoneNumber)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+        }
     }
 
     public class Child
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה ייחודי לכל ילד
-
-        [BsonElement("childID")]
-        public string ChildID { get; set; }
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonElement("firstName")]
         public string FirstName { get; set; }
@@ -70,13 +86,25 @@ namespace Server_Side.BL
 
         [BsonElement("readingHistory")]
         public List<ReadingHistoryEntry> ReadingHistory { get; set; } = new List<ReadingHistoryEntry>();
+
+        // בנאי
+        public Child(string firstName, string lastName, string username, string password, DateTime birthdate, int readingLevel)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Username = username;
+            Password = password;
+            Birthdate = birthdate;
+            ReadingLevel = readingLevel;
+            ReadingHistory = new List<ReadingHistoryEntry>();
+        }
     }
 
     public class ReadingHistoryEntry
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מזהה ייחודי לכל היסטוריית קריאה
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonElement("storyID")]
         public string StoryID { get; set; }
@@ -84,8 +112,15 @@ namespace Server_Side.BL
         [BsonElement("feedbackID")]
         public string FeedbackID { get; set; }
 
-        // הוספת שדה readDate כדי להתאים לשדה במונגוDB
         [BsonElement("readDate")]
         public DateTime ReadDate { get; set; }
+
+        // בנאי
+        public ReadingHistoryEntry(string storyID, string feedbackID, DateTime readDate)
+        {
+            StoryID = storyID;
+            FeedbackID = feedbackID;
+            ReadDate = readDate;
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server_Side.DAL;
 using Server_Side.BL;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,11 +12,11 @@ namespace Server_Side.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly DBservices _dbServices;
+        private readonly UserDBservices _userDBservices; 
 
-        public UserController(DBservices dbServices)
+        public UserController(UserDBservices userDBservices) 
         {
-            _dbServices = dbServices;
+            _userDBservices = userDBservices;
         }
 
         [HttpPost("register")]
@@ -46,7 +48,7 @@ namespace Server_Side.Controllers
                 return BadRequest(new { message = "Invalid child data" });
             }
 
-            bool result = await _dbServices.AddUserAsync(user);
+            bool result = await _userDBservices.AddUserAsync(user); 
             if (result)
             {
                 return Ok(new { message = "User created successfully" });
@@ -62,7 +64,7 @@ namespace Server_Side.Controllers
         {
             try
             {
-                List<User> users = await _dbServices.GetUsersAsync();
+                List<User> users = await _userDBservices.GetUsersAsync(); // שימוש ב- _userDBservices
                 if (users == null || users.Count == 0)
                 {
                     return NotFound(new { message = "No users found" });
@@ -74,6 +76,5 @@ namespace Server_Side.Controllers
                 return StatusCode(500, new { message = "An error occurred while retrieving users", error = ex.Message });
             }
         }
-
     }
 }
