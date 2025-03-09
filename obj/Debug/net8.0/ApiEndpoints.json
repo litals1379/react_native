@@ -1,5 +1,31 @@
 [
   {
+    "ContainingType": "Server_Side.Controllers.StoryController",
+    "Method": "AddStoryAsync",
+    "RelativePath": "api/Story/add",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "story",
+        "Type": "Server_Side.BL.Story",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.StoryController",
+    "Method": "GetAllStoriesAsync",
+    "RelativePath": "api/Story/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Server_Side.Controllers.UserController",
     "Method": "GetUsersAsync",
     "RelativePath": "api/User/all",

@@ -38,9 +38,9 @@ namespace Server_Side.BL
         }
     }
 
+    [BsonIgnoreExtraElements]
     public class ParentDetail
     {
-
         [BsonElement("firstName")]
         public string FirstName { get; set; }
 
@@ -50,7 +50,6 @@ namespace Server_Side.BL
         [BsonElement("phoneNumber")]
         public string PhoneNumber { get; set; }
 
-        // בנאי
         public ParentDetail(string firstName, string lastName, string phoneNumber)
         {
             FirstName = firstName;
@@ -58,11 +57,11 @@ namespace Server_Side.BL
             PhoneNumber = phoneNumber;
         }
     }
-
     public class Child
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("childID")]// עדכון כך שיתאים לשם השדה במסד הנתונים
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [BsonElement("firstName")]
@@ -87,9 +86,9 @@ namespace Server_Side.BL
         [BsonElement("readingHistory")]
         public List<ReadingHistoryEntry> ReadingHistory { get; set; } = new List<ReadingHistoryEntry>();
 
-        // בנאי
         public Child(string firstName, string lastName, string username, string password, DateTime birthdate, int readingLevel)
         {
+            Id = ObjectId.GenerateNewId().ToString();
             FirstName = firstName;
             LastName = lastName;
             Username = username;
@@ -99,6 +98,7 @@ namespace Server_Side.BL
             ReadingHistory = new List<ReadingHistoryEntry>();
         }
     }
+
 
     public class ReadingHistoryEntry
     {
