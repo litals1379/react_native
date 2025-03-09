@@ -3,54 +3,57 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, KeyboardAvoidingVi
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useChildContext } from './childContext'; // import the custom hook
 
 export default function Register() {
     const router = useRouter();
     const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [lastName, setLastName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [children, setChildren] = useState([]);
+    const { handleAddChild } = useChildContext(); // use the context here
+    const { children } = useChildContext();
 
     const handleRegister = async () => {
+        const apiUrl = 'https://192.168.1.106:7209/api/User/register/'; 
+    
         const userData = {
-            parentDetails: {
-                firstName,
-                lastName,
-                phoneNumber
-            },
+            parentDetails: [
+                {
+                    firstName,
+                    lastName,
+                    phoneNumber
+                }
+            ],
             email,
             username,
             password,
             children
         };
-
+    
         try {
-            const response = await fetch('https://localhost:7209/api/User/register', {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json; charset=UTF-8', 
                 },
                 body: JSON.stringify(userData),
             });
-
+    
             if (response.ok) {
-                router.push('./login');
+                router.push('./login'); 
             } else {
                 console.error("Registration failed");
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Network request failed:", error);
         }
     };
-
-    const handleAddChild = (childData) => {
-        setChildren(prevChildren => [...prevChildren, childData]);
-        router.push('/register');  // חוזר למסך הרשמה אחרי הוספת הילד
-    };
+    
 
     return (
         <KeyboardAvoidingView
@@ -125,7 +128,12 @@ export default function Register() {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('./addChild')}>
+                        <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() => router.push({
+                                pathname: './addChild',
+                            })}
+                        >
                             <Icon name="user-plus" size={30} color="#333" style={styles.optionIcon} />
                             <Text style={styles.optionText}>הוספת ילד</Text>
                         </TouchableOpacity>
@@ -133,7 +141,6 @@ export default function Register() {
                         <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>הרשמה</Text>
                         </TouchableOpacity>
-
                     </View>
                 </ScrollView>
             </TouchableWithoutFeedback>
@@ -148,21 +155,6 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#F8F8F8',
         direction: 'rtl',
-    },
-    logoContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    logo: {
-        width: 60,
-        height: 50,
-        marginRight: 8,
-    },
-    logoText: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        color: '#65558F',
     },
     title: {
         fontSize: 32,
@@ -226,12 +218,12 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 }, // iOS shadow
         shadowOpacity: 0.2, // iOS shadow
         shadowRadius: 2, // iOS shadow
-      },
-      optionIcon: {
+    },
+    optionIcon: {
         marginRight: 10,
-      },
-      optionText: {
+    },
+    optionText: {
         fontSize: 18,
         color: '#333',
-      },
+    },
 });
