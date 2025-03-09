@@ -3,6 +3,7 @@ import { Stack, useRouter } from "expo-router";
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router'; 
+import { ChildProvider } from './childContext';
 
 const colorsList = [
   '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', '#E6E6FA', '#87CEEB','#FFFFFF',
@@ -63,7 +64,8 @@ export default function RootLayout() {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <View style={{ flex: 1, backgroundColor: selectedColor }}>
+    <ChildProvider>
+        <View style={{ flex: 1, backgroundColor: selectedColor }}>
       <Stack screenOptions={{
         header: () => (
           <CustomHeader 
@@ -77,17 +79,21 @@ export default function RootLayout() {
         headerTintColor: "#000",
         headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
       }}>
-        <Stack.Screen name="drawer" options={{ headerShown: false }} />
-        <Stack.Screen name="index" options={{ headerShown: false }} /> 
-        <Stack.Screen name="login" />
-        <Stack.Screen name="register" />
-        <Stack.Screen name="characters" />
-        <Stack.Screen name="subjects" />
-        <Stack.Screen name="options" />
-        <Stack.Screen name="addChild" /> 
-        <Stack.Screen name="story" options={{ headerShown: false }} />  
-      </Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+          <ChildProvider>
+            <Stack.Screen name="drawer" options={{ headerShown: false }} />
+            <Stack.Screen name="register" />
+            <Stack.Screen name="addChild" /> 
+            <Stack.Screen name="login" />
+            <Stack.Screen name="characters" />
+            <Stack.Screen name="subjects" />
+            <Stack.Screen name="options" />
+            <Stack.Screen name="story" options={{ headerShown: false }} />  
+          </ChildProvider>
+       </Stack>
     </View>
+    </ChildProvider>
+    
   );
 }
 
