@@ -23,9 +23,9 @@ namespace Server_Side
             builder.Services.AddSingleton<IMongoClient>(sp =>
                 new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
 
-            // רישום של DBservices ו- UserDBservices
             builder.Services.AddScoped<DBservices>();
-            builder.Services.AddScoped<UserDBservices>(); 
+            builder.Services.AddScoped<UserDBservices>();
+            builder.Services.AddScoped<StoryDBservices>();
 
             var app = builder.Build();
 
