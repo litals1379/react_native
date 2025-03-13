@@ -14,7 +14,7 @@ export default function HomeScreen() {
     require('../assets/images/unicorn2.png'),
     require('../assets/images/unicorn3.png')
   ];
-  const texts = ['ללמוד', 'לקרוא', '!להנות'];
+  const texts = ['ללמוד', 'לקרוא', 'להנות!'];
   const [showLogo, setShowLogo] = useState(false);
   const [showMainImage, setShowMainImage] = useState(false);
   const [showStoryTime, setShowStoryTime] = useState(false);
@@ -69,7 +69,7 @@ export default function HomeScreen() {
       <Video
         ref={video}
         style={styles.video}
-        source={require('../assets/videos/background_video.mp4')} // Replace with your video path
+        source={require('../assets/videos/background_video.mp4')} 
         useNativeControls={false}
         resizeMode="cover"
         isLooping
@@ -82,10 +82,11 @@ export default function HomeScreen() {
           <Text style={styles.title}>{texts[textIndex]}</Text>
         </>
       ) : (
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <Animated.View style={styles.logoContainer}> 
           <TouchableOpacity onPress={() => router.push('/home')}>
             <Image source={require('../assets/images/logo.png')} style={styles.logo} />
           </TouchableOpacity>
+          {showStoryTime && <Text style={styles.storyTimeText}>Story Time</Text>} 
         </Animated.View>
       )}
 
@@ -96,8 +97,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-
-      {showStoryTime && <Text style={styles.title}>story time</Text>}
 
       {showLogo && (
         <>
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   logo: {
-    width: 300,
+    width: 400,
     height: 200,
     marginBottom: 20,
     resizeMode: 'contain',
@@ -188,5 +187,17 @@ const styles = StyleSheet.create({
     color: '#65558F',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  storyTimeText: {
+    position: 'absolute',
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#65558F',
+    top: 130,
   },
 });
