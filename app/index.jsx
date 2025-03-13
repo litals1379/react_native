@@ -1,31 +1,32 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View, Image, TouchableOpacity, Button } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { Audio } from 'expo-av';
+import { Audio, Video } from 'expo-av';
 
 export default function HomeScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
   const [imageIndex, setImageIndex] = useState(0);
-  const [textIndex, setTextIndex] = useState(0); // New state for text cycling
+  const [textIndex, setTextIndex] = useState(0);
   const unicornImages = [
     require('../assets/images/unicorn1.png'),
     require('../assets/images/unicorn2.png'),
     require('../assets/images/unicorn3.png')
   ];
-  const texts = ['ללמוד', 'לקרוא', '!להנות']; // Text array to match images
+  const texts = ['ללמוד', 'לקרוא', 'להנות!'];
   const [showLogo, setShowLogo] = useState(false);
   const [showMainImage, setShowMainImage] = useState(false);
-  const [showStoryTime, setShowStoryTime] = useState(false); // New state for showing story time
+  const [showStoryTime, setShowStoryTime] = useState(false);
+  const video = useRef(null);
+  const [status, setStatus] = useState({});
 
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
       if (index < unicornImages.length) {
         setImageIndex(index);
-        setTextIndex(index); // Set text according to the current image
+        setTextIndex(index);
         index++;
       } else {
         clearInterval(interval);
@@ -42,7 +43,7 @@ export default function HomeScreen() {
               duration: 1500,
               useNativeDriver: true,
             }).start(() => {
-              setShowStoryTime(true); // Show story time after the logo
+              setShowStoryTime(true);
             });
           });
         }, 750);
@@ -65,17 +66,27 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Display the unicorn images with texts */}
+      <Video
+        ref={video}
+        style={styles.video}
+        source={require('../assets/videos/background_video.mp4')} 
+        useNativeControls={false}
+        resizeMode="cover"
+        isLooping
+        shouldPlay
+        onPlaybackStatusUpdate={status => setStatus(() => status)}
+      />
       {!showLogo ? (
         <>
           <Image source={unicornImages[imageIndex]} style={styles.unicornImage} />
           <Text style={styles.title}>{texts[textIndex]}</Text>
         </>
       ) : (
-        <Animated.View style={{ opacity: fadeAnim }}>
+        <Animated.View style={styles.logoContainer}> 
           <TouchableOpacity onPress={() => router.push('/home')}>
             <Image source={require('../assets/images/logo.png')} style={styles.logo} />
           </TouchableOpacity>
+          {showStoryTime && <Text style={styles.storyTimeText}>Story Time</Text>} 
         </Animated.View>
       )}
 
@@ -87,10 +98,6 @@ export default function HomeScreen() {
         </Animated.View>
       )}
 
-      {/* Display the "story time" text once logo is shown */}
-      {showStoryTime && <Text style={styles.title}>story time</Text>}
-
-      {/* Display buttons only when the logo is shown */}
       {showLogo && (
         <>
           <TouchableOpacity style={styles.button} onPress={() => router.push('/login')}>
@@ -103,9 +110,6 @@ export default function HomeScreen() {
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
-
-          
-        
         </>
       )}
     </View>
@@ -117,7 +121,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8EDEB',
+  },
+  video: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    zIndex: -1,
   },
   unicornImage: {
     width: 400,
@@ -126,7 +137,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   logo: {
-    width: 300,
+    width: 400,
     height: 200,
     marginBottom: 20,
     resizeMode: 'contain',
@@ -176,5 +187,17 @@ const styles = StyleSheet.create({
     color: '#65558F',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  storyTimeText: {
+    position: 'absolute',
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#65558F',
+    top: 130,
   },
 });
