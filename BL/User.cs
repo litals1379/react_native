@@ -8,8 +8,8 @@ namespace Server_Side.BL
     public class User
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // יצירת מזהה אוטומטי
+        [BsonRepresentation(BsonType.ObjectId)] // מאפשר לקשר אובייקטים של MongoDB
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מייצר מזהה חדש בתור מחרוזת
 
         [BsonElement("parentDetails")]
         public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>();
@@ -18,11 +18,10 @@ namespace Server_Side.BL
         public string Email { get; set; }
 
         [BsonElement("username")]
-        public string Username { get; set; } 
+        public string Username { get; set; }
 
         [BsonElement("password")]
         public string Password { get; set; }
-
 
         [BsonElement("children")]
         public List<Child> Children { get; set; } = new List<Child>();
@@ -57,12 +56,13 @@ namespace Server_Side.BL
             PhoneNumber = phoneNumber;
         }
     }
+
     public class Child
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        [BsonElement("childID")]// עדכון כך שיתאים לשם השדה במסד הנתונים
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        [BsonRepresentation(BsonType.ObjectId)] // השדה הזה הוא ObjectId עכשיו
+        [BsonElement("childID")] // עדכון כך שיתאים לשם השדה במסד הנתונים
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מייצר מזהה חדש בתור מחרוזת
 
         [BsonElement("firstName")]
         public string FirstName { get; set; }
@@ -86,9 +86,9 @@ namespace Server_Side.BL
         [BsonElement("readingHistory")]
         public List<ReadingHistoryEntry> ReadingHistory { get; set; } = new List<ReadingHistoryEntry>();
 
+        // בנאי
         public Child(string firstName, string lastName, string username, string password, DateTime birthdate, int readingLevel)
         {
-            Id = ObjectId.GenerateNewId().ToString();
             FirstName = firstName;
             LastName = lastName;
             Username = username;
@@ -99,12 +99,11 @@ namespace Server_Side.BL
         }
     }
 
-
     public class ReadingHistoryEntry
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+        [BsonRepresentation(BsonType.ObjectId)] // השדה הזה הוא ObjectId גם
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מייצר מזהה חדש בתור מחרוזת
 
         [BsonElement("storyID")]
         public string StoryID { get; set; }
