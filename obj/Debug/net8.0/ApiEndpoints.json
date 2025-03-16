@@ -32,6 +32,48 @@
   },
   {
     "ContainingType": "Server_Side.Controllers.UserController",
+    "Method": "GetUserById",
+    "RelativePath": "api/User/GetUserById/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Server_Side.BL.User",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.UserController",
+    "Method": "LoginUser",
+    "RelativePath": "api/User/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "user",
+        "Type": "Server_Side.BL.User",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.UserController",
     "Method": "RegisterUser",
     "RelativePath": "api/User/register",
     "HttpMethod": "POST",
