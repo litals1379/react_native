@@ -1,25 +1,42 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
-
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function UserProfile() {
-  const userData = {
-    firstName: 'ישראל',
-    lastName: 'כהן',
-    email: 'israel@example.com',
-    city: 'תל אביב',
-    street: 'דיזנגוף',
-    street_number: '100',
-    birthDate: '1990-05-20',
-    profileImage: 'https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Clipart.png',
-    favorite_game: 'https://example.com/game',
-  };
+  const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(''); // ה-ID של המשתמש
+
+  // הגדרת ה-API URL בצורה דינמית
+  const apiUrl = `https://localhost:7209/api/User/GetUserById/${userId}`;
+
+  useEffect(() => {
+    // שליפת נתונים מה-API עם fetch
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        setUserData(data); // עדכון הנתונים
+      } catch (error) {
+        console.error("שגיאה בטעינת נתוני המשתמש:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [apiUrl]); // אם ה-API משתנה, נבצע את הקריאה מחדש
+
+  if (!userData) {
+    return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
+  }
 
   return (
     <View style={styles.container}>
+      {/* תמונת פרופיל */}
       <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
+      
+      {/* שם המשתמש */}
       <Text style={styles.name}>{userData.firstName} {userData.lastName}</Text>
+      
+      {/* פרטי המשתמש */}
       <View style={styles.infoContainer}>
         <FontAwesome name="envelope" size={20} color="gray" />
         <Text style={styles.email}>{userData.email}</Text>
@@ -32,7 +49,8 @@ export default function UserProfile() {
         <FontAwesome name="birthday-cake" size={20} color="gray" />
         <Text style={styles.birthDate}>תאריך לידה: {userData.birthDate}</Text>
       </View>
-      
+
+      {/* כפתורים */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button}>
           <FontAwesome name="edit" size={16} color="white" />
@@ -54,11 +72,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
-  },
-  link: {
-    padding: 10,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 5,
   },
   profileImage: {
     width: 120,
@@ -101,9 +114,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 5,
     marginHorizontal: 5,
-  },
-  disabledButton: {
-    backgroundColor: 'gray',
   },
   logoutButton: {
     flexDirection: 'row',

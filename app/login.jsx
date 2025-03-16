@@ -6,14 +6,42 @@ export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const apiUrl = 'https://localhost:7209/api/User/Login';  // הגדרת ה-API כאן
+
+  const handleSubmit = async () => {
     if (username && password) {
-      router.push('/userProfile'); 
+      setLoading(true);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        const data = await response.json();
+  
+        if (data.user) {
+          const { userId } = data.user;
+          // שומרים את ה- userId בסטייט או בקונטקסט
+          // מעבירים את ה- userId לעמוד ה-Subjects
+          router.push(`/subjects/${userId}`);
+        } else {
+          Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
+        }
+      } catch (error) {
+        Alert.alert('שגיאה', 'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
+      } finally {
+        setLoading(false);
+      }
     } else {
       Alert.alert('שגיאה', 'אנא מלא את כל השדות.');
     }
   };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -49,7 +77,7 @@ export default function Login() {
           <Text style={styles.googleText}>המשך עם Google</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.buttonText}>התחבר</Text>
         </TouchableOpacity>
 
