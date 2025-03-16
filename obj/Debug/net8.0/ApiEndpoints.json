@@ -1,28 +1,23 @@
 [
   {
     "ContainingType": "Server_Side.Controllers.StoryController",
-    "Method": "AddStoryAsync",
-    "RelativePath": "api/Story/add",
-    "HttpMethod": "POST",
+    "Method": "GetStoryForChild",
+    "RelativePath": "api/Story/GetStoryForChild/{childID}/{topic}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "story",
-        "Type": "Server_Side.BL.Story",
+        "Name": "childID",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "topic",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "Server_Side.Controllers.StoryController",
-    "Method": "GetAllStoriesAsync",
-    "RelativePath": "api/Story/all",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
     "ReturnTypes": []
   },
   {
