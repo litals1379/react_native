@@ -76,5 +76,35 @@ namespace Server_Side.Controllers
                 return StatusCode(500, new { message = "An error occurred while retrieving users", error = ex.Message });
             }
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] User user)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
+            {
+                return BadRequest(new { message = "Invalid username or password" });
+            }
+
+            // קריאה לפונקציה מתוך ה-DBservices
+            var loggedInUser = await _userDBservices.LoginAsync(user.Username, user.Password);
+            if (loggedInUser == null)
+            {
+                return Unauthorized(new { message = "Invalid username or password" });
+            }
+
+            return Ok(new { message = "Login successful", user = loggedInUser });
+        }
+
+        [HttpGet("GetUserById/{userId}")]
+        public async Task<ActionResult<User>> GetUserById(string userId)
+        {
+            var user = await _userDBservices.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(); 
+            }
+            return Ok(user);
+        }
+
     }
 }

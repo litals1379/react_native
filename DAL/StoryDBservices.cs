@@ -19,7 +19,7 @@ namespace Server_Side.DAL
         }
 
         // פונקציה שמחזירה סיפור מתאים לילד לפי רמה ונושא
-        public async Task<Story> GetStoryForChildAsync(string childID, string topic)
+        public async Task<string> GetStoryForChildAsync(string childID, string topic)
         {
             // חיפוש המשתמש שמכיל את הילד עם ה-ID המתאים
             var user = await _usersCollection
@@ -53,7 +53,15 @@ namespace Server_Side.DAL
                 return null;
             }
 
-            return story;
+            // החזרת הפסקה הראשונה מתוך הסיפור
+            if (story.Paragraphs != null && story.Paragraphs.Count > 0)
+            {
+                return story.Paragraphs["פסקה 1"]; // החזרת פסקה 1 מתוך האובייקט
+            }
+
+            Console.WriteLine($"No paragraphs found for story with ID {story.Id}");
+            return null;
         }
+
     }
 }
