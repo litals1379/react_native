@@ -47,3 +47,6 @@ build/
 
 # Ignore Resharper files
 _ReSharper.Caches/
+bin/Debug/net8.0/Server_Side.dll
+bin/Debug/net8.0/Server_Side.exe
+bin/Debug/net8.0/Server_Side.exe
