@@ -2,37 +2,40 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Server_Side.BL
 {
     public class User
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)] // מאפשר לקשר אובייקטים של MongoDB
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מייצר מזהה חדש בתור מחרוזת
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+
+        [BsonElement("username")]
+        [Required]  // דרישה חובה
+        public string Username { get; set; }
+
+        [BsonElement("password")]
+        [Required]  // דרישה חובה
+        public string Password { get; set; }
+
+        [BsonElement("email")]
+        public string? Email { get; set; } // הפיכת אימייל לשדה אופציונלי
 
         [BsonElement("parentDetails")]
         public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>();
 
-        [BsonElement("email")]
-        public string Email { get; set; }
-
-        [BsonElement("username")]
-        public string Username { get; set; }
-
-        [BsonElement("password")]
-        public string Password { get; set; }
-
         [BsonElement("children")]
         public List<Child> Children { get; set; } = new List<Child>();
 
-        // בנאי
-        public User(string email, string username, string password)
+        // קונסטרקטור חדש שמאפשר יצירת משתמש ללא אימייל
+        public User(string username, string password, string? email = null)
         {
-            ParentDetails = new List<ParentDetail>();
-            Email = email;
             Username = username;
             Password = password;
+            Email = email; // יכול להיות ריק
+            ParentDetails = new List<ParentDetail>();
             Children = new List<Child>();
         }
     }
