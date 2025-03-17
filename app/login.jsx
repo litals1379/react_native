@@ -8,31 +8,32 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const apiUrl = 'https://localhost:7209/api/User/Login';  // הגדרת ה-API כאן
+  const apiUrl = 'https://localhost:7209/api/User/login'; 
 
   const handleSubmit = async () => {
     if (username && password) {
       setLoading(true);
       try {
+        console.log("Trying to login with:", username, password);
+  
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
         });
   
+        console.log("Response status:", response.status);
+  
         const data = await response.json();
+        console.log("Response data:", data);
   
         if (data.user) {
-          const { userId } = data.user;
-          // שומרים את ה- userId בסטייט או בקונטקסט
-          // מעבירים את ה- userId לעמוד ה-Subjects
-          router.push(`/subjects/${userId}`);
+          router.push(`./subjects/${data.user.userId}`);
         } else {
           Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
         }
       } catch (error) {
+        console.log("Login error:", error);
         Alert.alert('שגיאה', 'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
       } finally {
         setLoading(false);
@@ -41,7 +42,7 @@ export default function Login() {
       Alert.alert('שגיאה', 'אנא מלא את כל השדות.');
     }
   };
-
+  
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
