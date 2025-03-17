@@ -18,7 +18,7 @@ export default function Register() {
     const { children } = useChildContext();
 
     const handleRegister = async () => {
-        const apiUrl = 'https://192.168.1.106:7209/api/User/register/'; 
+        const apiUrl = 'https://localhost:7209/api/User/register/'; 
     
         const userData = {
             parentDetails: [

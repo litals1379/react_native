@@ -6,7 +6,6 @@ export default function library() {
     const router = useRouter();
   return (
     <View>
-      {/* כפתור הבא */}
       <TouchableOpacity style={styles.button} onPress={() => router.push('../characters')}>
          <Text style={styles.buttonText}>צור סיפור חדש</Text>
       </TouchableOpacity>
