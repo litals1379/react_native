@@ -34,13 +34,14 @@ namespace Server_Side.DAL
         }
 
         // פונקציית התחברות
-        public async Task<User> LoginAsync(string email, string password)
+        public async Task<User> LoginAsync(string identifier, string password)
         {
-            // חיפוש משתמש לפי אימייל
-            var user = await _usersCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+            // חיפוש משתמש לפי אימייל או שם משתמש
+            var user = await _usersCollection.Find(u => u.Email == identifier || u.Username == identifier).FirstOrDefaultAsync();
+
             if (user == null)
             {
-                return null;
+                return null; // המשתמש לא נמצא
             }
 
             if (user.Password == password)
@@ -48,8 +49,9 @@ namespace Server_Side.DAL
                 return user; // אם הסיסמה נכונה, מחזירים את המידע של המשתמש
             }
 
-            return null;
+            return null; // סיסמה לא נכונה
         }
+
 
 
         // קבלת משתמש לפי מזהה
