@@ -28,7 +28,7 @@ export default function Login() {
         console.log("Response data:", data);
   
         if (data.user) {
-          router.push(`./subjects/${data.user.userId}`);
+          router.push(`./userProfile/${data.user.userId}`);
         } else {
           Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
         }
