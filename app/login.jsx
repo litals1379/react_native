@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function Login() {
@@ -10,8 +10,23 @@ export default function Login() {
 
   const apiUrl = 'https://localhost:7209/api/User/login'; 
 
+  const usernameRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // Email format validation
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; // Password must be at least 8 characters, with at least one letter, one number, and one special character.
+
   const handleSubmit = async () => {
     if (username && password) {
+      // Validate username with regex (email format)
+      if (!usernameRegex.test(username)) {
+        Alert.alert('שגיאה', 'הזן כתובת אימייל תקנית.');
+        return;
+      }
+
+      // Validate password with regex (minimum 8 chars, 1 letter, 1 number, 1 special char)
+      if (!passwordRegex.test(password)) {
+        Alert.alert('שגיאה', 'הסיסמה חייבת לכלול לפחות 8 תווים, אותיות, מספרים, ותו מיוחד.');
+        return;
+      }
+
       setLoading(true);
       try {
         console.log("Trying to login with:", username, password);
@@ -70,14 +85,6 @@ export default function Login() {
           />
         </View>
 
-        <TouchableOpacity style={styles.googleButton}>
-          <Image
-            source={require('../assets/images/google-icon.png')}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleText}>המשך עם Google</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.buttonText}>התחבר</Text>
         </TouchableOpacity>
@@ -122,25 +129,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     textAlign: 'right',
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#AAA',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  googleIcon: {
-    width: 20,
-    height: 20,
-    marginLeft: 10,
-  },
-  googleText: {
-    fontSize: 16,
-    color: '#555',
   },
   button: {
     backgroundColor: '#B3E7F2',

@@ -84,7 +84,7 @@ export default function RootLayout() {
             <Stack.Screen name="drawer" options={{ headerShown: false }} />
             <Stack.Screen name="register" />
             <Stack.Screen name="addChild" /> 
-            <Stack.Screen name="login" />
+            <Stack.Screen name="login" /> 
             <Stack.Screen name="characters" />
             <Stack.Screen name="subjects" />
             <Stack.Screen name="options" />
