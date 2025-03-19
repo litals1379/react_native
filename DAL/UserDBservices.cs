@@ -33,23 +33,23 @@ namespace Server_Side.DAL
             return await _usersCollection.Find(_ => true).ToListAsync();
         }
 
-        // פונקציית התחברות
-        public async Task<User> LoginAsync(string email, string password)
+        public async Task<User> LoginAsync(string username, string password)
         {
-            // חיפוש משתמש לפי אימייל
-            var user = await _usersCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+            var user = await _usersCollection.Find(u => u.Username == username).FirstOrDefaultAsync();
+
             if (user == null)
             {
-                return null;
+                return null; // המשתמש לא נמצא
             }
 
             if (user.Password == password)
             {
-                return user; // אם הסיסמה נכונה, מחזירים את המידע של המשתמש
+                return user; // אם הסיסמה נכונה, מחזירים את המשתמש
             }
 
-            return null;
+            return null; // סיסמה לא נכונה
         }
+
 
 
         // קבלת משתמש לפי מזהה
