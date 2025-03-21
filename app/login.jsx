@@ -1,48 +1,65 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const apiUrl = 'https://localhost:7209/api/User/login'; 
 
+  const validate = () => {
+    const newErrors = {};
+    const usernameRegex = /^[a-zA-Z0-9]{5,15}$/;
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}$/;
+
+    if (!username) {
+      newErrors.username = 'שם משתמש הוא שדה חובה.';
+    } else if (!usernameRegex.test(username)) {
+      newErrors.username = 'שם משתמש יכול להכיל רק אותיות ומספרים, בין 5 ל-15 תווים.';
+    }
+
+    if (!password) {
+      newErrors.password = 'סיסמה היא שדה חובה.';
+    } else if (!passwordRegex.test(password)) {
+      newErrors.password = 'סיסמה חייבת לכלול לפחות 1 אות גדולה, 1 אות קטנה ו-1 מספר, בין 6 ל-12 תווים.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
-    if (username && password) {
-      setLoading(true);
-      try {
-        console.log("Trying to login with:", username, password);
-  
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-        });
-  
-        console.log("Response status:", response.status);
-  
-        const data = await response.json();
-        console.log("Response data:", data);
-  
-        if (data.user) {
-          router.push(`./userProfile/${data.user.userId}`);
-        } else {
-          Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
-        }
-      } catch (error) {
-        console.log("Login error:", error);
-        Alert.alert('שגיאה', 'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
-      } finally {
-        setLoading(false);
+    if (!validate()) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.user) {
+        router.push(`./userProfile/${data.user.userId}`);
+      } else {
+        Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
       }
-    } else {
-      Alert.alert('שגיאה', 'אנא מלא את כל השדות.');
+    } catch (error) {
+      Alert.alert('שגיאה', 'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
+    } finally {
+      setLoading(false);
     }
   };
-  
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -53,30 +70,33 @@ export default function Login() {
 
         <View style={styles.form}>
           <Text style={styles.label}>שם משתמש:</Text>
-          <TextInput
-            placeholder="הזן את שם המשתמש"
-            style={styles.input}
-            value={username}
-            onChangeText={setUsername}
-          />
+          <View style={styles.inputContainer}>
+            <Icon name="user" size={20} color="#65558F" style={styles.icon} />
+            <TextInput
+              placeholder="הזן את שם המשתמש"
+              style={styles.input}
+              value={username}
+              onChangeText={setUsername}
+            />
+          </View>
+          {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
 
           <Text style={styles.label}>סיסמה:</Text>
-          <TextInput
-            placeholder="הזן סיסמה"
-            secureTextEntry
-            style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.inputContainer}>
+            <Icon name="lock" size={20} color="#65558F" style={styles.icon} />
+            <TextInput
+              placeholder="הזן סיסמה"
+              secureTextEntry={!passwordVisible}
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+              <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="#65558F" />
+            </TouchableOpacity>
+          </View>
+          {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
         </View>
-
-        <TouchableOpacity style={styles.googleButton}>
-          <Image
-            source={require('../assets/images/google-icon.png')}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleText}>המשך עם Google</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.buttonText}>התחבר</Text>
@@ -112,7 +132,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: 'right',
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
     height: 40,
     borderWidth: 1,
@@ -120,27 +142,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#EEE',
     paddingHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
     textAlign: 'right',
   },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#AAA',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  googleIcon: {
-    width: 20,
-    height: 20,
-    marginLeft: 10,
-  },
-  googleText: {
-    fontSize: 16,
-    color: '#555',
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    alignSelf: 'flex-start',
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#B3E7F2',
@@ -162,3 +177,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
