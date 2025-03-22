@@ -88,6 +88,7 @@ export default function RootLayout() {
             <Stack.Screen name="characters" />
             <Stack.Screen name="subjects" />
             <Stack.Screen name="options" />
+            <Stack.Screen name="googleAuth" />
             <Stack.Screen name="story" options={{ headerShown: false }} />  
           </ChildProvider>
        </Stack>

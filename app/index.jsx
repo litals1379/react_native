@@ -106,10 +106,11 @@ export default function HomeScreen() {
 
           <Button title="לא נרשמת? הירשם עכשיו" onPress={() => router.push('/register')} />
 
-          <TouchableOpacity style={styles.googleButton}>
+          <TouchableOpacity style={styles.googleButton} onPress={() => router.push('/googleAuth')}>
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
+
         </>
       )}
     </View>
