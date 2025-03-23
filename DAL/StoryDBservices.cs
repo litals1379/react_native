@@ -23,7 +23,7 @@ namespace Server_Side.DAL
         {
             // חיפוש המשתמש שמכיל את הילד עם ה-ID המתאים
             var user = await _usersCollection
-                .Find(u => u.Children.Any(c => c.Id == childID)) // חיפוש לפי מזהה הילד במחרוזת
+                .Find(u => u.Children.Any(c => c.Id == childID))
                 .FirstOrDefaultAsync();
 
             if (user == null)
@@ -33,7 +33,7 @@ namespace Server_Side.DAL
             }
 
             // מציאת נתוני הילד בתוך רשימת הילדים של המשתמש
-            var childData = user.Children.FirstOrDefault(c => c.Id == childID); // חיפוש לפי מזהה הילד במחרוזת
+            var childData = user.Children.FirstOrDefault(c => c.Id == childID);
             if (childData == null)
             {
                 Console.WriteLine($"Child data for ID {childID} not found.");
@@ -53,15 +53,69 @@ namespace Server_Side.DAL
                 return null;
             }
 
+            // הוספת הסיפור להיסטוריית הקריאה של הילד
+            var readingHistoryEntry = new ReadingHistoryEntry(
+                story.Id,
+                feedbackID: "", // ניתן להוסיף פידבק מאוחר יותר
+                readDate: DateTime.UtcNow
+            );
+
+            childData.ReadingHistory.Add(readingHistoryEntry);
+
+            // עדכון מסד הנתונים עם היסטוריית הקריאה החדשה
+            var update = Builders<User>.Update.Set(u => u.Children, user.Children);
+            await _usersCollection.UpdateOneAsync(u => u.Id == user.Id, update);
+
             // החזרת הפסקה הראשונה מתוך הסיפור
-            if (story.Paragraphs != null && story.Paragraphs.Count > 0)
+            if (story.Paragraphs != null && story.Paragraphs.ContainsKey("פסקה 1"))
             {
-                return story.Paragraphs["פסקה 1"]; // החזרת פסקה 1 מתוך האובייקט
+                return story.Paragraphs["פסקה 1"];
             }
 
             Console.WriteLine($"No paragraphs found for story with ID {story.Id}");
             return null;
         }
+
+        // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי
+        public async Task<List<string>> GetBooksReadByChildAsync(string childID)
+        {
+            // חיפוש המשתמש שמכיל את הילד עם ה-ID המתאים
+            var user = await _usersCollection
+                .Find(u => u.Children.Any(c => c.Id == childID))
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                Console.WriteLine($"Child with ID {childID} not found.");
+                return new List<string>();
+            }
+
+            // איתור הילד בתוך המשתמש
+            var childData = user.Children.FirstOrDefault(c => c.Id == childID);
+            if (childData == null || childData.ReadingHistory == null || !childData.ReadingHistory.Any())
+            {
+                Console.WriteLine($"No reading history found for child ID {childID}.");
+                return new List<string>();
+            }
+
+            // שליפת מזהי הסיפורים שהילד קרא
+            var storyIDs = childData.ReadingHistory.Select(rh => rh.StoryID).ToList();
+
+            // שליפת הכותרות מתוך מסד הנתונים
+            var stories = await _storiesCollection
+                .Find(s => storyIDs.Contains(s.Id))
+                .Project(s => s.Title) // שליפת רק את הכותרת
+                .ToListAsync();
+
+            if (!stories.Any())
+            {
+                Console.WriteLine("Couldn't find any read books.");
+            }
+
+            return stories;
+        }
+
+
 
     }
 }

@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "Server_Side.Controllers.StoryController",
+    "Method": "GetBooksReadByChild",
+    "RelativePath": "api/Story/GetBooksReadByChild/{childID}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "childID",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.StoryController",
     "Method": "GetStoryForChild",
     "RelativePath": "api/Story/GetStoryForChild/{childID}/{topic}",
     "HttpMethod": "GET",
