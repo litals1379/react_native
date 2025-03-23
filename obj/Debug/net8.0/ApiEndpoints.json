@@ -38,6 +38,27 @@
   },
   {
     "ContainingType": "Server_Side.Controllers.UserController",
+    "Method": "AddChild",
+    "RelativePath": "api/User/addChild/{userEmail}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userEmail",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "child",
+        "Type": "Server_Side.BL.Child",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Server_Side.Controllers.UserController",
     "Method": "GetUsersAsync",
     "RelativePath": "api/User/all",
     "HttpMethod": "GET",
