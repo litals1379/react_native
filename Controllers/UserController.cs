@@ -5,6 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
+using System.Text;
+//using System.Web.Script.Serialization;
+using MongoDB.Bson.IO;
 
 namespace Server_Side.Controllers
 {
@@ -39,9 +43,9 @@ namespace Server_Side.Controllers
             // בדיקת נתוני ילדים
             if (user.Children != null && user.Children.Any(c =>
                 string.IsNullOrWhiteSpace(c.FirstName) ||
-                string.IsNullOrWhiteSpace(c.LastName) ||
-                string.IsNullOrWhiteSpace(c.Username) ||
-                string.IsNullOrWhiteSpace(c.Password) ||
+                //string.IsNullOrWhiteSpace(c.LastName) ||
+                //string.IsNullOrWhiteSpace(c.Username) ||
+                //string.IsNullOrWhiteSpace(c.Password) ||
                 c.Birthdate == default ||
                 c.ReadingLevel < 0))
             {
@@ -59,6 +63,19 @@ namespace Server_Side.Controllers
             }
         }
 
+        [HttpPut("addChild/{userEmail}")]
+        public async Task<IActionResult> AddChild(string userEmail, [FromBody] Child child)
+        {
+            bool result = await _userDBservices.AddChildAsync(userEmail, child);
+            if (result)
+            {
+                return Ok(new { message = "Child added User updated successfully" });
+            }
+            else
+            {
+                return BadRequest(new { message = "Bad request from client" });
+            }
+        }
         [HttpGet("all")]
         public async Task<IActionResult> GetUsersAsync()
         {
@@ -105,6 +122,37 @@ namespace Server_Side.Controllers
             }
             return Ok(user);
         }
+        //[HttpPost("sendpushnotification")]
+        //public async Task<IActionResult> SendPushNotification([FromBody] PushNotData pnd)
+        //{
+        //    using (var client = new HttpClient())
+        //    {
+        //        var url = "https://exp.host/--/api/v2/push/send";
+        //        var payload = new
+        //        {
+        //            to = pnd.to,
+        //            title = pnd.title,
+        //            body = pnd.body,
+        //            badge = pnd.badge,
+        //            data = pnd.data
+        //        };
+
+        //        var json = JsonConvert.SerializeObject(payload);
+        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //        HttpResponseMessage response = await client.PostAsync(url, content);
+        //        string responseContent = await response.Content.ReadAsStringAsync();
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            return Ok(new { message = "Notification sent successfully", response = responseContent });
+        //        }
+        //        return StatusCode((int)response.StatusCode, new { message = "Error sending notification", response = responseContent });
+        //    }
+        //}
+
+
+
 
     }
 }

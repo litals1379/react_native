@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using Server_Side.BL;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,6 +28,45 @@ namespace Server_Side.DAL
             return true;
         }
 
+        public async Task<bool> AddChildAsync(string userEmail, Child child)
+        {
+            try
+            {
+                // מציאת המשתמש לפי אימייל
+                var user = await _usersCollection.Find(u => u.Email == userEmail).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    // אם לא נמצא משתמש עם האימייל, מחזירים false
+                    return false;
+                }
+
+                // בדיקה אם הילד כבר קיים ברשימת הילדים של המשתמש
+                if (user.Children.Any(c => c.FirstName == child.FirstName && c.Birthdate == child.Birthdate))
+                {
+                    return false; // הילד כבר קיים ברשימה
+                }
+
+                // הוספת הילד לרשימת הילדים של המשתמש
+                var update = Builders<User>.Update.Push(u => u.Children, child);
+
+                var result = await _usersCollection.UpdateOneAsync(
+                    u => u.Email == userEmail,
+                    update
+                );
+
+                return result.ModifiedCount > 0; // מחזירים true אם העדכון הצליח
+            }
+            catch (Exception ex)
+            {
+                // רישום השגיאה
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
         // קבלת רשימת משתמשים
         public async Task<List<User>> GetUsersAsync()
         {
@@ -49,8 +89,6 @@ namespace Server_Side.DAL
 
             return null; // סיסמה לא נכונה
         }
-
-
 
         // קבלת משתמש לפי מזהה
         public async Task<User> GetUserByIdAsync(string userId)

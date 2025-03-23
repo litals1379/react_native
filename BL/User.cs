@@ -70,14 +70,6 @@ namespace Server_Side.BL
         [BsonElement("firstName")]
         public string FirstName { get; set; }
 
-        [BsonElement("lastName")]
-        public string LastName { get; set; }
-
-        [BsonElement("username")]
-        public string Username { get; set; }
-
-        [BsonElement("password")]
-        public string Password { get; set; }
 
         [BsonElement("birthdate")]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
@@ -90,12 +82,12 @@ namespace Server_Side.BL
         public List<ReadingHistoryEntry> ReadingHistory { get; set; } = new List<ReadingHistoryEntry>();
 
         // בנאי
-        public Child(string firstName, string lastName, string username, string password, DateTime birthdate, int readingLevel)
+        public Child(string firstName,/* /string lastName, string username, string password,/*/ DateTime birthdate, int readingLevel)
         {
             FirstName = firstName;
-            LastName = lastName;
-            Username = username;
-            Password = password;
+            //LastName = lastName;
+            //Username = username;
+            //Password = password;
             Birthdate = birthdate;
             ReadingLevel = readingLevel;
             ReadingHistory = new List<ReadingHistoryEntry>();
