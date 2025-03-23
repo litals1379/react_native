@@ -1,0 +1,49 @@
+# Ignore Visual Studio files
+.vs/
+*.suo
+*.user
+*.cache
+
+# Ignore build output
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.log
+
+# Ignore dependencies
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Ignore database and user settings
+*.mdf
+*.ldf
+*.db
+appsettings.json
+appsettings.Development.json
+
+# Ignore logs
+*.log
+logs/
+*.tmp
+
+# Ignore publish output
+publish/
+dist/
+build/
+
+# Ignore temporary files
+*.bak
+*.swp
+*.swo
+
+# Ignore Rider / JetBrains files (if using)
+.idea/
+*.iml
+
+# Ignore Resharper files
+_ReSharper.Caches/
+
