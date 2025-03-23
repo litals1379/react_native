@@ -1,13 +1,14 @@
 import React, { useState } from 'react';  
 import { Platform, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';  
 import { useRouter } from 'expo-router';  
-import { useChildContext } from './childContext';  
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';  
 import DateTimePicker from '@react-native-community/datetimepicker';  
-import { Ionicons } from '@expo/vector-icons';  
+
+const addChildApiUrl = 'https://localhost:7209/api/User/addChild/'; 
 
 export default function AddChild() {
     const router = useRouter();  
-    const { handleAddChild } = useChildContext();  
     const [childFirstName, setChildFirstName] = useState('');    
     const [childUsername, setChildUsername] = useState('');  
     const [childPassword, setChildPassword] = useState('');  
@@ -15,40 +16,41 @@ export default function AddChild() {
     const [readingLevel, setReadingLevel] = useState('1');  
     const [showDatePicker, setShowDatePicker] = useState(false);  
 
-    // פונקציה להוספת ילד
-    const handleAdd = () => {
-        // בדיקה אם נבחר תאריך לידה
-        if (!birthDate) {
-            alert("אנא בחר תאריך לידה");
-            return;
-        }
-
-        // קריאה לפונקציה להוספת ילד מהקונטקסט
-        handleAddChild({
+    const handleAddChild = async () => {
+        const childData = {
             firstName: childFirstName,
-            username: childUsername,
-            password: childPassword,
-            birthDate,
-            readingLevel,
+            birthDate: birthDate.toISOString(),  // מוודא שהתאריך יהיה בתצורה נכונה
+            readingLevel: readingLevel,  // רמת קריאה
+        };
+        const userEmail = await AsyncStorage.getItem('userEmail');  // משיג את האימייל של המשתמש
+        const response = await fetch(addChildApiUrl + userEmail, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(childData),  // שולח את המידע ל-API
         });
 
-        // מעבר למסך הרישום אחרי ההוספה
-        router.push('/register');
+        if (response.ok) {
+            console.log('Child added:', childData);
+            router.push('/characters');  // מעביר לעמוד הבא אם ההוספה הצליחה
+        } else {
+            console.error("Failed to add child");
+        }
     };
 
-    // פונקציה לטיפול בבחירת תאריך
     const onDateChange = (event, selectedDate) => {
         if (selectedDate) {
             setBirthDate(selectedDate);  
         }
-        setShowDatePicker(false);  
+        setShowDatePicker(false);  // נסגר את בורר התאריך אחרי הבחירה
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.title}>הוספת ילד</Text>
 
-            {/* טופס להזנת שם פרטי */}
+            {/* Name input */}
             <Text style={styles.label}>שם פרטי:</Text>
             <TextInput
                 placeholder="הזן את שם הילד"
@@ -56,48 +58,28 @@ export default function AddChild() {
                 value={childFirstName}
                 onChangeText={setChildFirstName}  
             />
-
-            {/* טופס להזנת שם משתמש */}
-            <Text style={styles.label}>שם משתמש:</Text>
-            <TextInput
-                placeholder="הזן את שם המשתמש"
-                style={styles.input}
-                value={childUsername}
-                onChangeText={setChildUsername}
-            />
-
-            {/* טופס להזנת סיסמה */}
-            <Text style={styles.label}>סיסמה:</Text>
-            <TextInput
-                placeholder="הזן סיסמה"
-                style={styles.input}
-                secureTextEntry={true}  
-                value={childPassword}
-                onChangeText={setChildPassword}
-            />
-
-            {/* בחירת תאריך לידה */}
+            {/* Birth date picker */}
             <Text style={styles.label}>תאריך לידה:</Text>
 
-            {/* Input לתאריך עבור פלטפורמת web */}
+            {/* Web date input */}
             {Platform.OS === 'web' ? (
                 <input
                     type="date"
                     style={styles.input}
-                    value={birthDate ? birthDate.toISOString().split('T')[0] : ''}  
-                    onChange={(e) => setBirthDate(new Date(e.target.value))}  
+                    value={birthDate ? birthDate.toISOString().split('T')[0] : ''}  // מוודא שהתאריך בפורמט תקני עבור input type="date"
+                    onChange={(e) => setBirthDate(new Date(e.target.value))}  // מעדכן את התאריך עבור הדפדפן
                 />
             ) : (
                 <>
-                    {/* כפתור להצגת בורר תאריך */}
+                    {/* Touchable to show date picker for mobile */}
                     <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateButton}>
                         <Ionicons name="calendar-outline" size={24} color="#65558F" /> 
                         <Text style={styles.buttonText}>
-                        {birthDate ? birthDate.toLocaleDateString() : "בחר תאריך"}
+                            {birthDate ? birthDate.toLocaleDateString() : "בחר תאריך"}
                         </Text>
                     </TouchableOpacity>
 
-                    {/* בורר תאריך עבור מכשירים ניידים */}
+                    {/* Date picker for mobile */}
                     {showDatePicker && (
                         <DateTimePicker
                             value={birthDate || new Date()}  
@@ -109,7 +91,7 @@ export default function AddChild() {
                 </>
             )}
 
-            {/* טופס להזנת רמת קריאה */}
+            {/* Reading level input */}
             <Text style={styles.label}>רמת קריאה:</Text>
             <TextInput
                 placeholder="הזן רמת קריאה"
@@ -118,15 +100,14 @@ export default function AddChild() {
                 onChangeText={setReadingLevel}
             />
 
-            {/* כפתור לשליחת הטופס */}
-            <TouchableOpacity style={styles.button} onPress={handleAdd}>
+            {/* Submit button */}
+            <TouchableOpacity style={styles.button} onPress={handleAddChild}>
                 <Text style={styles.buttonText}>הוסף ילד</Text>
             </TouchableOpacity>
         </ScrollView>
     );
 }
 
-// סגנונות עבור הרכיבים
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
@@ -146,7 +127,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#65558F',
         marginBottom: 5,
-        textAlign: 'right',  
     },
     input: {
         width: '100%',
@@ -157,7 +137,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#EEE',
         paddingHorizontal: 10,
         marginBottom: 20,
-        textAlign: 'right',  
     },
     dateButton: {
         width: '100%',
@@ -165,12 +144,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#65558F',
         borderRadius: 8,
-        backgroundColor: '##EEE',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
         flexDirection: 'row',  
-        paddingHorizontal: 10,
     },
     button: {
         backgroundColor: '#B3E7F2',
