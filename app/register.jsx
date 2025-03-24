@@ -1,19 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotificationsAsync } from '../pushNotifications';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useChildContext } from './childContext';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
 
 export default function Register() {
     const router = useRouter();
@@ -24,8 +16,6 @@ export default function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const { handleAddChild } = useChildContext(); // use the context here
-    const { children } = useChildContext();
     const [errors, setErrors] = useState({});
     const [expoPushToken, setExpoPushToken] = useState('');
     const [notification, setNotification] = useState(undefined);
@@ -119,7 +109,7 @@ export default function Register() {
             email,
             username,
             password,
-            children,
+            children: [],
             expoPushToken, // הוספת האסימון
         };
 
@@ -137,6 +127,8 @@ export default function Register() {
                 console.log(userData.email);
                 console.log("Registration successful");
                 await AsyncStorage.setItem('userEmail', userData.email);
+                // שליחת הודעת Push לאחר ההרשמה
+                sendPushNotification(expoPushToken);
                 router.push('./addChild');
             } else {
                 console.error("Registration failed");
@@ -146,34 +138,31 @@ export default function Register() {
         }
     };
 
-    async function registerForPushNotificationsAsync() {
-        if (Platform.OS === 'android') {
-          Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-          });
-        }
-    
-        if (Constants.isDevice) {
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-          if (finalStatus !== 'granted') {
-            alert('Permission not granted to get push token for push notification!');
-            return;
-          }
-          const token = (await Notifications.getExpoPushTokenAsync()).data;
-          console.log(token);
-          return token;
-        } else {
-          alert('Must use physical device for push notifications');
-        }
-      }
+    // פונקציה לשליחת הודעת Push
+const sendPushNotification = async (expoPushToken) => {
+    const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'הרשמה הצליחה!',
+        body: 'המשתמש נרשם בהצלחה למערכת.',
+        data: { extraData: 'some data' },
+    };
+
+    try {
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(message),
+        });
+
+        const responseData = await response.json();
+        console.log('Push Notification response:', responseData);
+    } catch (error) {
+        console.error('Error sending push notification:', error);
+    }
+};
 
     return (
         <KeyboardAvoidingView
@@ -265,6 +254,7 @@ export default function Register() {
 
                         <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>הרשמה</Text>
+                            {notification && <Text>📢 התקבלה התראה: {notification.request.content.body}</Text>}
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

@@ -8,11 +8,8 @@ const subjectsData = [
   { id: 2, name: 'אגדות', image: require('../assets/images/fairytale.png') }, 
   { id: 3, name: 'ספורט', image: require('../assets/images/sport.png') },
   { id: 4, name: 'גיבורי על', image: require('../assets/images/hero.png') },
-  { id: 5, name: 'חיות', image: require('../assets/images/animals.png') },
-  { id: 6, name: 'הרפתקאות', image: require('../assets/images/adventure.png') },
-  { id: 7, name: 'מדע', image: require('../assets/images/medical.png') },
-  { id: 8, name: 'משפחה', image: require('../assets/images/family.png') },
-  { id: 9, name: 'אוכל', image: require('../assets/images/food.png') },
+  { id: 5, name: 'הרפתקאות', image: require('../assets/images/adventure.png') },
+  { id: 6, name: 'משפחה', image: require('../assets/images/family.png') },
 ];
 
 export default function Subjects() {
