@@ -23,7 +23,6 @@ namespace Server_Side
             builder.Services.AddSingleton<IMongoClient>(sp =>
                 new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
 
-            builder.Services.AddScoped<DBservices>();
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
 
