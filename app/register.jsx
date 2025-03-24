@@ -22,24 +22,29 @@ export default function Register() {
     const notificationListener = useRef();
     const responseListener = useRef();
 
-    useEffect(() => {
-        registerForPushNotificationsAsync()
-          .then(token => setExpoPushToken(token ?? ''))
-          .catch(error => setExpoPushToken(`${error}`));
-    
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-          setNotification(notification);
-        });
-    
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-          console.log(response);
-        });
-    
-        return () => {
-          notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-          responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
-        };
-      }, []);
+   useEffect(() => {
+    // רושם את המכשיר לקבלת התראות ומקבל את הטוקן הייחודי של Expo
+    registerForPushNotificationsAsync()
+        .then(token => setExpoPushToken(token ?? '')) // שומר את הטוקן (או מחרוזת ריקה במקרה של שגיאה)
+        .catch(error => setExpoPushToken(`${error}`)); // שומר שגיאה אם יש בעיה בקבלת הטוקן
+
+    // מאזין לקבלת התראה בזמן אמת ושומר את הנתונים של ההתראה
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+    });
+
+    // מאזין לתגובה של המשתמש על התראה (למשל, אם המשתמש לחץ על ההתראה)
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response); // מדפיס את התגובה של המשתמש לקונסול
+    });
+
+    // פונקציה שמנקה את המאזינים כאשר הקומפוננטה יוצאת מהזיכרון
+    return () => {
+        notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
+        responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+    };
+}, []); // [] אומר שהאפקט ירוץ רק פעם אחת כשהקומפוננטה נטענת
+
 
     const validate = () => {
         const newErrors = {};
@@ -139,30 +144,39 @@ export default function Register() {
     };
 
     // פונקציה לשליחת הודעת Push
-const sendPushNotification = async (expoPushToken) => {
-    const message = {
-        to: expoPushToken,
-        sound: 'default',
-        title: 'הרשמה הצליחה!',
-        body: 'המשתמש נרשם בהצלחה למערכת.',
-        data: { extraData: 'some data' },
+    const sendPushNotification = async (expoPushToken) => {
+        // יצירת הודעת הפוש שכוללת:
+        // - הטוקן של המכשיר שאליו תישלח ההתראה
+        // - צליל ברירת מחדל
+        // - כותרת וגוף ההודעה
+        // - נתונים נוספים שניתן לשלוח עם ההתראה
+        const message = {
+            to: expoPushToken, // טוקן המכשיר שאליו תישלח ההתראה
+            sound: 'default', // השמעת צליל ברירת מחדל בעת קבלת ההתראה
+            title: 'הרשמה הצליחה!', // כותרת ההודעה
+            body: 'המשתמש נרשם בהצלחה למערכת.', // גוף ההודעה
+            data: { extraData: 'some data' }, // נתונים נוספים שניתן להעביר עם ההתראה
+        };
+    
+        try {
+            // שליחת בקשה לשרת של Expo כדי לשלוח את ההתראה
+            const response = await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST', // שליחת הנתונים בשיטת POST
+                headers: {
+                    'Content-Type': 'application/json', // ציון סוג התוכן כ-JSON
+                },
+                body: JSON.stringify(message), // המרת האובייקט JSON למחרוזת כדי לשלוח אותו בבקשה
+            });
+    
+            // קבלת התגובה מהשרת ופענוח הנתונים שלה
+            const responseData = await response.json();
+            console.log('Push Notification response:', responseData); // הדפסת התגובה בקונסול
+        } catch (error) {
+            // טיפול בשגיאות במידה ושליחת ההתראה נכשלת
+            console.error('Error sending push notification:', error);
+        }
     };
-
-    try {
-        const response = await fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(message),
-        });
-
-        const responseData = await response.json();
-        console.log('Push Notification response:', responseData);
-    } catch (error) {
-        console.error('Error sending push notification:', error);
-    }
-};
+    
 
     return (
         <KeyboardAvoidingView
