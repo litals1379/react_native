@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, KeyboardAvoidingVi
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
-import { registerForPushNotificationsAsync } from '../pushNotifications';
+// import { registerForPushNotificationsAsync } from '../pushNotifications';
 import { Ionicons } from '@expo/vector-icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -17,33 +17,33 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [errors, setErrors] = useState({});
-    const [expoPushToken, setExpoPushToken] = useState('');
-    const [notification, setNotification] = useState(undefined);
-    const notificationListener = useRef();
-    const responseListener = useRef();
+    // const [expoPushToken, setExpoPushToken] = useState('');
+    // const [notification, setNotification] = useState(undefined);
+    // const notificationListener = useRef();
+    // const responseListener = useRef();
 
-   useEffect(() => {
-    // רושם את המכשיר לקבלת התראות ומקבל את הטוקן הייחודי של Expo
-    registerForPushNotificationsAsync()
-        .then(token => setExpoPushToken(token ?? '')) // שומר את הטוקן (או מחרוזת ריקה במקרה של שגיאה)
-        .catch(error => setExpoPushToken(`${error}`)); // שומר שגיאה אם יש בעיה בקבלת הטוקן
+//    useEffect(() => {
+//     // רושם את המכשיר לקבלת התראות ומקבל את הטוקן הייחודי של Expo
+//     registerForPushNotificationsAsync()
+//         .then(token => setExpoPushToken(token ?? '')) // שומר את הטוקן (או מחרוזת ריקה במקרה של שגיאה)
+//         .catch(error => setExpoPushToken(`${error}`)); // שומר שגיאה אם יש בעיה בקבלת הטוקן
 
-    // מאזין לקבלת התראה בזמן אמת ושומר את הנתונים של ההתראה
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-        setNotification(notification);
-    });
+//     // מאזין לקבלת התראה בזמן אמת ושומר את הנתונים של ההתראה
+//     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+//         setNotification(notification);
+//     });
 
-    // מאזין לתגובה של המשתמש על התראה (למשל, אם המשתמש לחץ על ההתראה)
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log(response); // מדפיס את התגובה של המשתמש לקונסול
-    });
+//     // מאזין לתגובה של המשתמש על התראה (למשל, אם המשתמש לחץ על ההתראה)
+//     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+//         console.log(response); // מדפיס את התגובה של המשתמש לקונסול
+//     });
 
-    // פונקציה שמנקה את המאזינים כאשר הקומפוננטה יוצאת מהזיכרון
-    return () => {
-        notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-        responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
-    };
-}, []); // [] אומר שהאפקט ירוץ רק פעם אחת כשהקומפוננטה נטענת
+//     // פונקציה שמנקה את המאזינים כאשר הקומפוננטה יוצאת מהזיכרון
+//     return () => {
+//         notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
+//         responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+//     };
+//     }, []); // [] אומר שהאפקט ירוץ רק פעם אחת כשהקומפוננטה נטענת
 
 
     const validate = () => {
@@ -101,7 +101,7 @@ export default function Register() {
     const handleRegister = async () => {
         if (!validate()) return;
 
-        const apiUrl = 'https://localhost:7209/api/User/register/'; 
+        const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/register/'; 
 
         const userData = {
             parentDetails: [
@@ -115,7 +115,7 @@ export default function Register() {
             username,
             password,
             children: [],
-            expoPushToken, // הוספת האסימון
+            // expoPushToken, // הוספת האסימון
         };
 
         try {
@@ -133,7 +133,7 @@ export default function Register() {
                 console.log("Registration successful");
                 await AsyncStorage.setItem('userEmail', userData.email);
                 // שליחת הודעת Push לאחר ההרשמה
-                sendPushNotification(expoPushToken);
+                // sendPushNotification(expoPushToken);
                 router.push('./addChild');
             } else {
                 console.error("Registration failed");
@@ -144,38 +144,38 @@ export default function Register() {
     };
 
     // פונקציה לשליחת הודעת Push
-    const sendPushNotification = async (expoPushToken) => {
-        // יצירת הודעת הפוש שכוללת:
-        // - הטוקן של המכשיר שאליו תישלח ההתראה
-        // - צליל ברירת מחדל
-        // - כותרת וגוף ההודעה
-        // - נתונים נוספים שניתן לשלוח עם ההתראה
-        const message = {
-            to: expoPushToken, // טוקן המכשיר שאליו תישלח ההתראה
-            sound: 'default', // השמעת צליל ברירת מחדל בעת קבלת ההתראה
-            title: 'הרשמה הצליחה!', // כותרת ההודעה
-            body: 'המשתמש נרשם בהצלחה למערכת.', // גוף ההודעה
-            data: { extraData: 'some data' }, // נתונים נוספים שניתן להעביר עם ההתראה
-        };
+    // const sendPushNotification = async (expoPushToken) => {
+    //     // יצירת הודעת הפוש שכוללת:
+    //     // - הטוקן של המכשיר שאליו תישלח ההתראה
+    //     // - צליל ברירת מחדל
+    //     // - כותרת וגוף ההודעה
+    //     // - נתונים נוספים שניתן לשלוח עם ההתראה
+    //     const message = {
+    //         to: expoPushToken, // טוקן המכשיר שאליו תישלח ההתראה
+    //         sound: 'default', // השמעת צליל ברירת מחדל בעת קבלת ההתראה
+    //         title: 'הרשמה הצליחה!', // כותרת ההודעה
+    //         body: 'המשתמש נרשם בהצלחה למערכת.', // גוף ההודעה
+    //         data: { extraData: 'some data' }, // נתונים נוספים שניתן להעביר עם ההתראה
+    //     };
     
-        try {
-            // שליחת בקשה לשרת של Expo כדי לשלוח את ההתראה
-            const response = await fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST', // שליחת הנתונים בשיטת POST
-                headers: {
-                    'Content-Type': 'application/json', // ציון סוג התוכן כ-JSON
-                },
-                body: JSON.stringify(message), // המרת האובייקט JSON למחרוזת כדי לשלוח אותו בבקשה
-            });
+    //     try {
+    //         // שליחת בקשה לשרת של Expo כדי לשלוח את ההתראה
+    //         const response = await fetch('https://exp.host/--/api/v2/push/send', {
+    //             method: 'POST', // שליחת הנתונים בשיטת POST
+    //             headers: {
+    //                 'Content-Type': 'application/json', // ציון סוג התוכן כ-JSON
+    //             },
+    //             body: JSON.stringify(message), // המרת האובייקט JSON למחרוזת כדי לשלוח אותו בבקשה
+    //         });
     
-            // קבלת התגובה מהשרת ופענוח הנתונים שלה
-            const responseData = await response.json();
-            console.log('Push Notification response:', responseData); // הדפסת התגובה בקונסול
-        } catch (error) {
-            // טיפול בשגיאות במידה ושליחת ההתראה נכשלת
-            console.error('Error sending push notification:', error);
-        }
-    };
+    //         // קבלת התגובה מהשרת ופענוח הנתונים שלה
+    //         const responseData = await response.json();
+    //         console.log('Push Notification response:', responseData); // הדפסת התגובה בקונסול
+    //     } catch (error) {
+    //         // טיפול בשגיאות במידה ושליחת ההתראה נכשלת
+    //         console.error('Error sending push notification:', error);
+    //     }
+    // };
     
 
     return (
@@ -268,7 +268,7 @@ export default function Register() {
 
                         <TouchableOpacity style={styles.button} onPress={handleRegister}>
                             <Text style={styles.buttonText}>הרשמה</Text>
-                            {notification && <Text>📢 התקבלה התראה: {notification.request.content.body}</Text>}
+                            {/* {notification && <Text>📢 התקבלה התראה: {notification.request.content.body}</Text>} */}
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     },
     eyeIconContainer: {
         position: 'absolute',
-        right: 10,
+        left: 10,
         top: 10,
     },
     button: {

@@ -13,7 +13,7 @@ export default function Story() {
 
   useEffect(() => {
     if (childID && topic) {
-      const apiUrl = `https://localhost:7209/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
+      const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
 
       const fetchStory = async () => {
         try {

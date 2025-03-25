@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';  
 import DateTimePicker from '@react-native-community/datetimepicker';  
 
-const addChildApiUrl = 'https://localhost:7209/api/User/addChild/'; 
+const addChildApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/addChild/'; 
 
 export default function AddChild() {
     const router = useRouter();  
