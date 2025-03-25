@@ -65,8 +65,6 @@ namespace Server_Side.DAL
             }
         }
 
-
-
         // קבלת רשימת משתמשים
         public async Task<List<User>> GetUsersAsync()
         {
