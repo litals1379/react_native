@@ -122,37 +122,5 @@ namespace Server_Side.Controllers
             }
             return Ok(user);
         }
-        //[HttpPost("sendpushnotification")]
-        //public async Task<IActionResult> SendPushNotification([FromBody] PushNotData pnd)
-        //{
-        //    using (var client = new HttpClient())
-        //    {
-        //        var url = "https://exp.host/--/api/v2/push/send";
-        //        var payload = new
-        //        {
-        //            to = pnd.to,
-        //            title = pnd.title,
-        //            body = pnd.body,
-        //            badge = pnd.badge,
-        //            data = pnd.data
-        //        };
-
-        //        var json = JsonConvert.SerializeObject(payload);
-        //        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        //        HttpResponseMessage response = await client.PostAsync(url, content);
-        //        string responseContent = await response.Content.ReadAsStringAsync();
-
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            return Ok(new { message = "Notification sent successfully", response = responseContent });
-        //        }
-        //        return StatusCode((int)response.StatusCode, new { message = "Error sending notification", response = responseContent });
-        //    }
-        //}
-
-
-
-
     }
 }
