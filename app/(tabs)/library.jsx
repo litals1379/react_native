@@ -10,7 +10,7 @@ export default function Library() {
 
     // פונקציה שתציג את הספרים שהילד קרא
     const fetchBooksReadByChild = async (childID) => {
-        const apiUrl = `https://localhost:7209/api/Story/GetBooksReadByChild/${childID}`;
+        const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetBooksReadByChild/${childID}`;
 
         try {
             const response = await fetch(apiUrl, {

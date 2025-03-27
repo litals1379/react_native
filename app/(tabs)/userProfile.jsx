@@ -46,14 +46,50 @@ export default function UserProfile() {
         <FontAwesome name="envelope" size={20} color="gray" />
         <Text style={styles.email}>{userData.email}</Text>
       </View>
-      <View style={styles.infoContainer}>
-        <FontAwesome name="map-marker" size={20} color="gray" />
-        <Text style={styles.address}>{`${userData.street} ${userData.street_number}, ${userData.city}`}</Text>
+
+       {/* פרטי הורים */}
+      {userData.parentDetails && userData.parentDetails.length > 0 && (
+        <View>
+          <Text style={styles.sectionTitle}>פרטי הורים:</Text>
+          {userData.parentDetails.map((parent, index) => (
+            <View key={index} style={styles.parentContainer}>
+              <View style={styles.parentInfoRow}>
+                <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
+                <Text>{parent.firstName} {parent.lastName}</Text>
+              </View>
+              <View style={styles.parentInfoRow}>
+                <FontAwesome name="phone" size={20} color="gray" style={styles.icon} />
+                <Text>טלפון: {parent.phoneNumber}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+
+         {/* רשימת ילדים */}
+{userData.children && userData.children.length > 0 && (
+  <View>
+    <Text style={styles.sectionTitle}>ילדים:</Text>
+    {userData.children.map((child, index) => (
+      <View key={index} style={styles.childContainer}>
+        <View style={styles.childInfoRow}>
+          <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
+          <Text>שם הילד:{child.firstName} {child.lastName}</Text>
+        </View>
+        <View style={styles.childInfoRow}>
+          <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
+          <Text>תאריך לידה: {child.birthdate}</Text>
+        </View>
+        {child.readingLevel && (
+          <View style={styles.childInfoRow}>
+            <FontAwesome name="book" size={20} color="gray" style={styles.icon} />
+            <Text>רמת קריאה: {child.readingLevel}</Text>
+          </View>
+        )}
       </View>
-      <View style={styles.infoContainer}>
-        <FontAwesome name="birthday-cake" size={20} color="gray" />
-        <Text style={styles.birthDate}>תאריך לידה: {userData.birthDate}</Text>
-      </View>
+    ))}
+  </View>
+)}
 
       {/* כפתורים */}
       <View style={styles.buttonContainer}>
@@ -77,6 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
+    direction: 'rtl',
   },
   profileImage: {
     width: 120,
