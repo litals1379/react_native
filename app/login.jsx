@@ -49,9 +49,7 @@ export default function Login() {
       const data = await response.json();
 
       if (data.user) {
-        router.push("(tabs)/userProfile");
-        /*router.push(`/(tabs)/userProfile/${data.user.userId}`);*/
-
+        router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
       }

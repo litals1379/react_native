@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
+import { useSearchParams } from 'expo-router';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
-  const [userId, setUserId] = useState(''); // ה-ID של המשתמש
+  const { userId } = useSearchParams(); // קבלת userId מה-Route
 
   // הגדרת ה-API URL בצורה דינמית
-  const apiUrl = `https://localhost:7209/api/User/GetUserById/${userId}`;
+  const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
 
   useEffect(() => {
     // שליפת נתונים מה-API עם fetch
