@@ -60,7 +60,7 @@ export default function Library() {
             )}
 
             {/* כפתור יצירת סיפור חדש */}
-            <TouchableOpacity style={styles.button} onPress={() => router.push('../characters')}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('../subjects')}>
                 <Text style={styles.buttonText}>צור סיפור חדש</Text>
             </TouchableOpacity>
         </View>
