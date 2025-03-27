@@ -37,7 +37,9 @@ export default function UserProfile() {
       <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
       
       {/* שם המשתמש */}
-      <Text style={styles.name}>{userData.firstName} {userData.lastName}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.name}>{userData.username}</Text>
+      </View>
       
       {/* פרטי המשתמש */}
       <View style={styles.infoContainer}>
