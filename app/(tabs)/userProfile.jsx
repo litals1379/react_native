@@ -1,12 +1,14 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams , useRouter  } from 'expo-router';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
+  const [selectedChildId, setSelectedChildId] = useState(null); 
   const params = useLocalSearchParams();
   const { userId } = params;
+  const router = useRouter(); 
   console.log(params);
 
   // הגדרת ה-API URL בצורה דינמית
@@ -30,6 +32,11 @@ export default function UserProfile() {
   if (!userData) {
     return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
   }
+
+  const handleChildSelection = (childId) => {
+    setSelectedChildId(childId);
+    router.push({ pathname: "/library", params: { childId: childId } }); // ניווט עם childId
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -68,11 +75,15 @@ export default function UserProfile() {
         )}
 
         {/* רשימת ילדים */}
-        {userData.children && userData.children.length > 0 && (
+       {userData.children && userData.children.length > 0 && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>ילדים:</Text>
             {userData.children.map((child, index) => (
-              <View key={index} style={styles.childContainer}>
+              <TouchableOpacity
+                key={index}
+                style={styles.childContainer}
+                onPress={() => handleChildSelection(child.id)} // טיפול בבחירה
+              >
                 <View style={styles.childInfoRow}>
                   <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
                   <Text>שם: {child.firstName} {child.lastName}</Text>
@@ -87,7 +98,7 @@ export default function UserProfile() {
                     <Text>רמת קריאה: {child.readingLevel}</Text>
                   </View>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         )}

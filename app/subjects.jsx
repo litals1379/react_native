@@ -24,7 +24,7 @@ export default function Subjects() {
   }, [userId]);
 
   const handleSubjectSelect = (topic) => {
-    router.push(`/story/${userId}/${encodeURIComponent(topic)}`);
+    router.push(`./story/${userId}/${encodeURIComponent(topic)}`);
   };
 
   const renderSubject = ({ item }) => (
