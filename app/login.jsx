@@ -48,9 +48,9 @@ export default function Login() {
 
       const data = await response.json();
 
-      
-
       if (data.user) {
+        // חלץ את userId מהתגובה מה-API
+        const userId = data.user.id;
         router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
