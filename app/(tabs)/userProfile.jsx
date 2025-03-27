@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
@@ -32,81 +32,86 @@ export default function UserProfile() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* תמונת פרופיל */}
-      <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
-      
-      {/* שם המשתמש */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.name}>{userData.username}</Text>
-      </View>
-      
-      {/* פרטי המשתמש */}
-      <View style={styles.infoContainer}>
-        <FontAwesome name="envelope" size={20} color="gray" />
-        <Text style={styles.email}>{userData.email}</Text>
-      </View>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
+        {/* תמונת פרופיל */}
+        <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
 
-       {/* פרטי הורים */}
-      {userData.parentDetails && userData.parentDetails.length > 0 && (
-        <View>
-          <Text style={styles.sectionTitle}>פרטי הורים:</Text>
-          {userData.parentDetails.map((parent, index) => (
-            <View key={index} style={styles.parentContainer}>
-              <View style={styles.parentInfoRow}>
-                <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
-                <Text>{parent.firstName} {parent.lastName}</Text>
-              </View>
-              <View style={styles.parentInfoRow}>
-                <FontAwesome name="phone" size={20} color="gray" style={styles.icon} />
-                <Text>טלפון: {parent.phoneNumber}</Text>
-              </View>
-            </View>
-          ))}
+        {/* שם המשתמש */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.name}>שם משתמש:{userData.username}</Text>
         </View>
-      )}
 
-         {/* רשימת ילדים */}
-{userData.children && userData.children.length > 0 && (
-  <View>
-    <Text style={styles.sectionTitle}>ילדים:</Text>
-    {userData.children.map((child, index) => (
-      <View key={index} style={styles.childContainer}>
-        <View style={styles.childInfoRow}>
-          <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
-          <Text>שם הילד:{child.firstName} {child.lastName}</Text>
+        {/* פרטי המשתמש */}
+        <View style={styles.infoContainer}>
+          <FontAwesome name="envelope" size={20} color="gray" style={styles.icon} />
+          <Text style={styles.email}>אימייל:{userData.email}</Text>
         </View>
-        <View style={styles.childInfoRow}>
-          <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
-          <Text>תאריך לידה: {child.birthdate}</Text>
-        </View>
-        {child.readingLevel && (
-          <View style={styles.childInfoRow}>
-            <FontAwesome name="book" size={20} color="gray" style={styles.icon} />
-            <Text>רמת קריאה: {child.readingLevel}</Text>
+
+        {/* פרטי הורים */}
+        {userData.parentDetails && userData.parentDetails.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>פרטי הורים:</Text>
+            {userData.parentDetails.map((parent, index) => (
+              <View key={index} style={styles.parentContainer}>
+                <View style={styles.parentInfoRow}>
+                  <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
+                  <Text>שם מלא:{parent.firstName} {parent.lastName}</Text>
+                </View>
+                <View style={styles.parentInfoRow}>
+                  <FontAwesome name="phone" size={20} color="gray" style={styles.icon} />
+                  <Text>טלפון: {parent.phoneNumber}</Text>
+                </View>
+              </View>
+            ))}
           </View>
         )}
-      </View>
-    ))}
-  </View>
-)}
 
-      {/* כפתורים */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <FontAwesome name="edit" size={16} color="white" />
-          <Text style={styles.buttonText}> עדכון פרטים</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutButton}>
-          <FontAwesome name="sign-out" size={16} color="white" />
-          <Text style={styles.buttonText}> התנתקות</Text>
-        </TouchableOpacity>
+        {/* רשימת ילדים */}
+        {userData.children && userData.children.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>ילדים:</Text>
+            {userData.children.map((child, index) => (
+              <View key={index} style={styles.childContainer}>
+                <View style={styles.childInfoRow}>
+                  <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
+                  <Text>שם: {child.firstName} {child.lastName}</Text>
+                </View>
+                <View style={styles.childInfoRow}>
+                  <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
+                  <Text>תאריך לידה: {child.birthdate}</Text>
+                </View>
+                {child.readingLevel && (
+                  <View style={styles.childInfoRow}>
+                    <FontAwesome name="book" size={20} color="gray" style={styles.icon} />
+                    <Text>רמת קריאה: {child.readingLevel}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* כפתורים */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button}>
+            <FontAwesome name="edit" size={16} color="white" />
+            <Text style={styles.buttonText}> עדכון פרטים</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutButton}>
+            <FontAwesome name="sign-out" size={16} color="white" />
+            <Text style={styles.buttonText}> התנתקות</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -136,13 +141,42 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginLeft: 5,
   },
-  address: {
-    fontSize: 16,
-    marginLeft: 5,
+  sectionContainer: {
+    width: '100%',
+    alignItems: 'flex-start',
+    marginTop: 15,
   },
-  birthDate: {
-    fontSize: 16,
-    marginLeft: 5,
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  parentContainer: {
+    backgroundColor: '#e0e0e0',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+    width: '100%',
+  },
+  childContainer: {
+    backgroundColor: '#e0e0e0',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+    width: '100%',
+  },
+  parentInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  childInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  icon: {
+    marginRight: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
