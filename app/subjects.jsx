@@ -17,13 +17,13 @@ export default function Subjects() {
   const childID = params.childID; // קבלת ה-childID מהעמוד הקודם
   const router = useRouter();
 
+  // הדפסת ה-ID של הילד לבדיקות
   useEffect(() => {
     console.log('ה-ID של הילד:', childID);
-    // לדוגמה: כאן תוכל לבצע קריאה ל-API כדי לקבל נתונים נוספים על הילד
   }, [childID]);
 
   const handleSubjectSelect = (topic) => {
-    router.push(`./story/${childID}/${encodeURIComponent(topic)}`);
+    router.push({ pathname: "./story", params: { childID: childID, topic: topic } });
   };
 
   const renderSubject = ({ item }) => (

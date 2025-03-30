@@ -1,48 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Story() {
-  const router = useRouter();
-  const { childID, topic } = router.query;  // מקבלים את ה-childID וה-topic מה-URL
+  const { childID, topic } = useLocalSearchParams(); // שימוש בפרמטרים מהנתיב
 
   const [paragraph, setParagraph] = useState(null);
-  const [loading, setLoading] = useState(true); // מצב טעינה
-  const [error, setError] = useState(null); // שגיאה אם יש
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchStory = async (childID, topic) => {
+    const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setParagraph(data.paragraphs?.[0] || "לא נמצאו פסקאות.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (childID && topic) {
-      const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
-
-      const fetchStory = async () => {
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'GET',  // מציין ששימוש ב-GET
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (!response.ok) {
-            throw new Error('Failed to fetch story');
-          }
-          const data = await response.json();
-          setParagraph(data.paragraphs[0]);  // מניח שהפסקה הראשונה נמצאת בתוך מערך "paragraphs"
-        } catch (error) {
-          setError(error.message);  // שמירת שגיאה במידה ויש
-        } finally {
-          setLoading(false);  // סיום טעינה
-        }
-      };
-
-      fetchStory();
+      fetchStory(childID, topic);
     }
   }, [childID, topic]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#65558F" />  {/* מציג סמל טעינה */}
+        <ActivityIndicator size="large" color="#65558F" />
       </SafeAreaView>
     );
   }
@@ -51,11 +50,9 @@ export default function Story() {
     <SafeAreaView style={styles.container}>
       <View>
         {error ? (
-          <Text style={styles.errorText}>{error}</Text> // הצגת שגיאה אם יש
-        ) : paragraph ? (
-          <Text>{paragraph}</Text>
+          <Text style={styles.errorText}>{error}</Text>
         ) : (
-          <Text>לא נמצא סיפור עבור הילד והנושא הנבחרים.</Text>  
+          <Text>{paragraph}</Text>
         )}
       </View>
     </SafeAreaView>
