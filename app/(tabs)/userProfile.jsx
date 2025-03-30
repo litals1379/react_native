@@ -5,7 +5,6 @@ import { useLocalSearchParams , useRouter  } from 'expo-router';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
-  const [selectedChildId, setSelectedChildId] = useState(null); 
   const params = useLocalSearchParams();
   const { userId } = params;
   const router = useRouter(); 
@@ -33,9 +32,11 @@ export default function UserProfile() {
     return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
   }
 
-  const handleChildSelection = (childId) => {
-    setSelectedChildId(childId);
-    router.push({ pathname: "/library", params: { childId: childId } }); // ניווט עם childId
+  const handleChildSelection = (child) => {
+    router.push({
+      pathname: "/library",
+      params: { child: JSON.stringify(child) }, // המרה למחרוזת JSON
+    });
   };
 
   return (
@@ -75,14 +76,14 @@ export default function UserProfile() {
         )}
 
         {/* רשימת ילדים */}
-       {userData.children && userData.children.length > 0 && (
+        {userData.children && userData.children.length > 0 && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>ילדים:</Text>
             {userData.children.map((child, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.childContainer}
-                onPress={() => handleChildSelection(child.id)} // טיפול בבחירה
+                onPress={() => handleChildSelection(child)} // שליחת אובייקט הילד
               >
                 <View style={styles.childInfoRow}>
                   <FontAwesome name="user" size={20} color="gray" style={styles.icon} />

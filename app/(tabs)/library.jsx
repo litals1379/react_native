@@ -7,7 +7,8 @@ export default function Library() {
   const [error, setError] = useState(null);
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { childId } = params; // קבלת childId מהפרמטרים
+  const child = params.child ? JSON.parse(params.child) : null; // המרה חזרה לאובייקט
+
 
   // פונקציה שתציג את הספרים שהילד קרא
   const fetchBooksReadByChild = async (childID) => {
@@ -32,10 +33,10 @@ export default function Library() {
 
   // קריאה לפונקציה עם טעינת הרכיב
   useEffect(() => {
-    if (childId) {
-      fetchBooksReadByChild(childId);
+    if (child && child.id) { // בדיקה שהאובייקט קיים ושיש לו id
+      fetchBooksReadByChild(child.id);
     }
-  }, [childId]);
+  }, [child]);
 
   return (
     <View style={styles.container}>
@@ -43,7 +44,7 @@ export default function Library() {
       {error && <Text style={styles.error}>{error}</Text>}
 
       {/* הצגת רשימת הספרים שהילד קרא */}
-      <Text style={styles.header}>הספרייה של:</Text>
+      <Text style={styles.header}>הספרייה של: {child.firstName}</Text>
       {books.length > 0 ? (
         books.map((book, index) => (
           <Text key={index} style={styles.bookItem}>{book}</Text>
@@ -53,7 +54,10 @@ export default function Library() {
       )}
 
       {/* כפתור יצירת סיפור חדש */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push('../subjects')}>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
+      >
         <Text style={styles.buttonText}>צור סיפור חדש</Text>
       </TouchableOpacity>
     </View>

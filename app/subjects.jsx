@@ -14,17 +14,16 @@ const subjectsData = [
 
 export default function Subjects() {
   const params = useLocalSearchParams();
-  const { userId } = params;
+  const childID = params.childID; // קבלת ה-childID מהעמוד הקודם
   const router = useRouter();
 
   useEffect(() => {
-    // כאן תוכל להוסיף את הקוד שיביא את פרטי הילד לפי ה- userId
-    console.log('ה-ID של הילד:', userId);
-    // לדוגמה: שליחת בקשה ל-API כדי להביא את פרטי הילד
-  }, [userId]);
+    console.log('ה-ID של הילד:', childID);
+    // לדוגמה: כאן תוכל לבצע קריאה ל-API כדי לקבל נתונים נוספים על הילד
+  }, [childID]);
 
   const handleSubjectSelect = (topic) => {
-    router.push(`./story/${userId}/${encodeURIComponent(topic)}`);
+    router.push(`./story/${childID}/${encodeURIComponent(topic)}`);
   };
 
   const renderSubject = ({ item }) => (
@@ -46,7 +45,7 @@ export default function Subjects() {
         data={subjectsData}
         renderItem={renderSubject}
         keyExtractor={(item) => item.id.toString()}
-        numColumns={2} // שינוי ל-2 עמודות
+        numColumns={2}
         contentContainerStyle={styles.subjectGrid}
       />
     </View>
@@ -72,8 +71,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   subjectButton: {
-    width: 150, // הגדלת רוחב הכפתור
-    height: 150, // הגדלת גובה הכפתור
+    width: 150,
+    height: 150,
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -86,8 +85,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   subjectImageContainer: {
-    width: 100, // הגדלת גודל התמונה
-    height: 100, // הגדלת גודל התמונה
+    width: 100,
+    height: 100,
     borderRadius: 50,
     overflow: 'hidden',
     marginBottom: 8,
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   subjectName: {
-    fontSize: 18, // הגדלת גודל הטקסט
+    fontSize: 18,
     color: '#333',
     textAlign: 'center',
   },
