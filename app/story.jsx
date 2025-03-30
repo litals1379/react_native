@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Speech from 'expo-speech'; // Import expo-speech for text-to-speech
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams(); // שימוש בפרמטרים מהנתיב
@@ -10,6 +11,7 @@ export default function Story() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Fetch story from the API
   const fetchStory = async (childID, topic) => {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
   
@@ -19,10 +21,10 @@ export default function Story() {
         headers: { 'Content-Type': 'application/json' },
       });
   
-      const text = await response.text(); // קבל את התגובה כטקסט רגיל
-      console.log("Response text:", text); // הדפס את התגובה לבדיקה
+      const text = await response.text(); // Get the response as plain text
+      console.log("Response text:", text); // Log the response for debugging
   
-      setParagraph(text || "לא נמצאו פסקאות."); // שמור את הטקסט ישירות
+      setParagraph(text || "לא נמצאו פסקאות."); // Save the text directly
     } catch (err) {
       console.error("Fetch error:", err.message);
       setError(err.message);
@@ -36,6 +38,18 @@ export default function Story() {
       fetchStory(childID, topic);
     }
   }, [childID, topic]);
+
+  // Function to speak the fetched story
+  const speakStory = () => {
+    if (paragraph) {
+      Speech.speak(paragraph, { language: 'he-IL' }); // Speak the paragraph in Hebrew
+    }
+  };
+
+  // Function to stop speaking
+  const stopStory = () => {
+    Speech.stop(); // Stop any ongoing speech
+  };
 
   if (loading) {
     return (
@@ -51,7 +65,11 @@ export default function Story() {
         {error ? (
           <Text style={styles.errorText}>{error}</Text>
         ) : (
-          <Text>{paragraph}</Text>
+          <>
+            <Text>{paragraph}</Text>
+            <Button title="🔊 השמע סיפור" onPress={speakStory} />
+            <Button title="⏸️ עצור קריאה" onPress={stopStory} /> 
+          </>
         )}
       </View>
     </SafeAreaView>
