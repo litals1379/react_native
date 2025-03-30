@@ -12,20 +12,19 @@ export default function Story() {
 
   const fetchStory = async (childID, topic) => {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
-
+  
     try {
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setParagraph(data.paragraphs?.[0] || "לא נמצאו פסקאות.");
+  
+      const text = await response.text(); // קבל את התגובה כטקסט רגיל
+      console.log("Response text:", text); // הדפס את התגובה לבדיקה
+  
+      setParagraph(text || "לא נמצאו פסקאות."); // שמור את הטקסט ישירות
     } catch (err) {
+      console.error("Fetch error:", err.message);
       setError(err.message);
     } finally {
       setLoading(false);
