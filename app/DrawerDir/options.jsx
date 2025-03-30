@@ -40,6 +40,7 @@ export default function Options() {
 
 const styles = StyleSheet.create({
   container: {
+    direction: 'rtl',
     flex: 1,
     backgroundColor: '#f0f0f0', // רקע אפור בהיר
     padding: 20,
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2, // iOS shadow
   },
   optionIcon: {
-    marginRight: 10,
+    marginLeft: 10,
   },
   optionText: {
     fontSize: 18,
