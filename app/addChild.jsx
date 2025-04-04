@@ -10,8 +10,6 @@ const addChildApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/addCh
 export default function AddChild() {
     const router = useRouter();  
     const [childFirstName, setChildFirstName] = useState('');    
-    const [childUsername, setChildUsername] = useState('');  
-    const [childPassword, setChildPassword] = useState('');  
     const [birthDate, setBirthDate] = useState(null);  
     const [readingLevel, setReadingLevel] = useState('1');  
     const [showDatePicker, setShowDatePicker] = useState(false);  
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         backgroundColor: '#F8F8F8',
-        direction: 'rtl',  
+        writingDirection: 'rtl',  
     },
     title: {
         fontSize: 32,
