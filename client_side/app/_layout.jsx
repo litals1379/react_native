@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Stack, useRouter } from "expo-router";
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, } from '@expo/vector-icons';
 import { Link } from 'expo-router'; 
 import { ChildProvider } from './childContext';
 
@@ -20,7 +20,7 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedCol
         </Link>
         {router.canGoBack() && (
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Text style={{ fontSize: 30, color: '#65558F' }}>{'<'}</Text>
+            <Ionicons name="return-down-back-outline" size={25} color="#6200ea"></Ionicons>
           </TouchableOpacity>
         )}
 
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    left: 10,
+    left: 15,
     bottom: 10,
     padding: 5,
     zIndex: 1,
