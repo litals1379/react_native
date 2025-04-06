@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using Server_Side.DAL;
+using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
+
 
 namespace Server_Side
 {
@@ -22,6 +25,11 @@ namespace Server_Side
             // רישום MongoDB Client
             builder.Services.AddSingleton<IMongoClient>(sp =>
                 new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
+
+            // רישום SqlConnection כ-Scoped (נפתח חדש לכל בקשה)
+            builder.Services.AddScoped<SqlConnection>(sp =>
+                new SqlConnection(builder.Configuration.GetConnectionString("SqlServer")));
+
 
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
