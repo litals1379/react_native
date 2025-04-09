@@ -1,30 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Button, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Speech from 'expo-speech'; // Import expo-speech for text-to-speech
+import * as Speech from 'expo-speech';
+import { useSpeechRecognition, useSpeechRecognitionEvents } from 'expo-speech-recognition'; 
 
 export default function Story() {
-  const { childID, topic } = useLocalSearchParams(); // שימוש בפרמטרים מהנתיב
+  const { childID, topic } = useLocalSearchParams();
 
   const [paragraph, setParagraph] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [comparisonResult, setComparisonResult] = useState(null);
 
-  // Fetch story from the API
+  const {
+    startSpeechRecognition,
+    stopSpeechRecognition,
+    isRecording,
+    transcript,
+    resetTranscript,
+  } = useSpeechRecognition();
+
+  useSpeechRecognitionEvents({
+    onResult: (result) => {
+      compareSpeech(result.transcript);
+    },
+  });
+
   const fetchStory = async (childID, topic) => {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
-  
+
     try {
-      const response = await fetch(apiUrl, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-  
-      const text = await response.text(); // Get the response as plain text
-      console.log("Response text:", text); // Log the response for debugging
-  
-      setParagraph(text || "לא נמצאו פסקאות."); // Save the text directly
+      const response = await fetch(apiUrl);
+      const text = await response.text();
+      setParagraph(text || "לא נמצאו פסקאות.");
     } catch (err) {
       console.error("Fetch error:", err.message);
       setError(err.message);
@@ -39,16 +48,55 @@ export default function Story() {
     }
   }, [childID, topic]);
 
-  // Function to speak the fetched story
   const speakStory = () => {
     if (paragraph) {
-      Speech.speak(paragraph, { language: 'he-IL' }); // Speak the paragraph in Hebrew
+      Speech.speak(paragraph, { language: 'he-IL' });
     }
   };
 
-  // Function to stop speaking
   const stopStory = () => {
-    Speech.stop(); // Stop any ongoing speech
+    Speech.stop();
+  };
+
+  const startListening = async () => {
+    setComparisonResult(null);
+    resetTranscript();
+    await startSpeechRecognition({ language: 'he-IL' });
+  };
+
+  const stopListening = async () => {
+    await stopSpeechRecognition();
+  };
+
+  const compareSpeech = (spokenText) => {
+    if (!paragraph) return;
+
+    const originalWords = paragraph.split(' ');
+    const spokenWords = spokenText.split(' ');
+
+    const result = originalWords.map((word, i) => {
+      const match = spokenWords[i] && spokenWords[i].trim() === word.trim();
+      return { word, match };
+    });
+
+    setComparisonResult(result);
+  };
+
+  const renderComparison = () => {
+    if (!comparisonResult) return null;
+
+    return (
+      <Text style={styles.paragraph}>
+        {comparisonResult.map((item, index) => (
+          <Text
+            key={index}
+            style={{ color: item.match ? 'black' : 'red', fontWeight: item.match ? 'normal' : 'bold' }}
+          >
+            {item.word + ' '}
+          </Text>
+        ))}
+      </Text>
+    );
   };
 
   if (loading) {
@@ -61,17 +109,36 @@ export default function Story() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        {error ? (
-          <Text style={styles.errorText}>{error}</Text>
-        ) : (
-          <>
-            <Text>{paragraph}</Text>
-            <Button title="🔊 השמע סיפור" onPress={speakStory} />
-            <Button title="⏸️ עצור קריאה" onPress={stopStory} /> 
-          </>
-        )}
-      </View>
+      <ScrollView>
+        <View>
+          {error ? (
+            <Text style={styles.errorText}>{error}</Text>
+          ) : (
+            <>
+              <Text style={styles.title}>סיפור:</Text>
+              <Text style={styles.paragraph}>{paragraph}</Text>
+
+              <Button title="🔊 השמע סיפור" onPress={speakStory} />
+              <Button title="⏸️ עצור קריאה" onPress={stopStory} />
+
+              <View style={{ marginVertical: 20 }}>
+                <Button
+                  title={isRecording ? "⏹️ עצור קריאת ילד" : "🎤 התחלת קריאת ילד"}
+                  onPress={isRecording ? stopListening : startListening}
+                  color={isRecording ? '#C0392B' : '#2980B9'}
+                />
+              </View>
+
+              {comparisonResult && (
+                <>
+                  <Text style={styles.title}>השוואת קריאה:</Text>
+                  {renderComparison()}
+                </>
+              )}
+            </>
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -79,10 +146,18 @@ export default function Story() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 16,
     backgroundColor: '#F8F8F8',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  paragraph: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 16,
   },
   errorText: {
     color: 'red',
