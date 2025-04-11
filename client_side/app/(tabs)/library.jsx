@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
+    color: '#65558F'
   },
   bookItem: {
     fontSize: 16,

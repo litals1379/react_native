@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
@@ -104,6 +104,8 @@ export default function Login() {
           <Text style={styles.buttonText}>התחבר</Text>
         </TouchableOpacity>
 
+        {loading && <ActivityIndicator size="large" color="#65558F" style={styles.loadingIndicator} />}
+
         <Text style={styles.helpText}>שכחתי סיסמה</Text>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -116,13 +118,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#F8F8F8',
-    writingDirection: 'rtl',
+    flexDirection: 'column',
+    direction: 'rtl', 
+  },
+  loadingIndicator: {
+    marginTop: 20, 
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#65558F',
     marginBottom: 20,
+    textAlign: 'right', 
+    writingDirection: 'rtl',
   },
   form: {
     width: '100%',
@@ -131,33 +139,40 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     fontSize: 16,
     color: '#65558F',
-    marginBottom: 5,
+    marginBottom: 8,
     textAlign: 'right',
+    writingDirection: 'rtl',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    height: 40,
+    height: 45,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: '#ccc', 
     borderRadius: 8,
-    backgroundColor: '#EEE',
+    backgroundColor: '#fff', 
     paddingHorizontal: 10,
     marginBottom: 10,
+    flexDirection: 'row-reverse',
   },
   icon: {
-    marginRight: 10,
+    marginLeft: 10, 
   },
   input: {
     flex: 1,
     textAlign: 'right',
+    writingDirection: 'rtl',
+    fontSize: 16, 
+    color: '#333',
   },
   errorText: {
     color: 'red',
     fontSize: 14,
     alignSelf: 'flex-start',
     marginBottom: 10,
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
   button: {
     backgroundColor: '#B3E7F2',
@@ -172,11 +187,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#65558F',
     fontWeight: 'bold',
+    textAlign: 'center',
+    writingDirection: 'rtl',
   },
   helpText: {
-    fontSize: 14,
-    color: '#65558F',
+    fontSize: 15, 
+    color: '#007bff', 
     textDecorationLine: 'underline',
+    textAlign: 'center',
+    marginTop: 10, 
+    writingDirection: 'rtl',
   },
 });
-

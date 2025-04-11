@@ -82,7 +82,7 @@ export default function UserProfile() {
             {userData.children.map((child, index) => (
               <TouchableOpacity
                 key={index}
-                style={styles.childContainer}
+                style={styles.childCard}
                 onPress={() => handleChildSelection(child)} // שליחת אובייקט הילד
               >
                 <View style={styles.childInfoRow}>
@@ -106,7 +106,7 @@ export default function UserProfile() {
 
         {/* כפתורים */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.updateButton}>
             <FontAwesome name="edit" size={16} color="white" />
             <Text style={styles.buttonText}> עדכון פרטים</Text>
           </TouchableOpacity>
@@ -121,100 +121,139 @@ export default function UserProfile() {
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-    direction: 'rtl',
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 15,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  email: {
-    fontSize: 16,
-    color: 'gray',
-    marginLeft: 5,
-  },
-  sectionContainer: {
-    width: '100%',
-    alignItems: 'flex-start',
-    marginTop: 15,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  parentContainer: {
-    backgroundColor: '#e0e0e0',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
-    width: '100%',
-  },
-  childContainer: {
-    backgroundColor: '#e0e0e0',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
-    width: '100%',
-  },
-  parentInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  childInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    marginTop: 15,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#007bff',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'red',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    marginLeft: 5,
-  },
-});
+    scrollView: {
+      flex: 1,
+      backgroundColor: '#f8f8f8',
+    },
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      padding: 20,
+      direction: 'rtl',
+    },
+    profileImage: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      marginBottom: 15,
+      borderWidth: 2,
+      borderColor: '#65558F',
+    },
+    name: {
+      fontSize: 15,
+      fontWeight: 'bold',
+      marginBottom: 8,
+      color: '#65558F',
+    },
+    infoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    email: {
+      fontSize: 15,
+      color: '#65558F',
+      marginLeft: 8,
+    },
+    sectionContainer: {
+      width: '100%',
+      alignItems: 'flex-start',
+      marginTop: 20,
+      marginBottom: 10,
+      paddingHorizontal: 10,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      color: '#65558F',
+    },
+    parentCard: {
+      backgroundColor: '#fff',
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 5,
+      width: '100%',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    childCard: {
+      backgroundColor: '#fff',
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 10, // הגדלת הריווח בין כרטיסי ילדים
+      width: '100%',
+      borderWidth: 1, // הוספת גבול לכל כרטיס ילד
+      borderColor: '#ddd', // צבע הגבול
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    parentInfoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    childInfoRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    parentText: {
+      fontSize: 15,
+      color: '#65558F',
+      marginLeft: 8,
+    },
+    childText: {
+      fontSize: 15,
+      color: '#65558F',
+      marginLeft: 8,
+    },
+    icon: {
+      marginRight: 8,
+      color: '#65558F',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      marginTop: 25,
+    },
+    updateButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#007bff', // צבע כחול בולט
+      paddingVertical: 12, // קצת יותר ריווח אנכי
+      paddingHorizontal: 18, // קצת יותר ריווח אופקי
+      borderRadius: 8,
+      marginHorizontal: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3,
+      elevation: 4, // קצת יותר בולט
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#dc3545',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      borderRadius: 8,
+      marginHorizontal: 5,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      elevation: 3,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      marginLeft: 8,
+    },
+  });
