@@ -15,15 +15,6 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedCol
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: selectedColor }]}>
       <View style={[styles.header, { backgroundColor: selectedColor }]}> 
-        <Link href="/DrawerDir/options" style={styles.link}>
-          <Ionicons name="menu" size={30} color="#6200ea" />
-        </Link>
-        {router.canGoBack() && (
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="return-down-back-outline" size={25} color="#6200ea"></Ionicons>
-          </TouchableOpacity>
-        )}
-
         <View style={styles.logoContainer}>
           <Image source={require('../assets/images/logo.png')} style={styles.logo} />
           <Text style={styles.storyText}>Story Time</Text>
@@ -35,8 +26,7 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedCol
         >
           <Text style={styles.colorButtonText}>🎨</Text>
         </TouchableOpacity>
-        
-
+    
         {showPicker && (
           <FlatList
             data={colorsList}
@@ -81,13 +71,10 @@ export default function RootLayout() {
       }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
           <ChildProvider>
-            <Stack.Screen name="drawer" options={{ headerShown: false }} />
             <Stack.Screen name="register" />
             <Stack.Screen name="addChild" /> 
             <Stack.Screen name="login" /> 
-            <Stack.Screen name="characters" />
             <Stack.Screen name="subjects" />
-            <Stack.Screen name="options" />
             <Stack.Screen name="googleAuth" />
             <Stack.Screen name="story" options={{ headerShown: false }} />  
           </ChildProvider>
