@@ -28,11 +28,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="search"
-        options={{
-          title: 'חיפוש',
-          headerShown:false,
-          tabBarIcon: ({ color, size }) => <Icon name="search" size={size} color={color} />,
+      name="options"
+      options={{
+        title: 'אפשרויות',
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => <Icon name="cog" size={size} color={color} />, // cog = גלגל שיניים
         }}
       />
     </Tabs>
