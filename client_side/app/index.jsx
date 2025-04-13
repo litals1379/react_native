@@ -104,7 +104,9 @@ export default function HomeScreen() {
             <Text style={styles.buttonText}>התחבר</Text>
           </TouchableOpacity>
 
-          <Button title="לא נרשמת? הירשם עכשיו" onPress={() => router.push('/register')} />
+          <TouchableOpacity onPress={() => router.push('/register')}>
+            <Text style={styles.registerText}>לא נרשמת? הירשם עכשיו</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.googleButton} onPress={() => router.push('/googleAuth')}>
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
@@ -200,5 +202,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#65558F',
     top: 130,
+  },
+  registerText: {
+    fontSize: 15,
+    color: '#007bff',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    marginTop: 10,
+    writingDirection: 'rtl',
   },
 });
