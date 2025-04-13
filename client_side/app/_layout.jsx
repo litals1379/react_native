@@ -88,7 +88,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   safeArea: { backgroundColor: "#B3E7F2" },
   header: {
-    height: 145,
+    height: 154,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
