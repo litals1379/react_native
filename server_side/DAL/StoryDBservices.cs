@@ -3,6 +3,7 @@ using Server_Side.BL;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using MongoDB.Bson;
 
 namespace Server_Side.DAL
 {
@@ -19,7 +20,7 @@ namespace Server_Side.DAL
         }
 
         // פונקציה שמחזירה סיפור מתאים לילד לפי רמה ונושא
-        public async Task<string> GetStoryForChildAsync(string childID, string topic)
+        public async Task<Story> GetStoryForChildAsync(string childID, string topic)
         {
             // חיפוש המשתמש שמכיל את הילד עם ה-ID המתאים
             var user = await _usersCollection
@@ -32,7 +33,7 @@ namespace Server_Side.DAL
                 return null;
             }
 
-            // מציאת נתוני הילד בתוך רשימת הילדים של המשתמש
+            // מציאת נתוני הילד
             var childData = user.Children.FirstOrDefault(c => c.Id == childID);
             if (childData == null)
             {
@@ -42,38 +43,34 @@ namespace Server_Side.DAL
 
             int readingLevel = childData.ReadingLevel;
 
-            // חיפוש סיפור שמתאים לרמת הקריאה ולנושא
+            // רשימת הסיפורים שהילד כבר קרא
+            var readStoryIds = childData.ReadingHistory.Select(rh => rh.StoryId).ToHashSet();
+
+            // חיפוש סיפור חדש שלא קרא עדיין, שמתאים לרמת הקריאה והנושא
             var story = await _storiesCollection
-                .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic)
+                .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic && !readStoryIds.Contains(s.Id))
                 .FirstOrDefaultAsync();
 
             if (story == null)
             {
-                Console.WriteLine($"No story found for reading level {readingLevel} and topic {topic}.");
+                Console.WriteLine($"No new story found for reading level {readingLevel} and topic {topic}.");
                 return null;
             }
 
             // הוספת הסיפור להיסטוריית הקריאה של הילד
             var readingHistoryEntry = new ReadingHistoryEntry(
                 story.Id,
-                feedbackID: "", // ניתן להוסיף פידבק מאוחר יותר
+                feedbackID: "", // ניתן לעדכן בהמשך
                 readDate: DateTime.UtcNow
             );
 
             childData.ReadingHistory.Add(readingHistoryEntry);
 
-            // עדכון מסד הנתונים עם היסטוריית הקריאה החדשה
+            // עדכון רשימת הילדים במסד הנתונים
             var update = Builders<User>.Update.Set(u => u.Children, user.Children);
             await _usersCollection.UpdateOneAsync(u => u.Id == user.Id, update);
 
-            // החזרת הפסקה הראשונה מתוך הסיפור
-            if (story.Paragraphs != null && story.Paragraphs.ContainsKey("פסקה 1"))
-            {
-                return story.Paragraphs["פסקה 1"];
-            }
-
-            Console.WriteLine($"No paragraphs found for story with ID {story.Id}");
-            return null;
+            return story;
         }
 
         // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי
@@ -99,7 +96,7 @@ namespace Server_Side.DAL
             }
 
             // שליפת מזהי הסיפורים שהילד קרא
-            var storyIDs = childData.ReadingHistory.Select(rh => rh.StoryID).ToList();
+            var storyIDs = childData.ReadingHistory.Select(rh => rh.StoryId).ToList();
 
             // שליפת הכותרות מתוך מסד הנתונים
             var stories = await _storiesCollection
@@ -115,7 +112,12 @@ namespace Server_Side.DAL
             return stories;
         }
 
-
+        public async Task<Story> GetStoryByIdAsync(string id)
+        {
+            var filter = Builders<Story>.Filter.Eq(s => s.Id, id);
+            var story = await _storiesCollection.Find(filter).FirstOrDefaultAsync();
+            return story;
+        }
 
     }
 }

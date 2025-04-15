@@ -44,5 +44,19 @@ namespace Server_Side.Controllers
 
             return Ok(booksRead);
         }
+
+        // קבלת ספר לפי ID
+        [HttpGet("GetStoryById/{storyId}")]
+        public async Task<IActionResult> GetStoryById(string storyId)
+        {
+            var story = await _storyDBservices.GetStoryByIdAsync(storyId);
+
+            if (story == null)
+            {
+                return NotFound($"No story found with ID: {storyId}.");
+            }
+
+            return Ok(story);
+        }
     }
 }

@@ -13,8 +13,14 @@ namespace Server_Side.BL
         [BsonElement("title")]
         public string Title { get; set; }
 
+        [BsonElement("coverImg")]
+        public string CoverImg { get; set; }
+
         [BsonElement("topic")]
         public string Topic { get; set; }
+
+        [BsonElement("imagesUrls")]
+        public Dictionary<string, string> ImagesUrls { get; set; } // שינוי המפתח ל-string
 
         [BsonElement("paragraphs")]
         public Dictionary<string, string> Paragraphs { get; set; } // שינוי המפתח ל-string
@@ -24,11 +30,13 @@ namespace Server_Side.BL
 
         public Story() { }
 
-        public Story(string id, string title, string topic, Dictionary<string, string> paragraphs, int readingLevel)
+        public Story(string id, string title, string coverImg, string topic, Dictionary<string, string> imagesUrls, Dictionary<string, string> paragraphs, int readingLevel)
         {
             Id = id;
             Title = title;
+            CoverImg = coverImg;
             Topic = topic;
+            ImagesUrls = imagesUrls;
             Paragraphs = paragraphs;
             ReadingLevel = readingLevel;
         }
