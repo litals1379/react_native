@@ -101,7 +101,7 @@ namespace Server_Side.BL
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString(); // מייצר מזהה חדש בתור מחרוזת
 
         [BsonElement("storyID")]
-        public string StoryID { get; set; }
+        public string StoryId { get; set; }
 
         [BsonElement("feedbackID")]
         public string FeedbackID { get; set; }
@@ -112,7 +112,7 @@ namespace Server_Side.BL
         // בנאי
         public ReadingHistoryEntry(string storyID, string feedbackID, DateTime readDate)
         {
-            StoryID = storyID;
+            StoryId = storyID;
             FeedbackID = feedbackID;
             ReadDate = readDate;
         }

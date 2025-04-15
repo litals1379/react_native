@@ -4,10 +4,17 @@
 //{
 //    private readonly SqlConnection _sqlConnection;
 
+<<<<<<< HEAD
 //    //public UserDBservices(SqlConnection sqlConnection)
 //    //{
 //    //    _sqlConnection = sqlConnection;
 //    //}
+=======
+//    public UserDBservices(SqlConnection sqlConnection)
+//    {
+//        _sqlConnection = sqlConnection;
+//    }
+>>>>>>> Pavel
 
 //    public void SomeSqlMethod()
 //    {
