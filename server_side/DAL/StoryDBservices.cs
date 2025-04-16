@@ -74,9 +74,8 @@ namespace Server_Side.DAL
         }
 
         // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי
-        public async Task<List<string>> GetBooksReadByChildAsync(string childID)
+        public async Task<List<Story>> GetBooksReadByChildAsync(string childID)
         {
-            // חיפוש המשתמש שמכיל את הילד עם ה-ID המתאים
             var user = await _usersCollection
                 .Find(u => u.Children.Any(c => c.Id == childID))
                 .FirstOrDefaultAsync();
@@ -84,33 +83,27 @@ namespace Server_Side.DAL
             if (user == null)
             {
                 Console.WriteLine($"Child with ID {childID} not found.");
-                return new List<string>();
+                return new List<Story>();
             }
 
-            // איתור הילד בתוך המשתמש
             var childData = user.Children.FirstOrDefault(c => c.Id == childID);
             if (childData == null || childData.ReadingHistory == null || !childData.ReadingHistory.Any())
             {
                 Console.WriteLine($"No reading history found for child ID {childID}.");
-                return new List<string>();
+                return new List<Story>();
             }
 
-            // שליפת מזהי הסיפורים שהילד קרא
             var storyIDs = childData.ReadingHistory.Select(rh => rh.StoryId).ToList();
 
-            // שליפת הכותרות מתוך מסד הנתונים
+            // שליפת כל הסיפורים המלאים לפי מזהה
             var stories = await _storiesCollection
                 .Find(s => storyIDs.Contains(s.Id))
-                .Project(s => s.Title) // שליפת רק את הכותרת
                 .ToListAsync();
-
-            if (!stories.Any())
-            {
-                Console.WriteLine("Couldn't find any read books.");
-            }
 
             return stories;
         }
+
+
 
         public async Task<Story> GetStoryByIdAsync(string id)
         {

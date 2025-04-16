@@ -70,13 +70,13 @@ export default function RootLayout() {
         headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
       }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="story" options={{ headerShown: false }} /> 
           <ChildProvider>
             <Stack.Screen name="register" />
             <Stack.Screen name="addChild" /> 
             <Stack.Screen name="login" /> 
             <Stack.Screen name="subjects" />
-            <Stack.Screen name="googleAuth" />
-            <Stack.Screen name="story" options={{ headerShown: false }} />  
+            <Stack.Screen name="googleAuth" /> 
           </ChildProvider>
        </Stack>
     </View>
