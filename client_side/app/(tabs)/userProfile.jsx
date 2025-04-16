@@ -1,32 +1,57 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
-import { useLocalSearchParams , useRouter  } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
-  const params = useLocalSearchParams();
-  const { userId } = params;
-  const router = useRouter();
-  console.log(params);
-
-  // הגדרת ה-API URL בצורה דינמית
-  const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
-
+  // const params = useLocalSearchParams();
+  // const { userId } = params; // קבלת ה-userId מהפרמטרים של ה-URL
+  //get userId from AsyncStorage
   useEffect(() => {
-    // שליפת נתונים מה-API עם fetch
-    const fetchUserData = async () => {
+    const getUserId = async () => {
+      const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
       try {
+        const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
         setUserData(data); // עדכון הנתונים
       } catch (error) {
         console.error("שגיאה בטעינת נתוני המשתמש:", error);
       }
-    };
 
-    fetchUserData();
-  }, [apiUrl]); // אם ה-API משתנה, נבצע את הקריאה מחדש
+    }
+    getUserId();
+  }, []);
+
+  const router = useRouter();
+  // console.log(params);
+
+  // הגדרת ה-API URL בצורה דינמית
+
+  // useEffect(() => {
+  //   // שליפת נתונים מה-API עם fetch
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await fetch(apiUrl);
+  //       const data = await response.json();
+  //       setUserData(data); // עדכון הנתונים
+  //     } catch (error) {
+  //       console.error("שגיאה בטעינת נתוני המשתמש:", error);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, [apiUrl]); // אם ה-API משתנה, נבצע את הקריאה מחדש
+
+
+  //התנתקות ממשתמש
+  const logoutButton = async () => {
+    await AsyncStorage.clear(); // ניקוי ה-AsyncStorage
+    router.push({ pathname: "login" }); // העברה לעמוד הכניסה
+  };
 
   if (!userData) {
     return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
@@ -125,7 +150,8 @@ export default function UserProfile() {
             <FontAwesome name="edit" size={16} color="white" />
             <Text style={styles.buttonText}> עדכון פרטים</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton}>
+          <TouchableOpacity style={styles.logoutButton} onPress={logoutButton}>
+
             <FontAwesome name="sign-out" size={16} color="white" />
             <Text style={styles.buttonText}> התנתקות</Text>
           </TouchableOpacity>

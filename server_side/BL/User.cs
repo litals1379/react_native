@@ -29,6 +29,7 @@ namespace Server_Side.BL
         [BsonElement("children")]
         public List<Child> Children { get; set; } = new List<Child>();
 
+        
         // קונסטרקטור חדש שמאפשר יצירת משתמש ללא אימייל
         public User(string username, string password, string? email = null)
         {

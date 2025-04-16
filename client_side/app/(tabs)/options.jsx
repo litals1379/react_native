@@ -1,7 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { useRouter } from 'expo-router';
 
+const router = useRouter();
 export default function Options() {
   return (
     <View style={styles.container}>
@@ -14,7 +16,7 @@ export default function Options() {
         <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
+      <TouchableOpacity style={styles.optionButton} onPress={() => router.push('../addChild')}>
         <Icon name="user-plus" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>הוספת ילד</Text>
       </TouchableOpacity>
