@@ -42,13 +42,5 @@ namespace Server_Side.BL
         }
     }
 
-    public class StorySummary
-    {
-
-        [BsonElement("title")]
-        public string Title { get; set; }
-
-        [BsonElement("coverImg")]
-        public string CoverImg { get; set; }
-    }
+  
 }

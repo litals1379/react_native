@@ -26,9 +26,16 @@ export default function Library() {
       }
 
       const data = await response.json();
-      console.log('Books structure:', JSON.stringify(data, null, 2));
       console.log('Books fetched from API:', data);
-      setBooks(data);
+
+      // שומרים רק title ו־coverImg מכל ספר
+      const simplifiedBooks = data.map(book => ({
+        title: book.title,
+        coverImg: book.coverImg,
+      }));
+
+      console.log('Simplified books:', simplifiedBooks);
+      setBooks(simplifiedBooks);
     } catch (err) {
       console.error('Error fetching books:', err);
       setError(err.message);
@@ -40,7 +47,7 @@ export default function Library() {
       console.log('Child object:', child);
       fetchBooksReadByChild(child.id);
     }
-  }, [child, books]); 
+  }, [child, books]);
 
   return (
     <View style={styles.container}>
@@ -49,34 +56,23 @@ export default function Library() {
       <Text style={styles.header}>הספרייה של: {child?.firstName}</Text>
 
       {books.length > 0 ? (
-        <ScrollView style={styles.booksList}>
-          {books.map((book, index) => {
-            console.log('Rendering book:', book);  // לוג לכל ספר שמוצג
-            
-            // הדפסת כתובת ה-URL של התמונה
-            console.log('Book Cover Image URL:', book.coverImg);
+  <ScrollView style={styles.booksList}>
+    {books.map((book, index) => (
+      <View key={index} style={styles.bookItem}>
+        {book.coverImg ? (
+          <Image
+            source={{ uri: book.coverImg }}
+            style={styles.bookImage}
+          />
+        ) : null}
+        <Text style={styles.bookTitle}>{book.title}</Text>
+      </View>
+    ))}
+  </ScrollView>
+) : (
+  <Text style={styles.noBooksText}>No books found.</Text>
+)}
 
-            return (
-              <View key={index} style={styles.bookItem}>
-                {book.coverImg ? (
-                  <Image
-                    source={{ uri: book.coverImg }}
-                    style={styles.bookImage}
-                  />
-                ) : (
-                  <Image
-                    source={{ uri: 'https://via.placeholder.com/150' }} // תמונה ברירת מחדל
-                    style={styles.bookImage}
-                  />
-                )}
-                <Text style={styles.bookTitle}>{book.title}</Text>
-              </View>
-            );
-          })}
-        </ScrollView>
-      ) : (
-        <Text style={styles.noBooksText}>No books found.</Text>
-      )}
 
       <TouchableOpacity
         style={styles.button}

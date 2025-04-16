@@ -74,7 +74,7 @@ namespace Server_Side.DAL
         }
 
         // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי
-        public async Task<List<StorySummary>> GetBooksReadByChildAsync(string childID)
+        public async Task<List<Story>> GetBooksReadByChildAsync(string childID)
         {
             var user = await _usersCollection
                 .Find(u => u.Children.Any(c => c.Id == childID))
@@ -83,32 +83,26 @@ namespace Server_Side.DAL
             if (user == null)
             {
                 Console.WriteLine($"Child with ID {childID} not found.");
-                return new List<StorySummary>();
+                return new List<Story>();
             }
 
             var childData = user.Children.FirstOrDefault(c => c.Id == childID);
             if (childData == null || childData.ReadingHistory == null || !childData.ReadingHistory.Any())
             {
                 Console.WriteLine($"No reading history found for child ID {childID}.");
-                return new List<StorySummary>();
+                return new List<Story>();
             }
 
             var storyIDs = childData.ReadingHistory.Select(rh => rh.StoryId).ToList();
 
-            // שליפת כותרת ותמונה של הסיפורים
+            // שליפת כל הסיפורים המלאים לפי מזהה
             var stories = await _storiesCollection
-              .Find(s => storyIDs.Contains(s.Id))
-              .ToListAsync();
+                .Find(s => storyIDs.Contains(s.Id))
+                .ToListAsync();
 
-                    var summaries = stories.Select(s => new StorySummary
-                    {
-                        Title = s.Title,
-                        CoverImg = s.CoverImg
-                    }).ToList();
-
-            return summaries;
-
+            return stories;
         }
+
 
 
         public async Task<Story> GetStoryByIdAsync(string id)
