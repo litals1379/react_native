@@ -12,8 +12,8 @@ export default function UserProfile() {
   //get userId from AsyncStorage
   useEffect(() => {
     const getUserId = async () => {
-      const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
       try {
+        const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
         const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
