@@ -3,8 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using Server_Side.DAL;
+using Server_Side.BL;
 using Microsoft.Data.SqlClient;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
 
 
 namespace Server_Side
@@ -34,6 +37,9 @@ namespace Server_Side
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
 
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
+            builder.Logging.AddConsole();
             var app = builder.Build();
 
             if (true)
@@ -43,6 +49,7 @@ namespace Server_Side
             }
 
             app.UseCors("corspolicy");
+            app.UseRouting();
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

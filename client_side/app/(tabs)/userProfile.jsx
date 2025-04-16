@@ -44,24 +44,31 @@ export default function UserProfile() {
 
   // פונקציה לשינוי התמונה של פרופיל המשתמש עדיין לא עובדת
   const pickImage = async () => {
-    // Request camera roll permissions
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission denied', 'Please grant permission to access your photo library.');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1], // Keep aspect ratio for profile image
-      quality: 0.7, // Adjust as needed
-    });
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      // Immediately try to upload after selecting
-      uploadImage(result.assets[0]);
+    console.log('pickImage called');
+    try {
+      // Request camera roll permissions
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission denied', 'Please grant permission to access your photo library.');
+        return;
+      }
+  
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaType,
+        allowsEditing: true,
+        aspect: [1, 1], // Keep aspect ratio for profile image
+        quality: 0.7, // Adjust as needed
+      });
+  
+      console.log('ImagePicker result:', result);
+  
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImageUri(result.assets[0].uri);
+        uploadImage(result.assets[0]);
+      }
+    } catch (error) {
+      console.error('Error in pickImage:', error);
+      Alert.alert('Something went wrong while picking the image.');
     }
   };
 
@@ -79,7 +86,10 @@ export default function UserProfile() {
       name: 'profileImage.jpg', // Or generate a unique name
     });
 
+    console.log('FormData contains image?', formData.has('image')); // check if image is added
+
     try {
+      console.log('Uploading image...');
       const response = await fetch(uploadApiUrl, {
         method: 'POST',
         headers: {
@@ -87,6 +97,8 @@ export default function UserProfile() {
         },
       body: formData,
       });
+
+      console.log('Upload response:', response);
 
       if (response.ok) {
         Alert.alert('הצלחה', 'התמונה עודכנה בהצלחה!');
@@ -100,8 +112,8 @@ export default function UserProfile() {
       } catch (error) {
       Alert.alert('שגיאת רשת', 'אירעה שגיאת רשת בעת העלאת התמונה.');
       console.error('שגיאת העלאה:', error);
-      } finally {
-      setImageUri(null); // Clear the local preview after upload attempt
+      // } finally {
+      // setImageUri(null); // Clear the local preview after upload attempt
     }
   };
 

@@ -96,5 +96,22 @@ namespace Server_Side.DAL
             var user = await _usersCollection.Find(u => u.Id == userId).FirstOrDefaultAsync();
             return user;
         }
+
+        public async Task<bool> UpdateUserProfileImageAsync(string userId, string imageUrl)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq("_id", userId); // Adjust the filter based on the actual property name for the user's ID in your User model. If you are using MongoDB's default ObjectId, it might be "_id" and the userId might need to be converted.
+                var update = Builders<User>.Update.Set("profileImage", imageUrl);
+                var result = await _usersCollection.UpdateOneAsync(filter, update);
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                // Consider logging the error properly using ILogger
+                Console.WriteLine($"Error updating profile image for user {userId}: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
