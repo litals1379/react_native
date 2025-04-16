@@ -36,13 +36,12 @@ namespace Server_Side
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
+            if (true)
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
             app.UseCors("corspolicy");
             app.UseAuthorization();
             app.MapControllers();
