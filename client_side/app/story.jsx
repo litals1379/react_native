@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Button, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Speech from 'expo-speech';
@@ -15,6 +15,7 @@ export default function Story() {
   const { childID, topic } = useLocalSearchParams();
 
   const [paragraph, setParagraph] = useState(null);
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comparisonResult, setComparisonResult] = useState(null);
@@ -33,14 +34,32 @@ export default function Story() {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
     try {
       const response = await fetch(apiUrl);
-      const text = await response.text();
-      setParagraph(text || "לא נמצאו פסקאות.");
+      const text = await response.text(); // קורא את התגובה כטקסט
+  
+      console.log('Raw response text:', text); 
+  
+      if (!response.ok) {
+        throw new Error(`Server returned error: ${text}`);
+      }
+  
+      const data = JSON.parse(text);
+      console.log('Parsed JSON:', data); 
+  
+      const firstParagraph = data?.paragraphs?.p1 || "אין פסקה זמינה.";
+      const imageUrl = data?.imagesUrls?.img1 || null;
+  
+      setParagraph(firstParagraph);
+      setImage(imageUrl);
     } catch (err) {
+      console.error('Error while fetching/parsing:', err); 
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+  
+  
+  
 
   useEffect(() => {
     if (childID && topic) {
@@ -149,7 +168,13 @@ export default function Story() {
             <Text style={styles.errorText}>{error}</Text>
           ) : (
             <>
-              <Text style={styles.title}>סיפור:</Text>
+              {image && (
+                <Image
+                  source={{ uri: image }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              )}
               <Text style={styles.paragraph}>{paragraph}</Text>
 
               <Button title="🔊 השמע סיפור" onPress={speakStory} />
@@ -198,5 +223,11 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
     textAlign: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 250,
+    borderRadius: 12,
+    marginBottom: 16,
   },
 });
