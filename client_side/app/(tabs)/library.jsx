@@ -50,7 +50,7 @@ export default function Library() {
           <Text key={index} style={styles.bookItem}>{book}</Text>
         ))
       ) : (
-        <Text>No books found.</Text>
+        <Text style={styles.text}>לא נמצאו סיפורים</Text>
       )}
 
       {/* כפתור יצירת סיפור חדש */}
@@ -100,4 +100,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  text:{
+    fontSize: 16,
+    margin: 5,
+  }
 });
