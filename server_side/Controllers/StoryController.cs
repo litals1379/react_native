@@ -33,17 +33,21 @@ namespace Server_Side.Controllers
 
         // API לקבלת רשימת ספרים שהילד קרא
         [HttpGet("GetBooksReadByChild/{childID}")]
-        public async Task<IActionResult> GetBooksReadByChild(string childID)
+        public async Task<ActionResult<List<StorySummary>>> GetBooksReadByChild(string childID)
         {
+            // קריאה לשכבת ה-Service
             var booksRead = await _storyDBservices.GetBooksReadByChildAsync(childID);
 
+            // בדיקה אם נמצא משהו
             if (booksRead == null || booksRead.Count == 0)
             {
                 return NotFound($"No books found for child ID {childID}.");
             }
 
+            // החזרת הרשימה כפי שהיא
             return Ok(booksRead);
         }
+
 
         // קבלת ספר לפי ID
         [HttpGet("GetStoryById/{storyId}")]
