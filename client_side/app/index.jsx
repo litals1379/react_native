@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    marginTop: 15,
+    marginTop: 10,
   },
   googleIcon: {
     width: 20,
