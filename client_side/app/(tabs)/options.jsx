@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { useRouter } from 'expo-router';
 
 const router = useRouter();
 export default function Options() {
   return (
+    <ScrollView style={{ flex: 1 }}>
     <View style={styles.container}>
       <View style={styles.header} />
 
@@ -41,6 +42,7 @@ export default function Options() {
         <Text style={styles.optionText}>מסך מנהל</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 }
 
