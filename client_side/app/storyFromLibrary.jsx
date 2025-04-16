@@ -69,6 +69,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
   },
   content: {
+    textAlign: 'right',
+    alignSelf: 'flex-start',
     fontSize: 16,
     marginTop: 20,
     color: '#333',

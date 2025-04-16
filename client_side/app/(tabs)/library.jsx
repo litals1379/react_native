@@ -126,6 +126,9 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   bookTitle: {
+    alignContent: 'flex-start',
+    flex: 1,
+    textAlign: 'right',
     fontSize: 16,
     color: '#333',
     flexShrink: 1,

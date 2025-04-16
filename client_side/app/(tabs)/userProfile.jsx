@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useLocalSearchParams , useRouter  } from 'expo-router';
-
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
   const params = useLocalSearchParams();
@@ -39,11 +38,21 @@ export default function UserProfile() {
     });
   };
 
+  // פונקציה לשינוי התמונה של פרופיל המשתמש עדיין לא עובדת
+  const changeImage = () => {
+    console.log('Plus icon pressed!');
+  };
+
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         {/* תמונת פרופיל */}
-        <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />
+        {userData.profileImage ? (
+          <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />) : (
+            <TouchableOpacity style={styles.plusIconContainer} onPress={changeImage}>
+              <AntDesign name="plus" size={24} color="#65558F" />
+            </TouchableOpacity>
+          )}
 
         {/* שם המשתמש */}
         <View style={styles.infoContainer}>
@@ -155,6 +164,17 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#65558F',
   },
+  plusIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#65558F',
+    backgroundColor: '#eee',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
   name: {
     fontSize: 15,
     marginBottom: 8,
@@ -252,6 +272,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 8,
+    marginLeft: 8,
     color: '#65558F',
   },
   buttonContainer: {
