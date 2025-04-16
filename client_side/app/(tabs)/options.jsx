@@ -16,7 +16,7 @@ export default function Options() {
         <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton} onPress={() => router.push('../addChild')}>
+      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/addChild'})}>
         <Icon name="user-plus" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>הוספת ילד</Text>
       </TouchableOpacity>
@@ -34,6 +34,11 @@ export default function Options() {
       <TouchableOpacity style={styles.optionButton}>
         <Icon name="users" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>משתמשי ילדים</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/adminDashboard'})}>
+        <Icon name="admin" size={30} style={styles.optionIcon} />
+        <Text style={styles.optionText}>מסך מנהל</Text>
       </TouchableOpacity>
     </View>
   );

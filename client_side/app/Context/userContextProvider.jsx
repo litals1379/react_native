@@ -8,7 +8,7 @@ export const UserProvider = ({ children }) => {
     // שליפה מהשרת
     const fetchUsers = async () => {
         try {
-            const response = await fetch('https://your-api.com/api/users/all');
+            const response = await fetch('http://www.storytimetestsitetwo.somee.com/api/User/all');
             if (!response.ok) throw new Error('שגיאה בשליפה');
             const data = await response.json();
             setUsers(data);

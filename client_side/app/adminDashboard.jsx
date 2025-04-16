@@ -25,7 +25,7 @@ export default function AdminDashboard() {
   };
 
   const renderUser = ({ item }) => {
-    if (item.username?.toLowerCase() === 'admin') return null;
+    // if (item.username?.toLowerCase() === 'admin') return null;
 
     return (
       <View style={styles.card}>
