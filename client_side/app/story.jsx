@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, Button, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Speech from 'expo-speech';
@@ -10,6 +10,7 @@ import {
   requestPermissionsAsync,
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // מיובא מחבילת האייקונים
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();
@@ -34,16 +35,13 @@ export default function Story() {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
     try {
       const response = await fetch(apiUrl);
-      const text = await response.text(); // קורא את התגובה כטקסט
-  
-      console.log('Raw response text:', text); 
+      const text = await response.text(); 
   
       if (!response.ok) {
         throw new Error(`Server returned error: ${text}`);
       }
   
       const data = JSON.parse(text);
-      console.log('Parsed JSON:', data); 
   
       const firstParagraph = data?.paragraphs?.p1 || "אין פסקה זמינה.";
       const imageUrl = data?.imagesUrls?.img1 || null;
@@ -51,15 +49,11 @@ export default function Story() {
       setParagraph(firstParagraph);
       setImage(imageUrl);
     } catch (err) {
-      console.error('Error while fetching/parsing:', err); 
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
-  
-  
 
   useEffect(() => {
     if (childID && topic) {
@@ -97,9 +91,6 @@ export default function Story() {
     await stop();
   };
 
-  const cleanWord = (word) =>
-    word.toLowerCase().replace(/[.,!?״'":;\-]/g, '');
-
   const handleLiveComparison = (spokenText) => {
     if (!paragraph) return;
 
@@ -112,11 +103,11 @@ export default function Story() {
 
     if (!originalWord || !spokenWord) return;
 
-    const isMatch = cleanWord(originalWord) === cleanWord(spokenWord);
+    const isMatch = originalWord.toLowerCase() === spokenWord.toLowerCase();
 
     const result = originalWords.map((word, i) => ({
       word,
-      match: spokenWords[i] && cleanWord(spokenWords[i]) === cleanWord(word),
+      match: spokenWords[i] && spokenWords[i].toLowerCase() === word.toLowerCase(),
     }));
 
     setComparisonResult(result);
@@ -177,14 +168,15 @@ export default function Story() {
               )}
               <Text style={styles.paragraph}>{paragraph}</Text>
 
-              <Button title="🔊 השמע סיפור" onPress={speakStory} />
-              <Button title="⏸️ עצור קריאה" onPress={stopStory} />
-
+              <Icon name="volume-up" size={30} color="#2980B9" onPress={speakStory} />
+              <Icon name="stop" size={30} color="#C0392B" onPress={stopStory} />
+              
               <View style={{ marginVertical: 20 }}>
-                <Button
-                  title={isRecording ? "⏹️ עצור קריאת ילד" : "🎤 התחלת קריאת ילד"}
-                  onPress={isRecording ? stopListening : startListening}
+                <Icon
+                  name={isRecording ? "stop" : "mic"}
+                  size={30}
                   color={isRecording ? '#C0392B' : '#2980B9'}
+                  onPress={isRecording ? stopListening : startListening}
                 />
               </View>
 

@@ -30,6 +30,7 @@ export default function Library() {
 
       // שומרים רק title ו־coverImg מכל ספר
       const simplifiedBooks = data.map(book => ({
+        id: book.id, // הוספתי את ה-id של הספר
         title: book.title,
         coverImg: book.coverImg,
       }));
@@ -56,23 +57,26 @@ export default function Library() {
       <Text style={styles.header}>הספרייה של: {child?.firstName}</Text>
 
       {books.length > 0 ? (
-  <ScrollView style={styles.booksList}>
-    {books.map((book, index) => (
-      <View key={index} style={styles.bookItem}>
-        {book.coverImg ? (
-          <Image
-            source={{ uri: book.coverImg }}
-            style={styles.bookImage}
-          />
-        ) : null}
-        <Text style={styles.bookTitle}>{book.title}</Text>
-      </View>
-    ))}
-  </ScrollView>
-) : (
-  <Text style={styles.noBooksText}>No books found.</Text>
-)}
-
+        <ScrollView style={styles.booksList}>
+          {books.map((book, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.bookItem}
+              onPress={() => router.push({ pathname: 'storyFromLibrary', params: { storyId: book.id } })} // שולחים את ה-`storyId` כפרמטר
+            >
+              {book.coverImg ? (
+                <Image
+                  source={{ uri: book.coverImg }}
+                  style={styles.bookImage}
+                />
+              ) : null}
+              <Text style={styles.bookTitle}>{book.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      ) : (
+        <Text style={styles.noBooksText}>No books found.</Text>
+      )}
 
       <TouchableOpacity
         style={styles.button}
