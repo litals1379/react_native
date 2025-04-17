@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+// import { FontAwesome } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,9 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // const params = useLocalSearchParams();
 // const { userId } = params; // קבלת ה-userId מהפרמטרים של ה-URL
 //get userId from AsyncStorage
-// import { FontAwesome, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, AntDesign } from '@expo/vector-icons';
 // import { useLocalSearchParams , useRouter  } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
+// import * as ImagePicker from 'expo-image-picker';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
@@ -80,80 +80,80 @@ export default function UserProfile() {
     });
   };
 
-  // פונקציה לשינוי התמונה של פרופיל המשתמש עדיין לא עובדת
-  const pickImage = async () => {
-    console.log('pickImage called');
-    try {
-      // Request camera roll permissions
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission denied', 'Please grant permission to access your photo library.');
-        return;
-      }
+  // // פונקציה לשינוי התמונה של פרופיל המשתמש עדיין לא עובדת
+  // const pickImage = async () => {
+  //   console.log('pickImage called');
+  //   try {
+  //     // Request camera roll permissions
+  //     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       Alert.alert('Permission denied', 'Please grant permission to access your photo library.');
+  //       return;
+  //     }
 
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaType,
-        allowsEditing: true,
-        aspect: [1, 1], // Keep aspect ratio for profile image
-        quality: 0.7, // Adjust as needed
-      });
+  //     let result = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.MediaType,
+  //       allowsEditing: true,
+  //       aspect: [1, 1], // Keep aspect ratio for profile image
+  //       quality: 0.7, // Adjust as needed
+  //     });
 
-      console.log('ImagePicker result:', result);
+  //     console.log('ImagePicker result:', result);
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setImageUri(result.assets[0].uri);
-        uploadImage(result.assets[0]);
-      }
-    } catch (error) {
-      console.error('Error in pickImage:', error);
-      Alert.alert('Something went wrong while picking the image.');
-    }
-  };
+  //     if (!result.canceled && result.assets && result.assets.length > 0) {
+  //       setImageUri(result.assets[0].uri);
+  //       uploadImage(result.assets[0]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error in pickImage:', error);
+  //     Alert.alert('Something went wrong while picking the image.');
+  //   }
+  // };
 
-  const uploadImage = async (imageAsset) => {
-    if (!imageAsset) {
-      Alert.alert('No image selected', 'Please select an image to upload.');
-      return;
-    }
+  // const uploadImage = async (imageAsset) => {
+  //   if (!imageAsset) {
+  //     Alert.alert('No image selected', 'Please select an image to upload.');
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    formData.append('userId', userId); // Assuming your backend needs the userId to associate the image
-    formData.append('image', {
-      uri: imageAsset.uri,
-      type: imageAsset.type || 'image/jpeg', // Ensure type is included
-      name: 'profileImage.jpg', // Or generate a unique name
-    });
+  //   const formData = new FormData();
+  //   formData.append('userId', userId); // Assuming your backend needs the userId to associate the image
+  //   formData.append('image', {
+  //     uri: imageAsset.uri,
+  //     type: imageAsset.type || 'image/jpeg', // Ensure type is included
+  //     name: 'profileImage.jpg', // Or generate a unique name
+  //   });
 
-    console.log('FormData contains image?', formData.has('image')); // check if image is added
+  //   console.log('FormData contains image?', formData.has('image')); // check if image is added
 
-    try {
-      console.log('Uploading image...');
-      const response = await fetch(uploadApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        body: formData,
-      });
+  //   try {
+  //     console.log('Uploading image...');
+  //     const response = await fetch(uploadApiUrl, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //       body: formData,
+  //     });
 
-      console.log('Upload response:', response);
+  //     console.log('Upload response:', response);
 
-      if (response.ok) {
-        Alert.alert('הצלחה', 'התמונה עודכנה בהצלחה!');
-        // After successful upload, refresh user data to display the new image
-        fetchUserData();
-      } else {
-        Alert.alert('שגיאה', 'העלאת התמונה נכשלה.');
-        const errorData = await response.text(); // Or response.json() if your backend sends JSON error
-        console.error('שגיאה בהעלאת התמונה:', errorData);
-      }
-    } catch (error) {
-      Alert.alert('שגיאת רשת', 'אירעה שגיאת רשת בעת העלאת התמונה.');
-      console.error('שגיאת העלאה:', error);
-      // } finally {
-      // setImageUri(null); // Clear the local preview after upload attempt
-    }
-  };
+  //     if (response.ok) {
+  //       Alert.alert('הצלחה', 'התמונה עודכנה בהצלחה!');
+  //       // After successful upload, refresh user data to display the new image
+  //       fetchUserData();
+  //     } else {
+  //       Alert.alert('שגיאה', 'העלאת התמונה נכשלה.');
+  //       const errorData = await response.text(); // Or response.json() if your backend sends JSON error
+  //       console.error('שגיאה בהעלאת התמונה:', errorData);
+  //     }
+  //   } catch (error) {
+  //     Alert.alert('שגיאת רשת', 'אירעה שגיאת רשת בעת העלאת התמונה.');
+  //     console.error('שגיאת העלאה:', error);
+  //     // } finally {
+  //     // setImageUri(null); // Clear the local preview after upload attempt
+  //   }
+  // };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -161,7 +161,7 @@ export default function UserProfile() {
         {/* תמונת פרופיל */}
         {userData.profileImage ? (
           <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />) : (
-          <TouchableOpacity style={styles.plusIconContainer} onPress={pickImage}>
+          <TouchableOpacity style={styles.plusIconContainer} >
             <AntDesign name="plus" size={24} color="#65558F" />
           </TouchableOpacity>
         )}

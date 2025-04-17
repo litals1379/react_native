@@ -39,6 +39,8 @@ namespace Server_Side.BL
             ParentDetails = new List<ParentDetail>();
             Children = new List<Child>();
         }
+
+     
     }
 
     [BsonIgnoreExtraElements]

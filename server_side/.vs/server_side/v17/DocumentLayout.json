@@ -1,17 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\",
+  "WorkspaceRootPath": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\chena\\final-project\\react_native\\server_side\\dal\\userdbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:dal\\userdbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\chena\\final-project\\react_native\\server_side\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\chena\\final-project\\react_native\\server_side\\bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\chena\\final-project\\react_native\\server_side\\bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\dal\\storydbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\chena\\final-project\\react_native\\server_side\\dal\\storydbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:dal\\storydbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -22,47 +30,85 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StoryController.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\StoryController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StoryController.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\StoryController.cs",
-              "RelativeToolTip": "Controllers\\StoryController.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwEAAAAAJAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "UserDBservices.cs",
+              "DocumentMoniker": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\DAL\\UserDBservices.cs",
+              "RelativeDocumentMoniker": "DAL\\UserDBservices.cs",
+              "ToolTip": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\DAL\\UserDBservices.cs*",
+              "RelativeToolTip": "DAL\\UserDBservices.cs*",
+              "ViewState": "AQIAAIUAAAAAAAAAAAAwwJ8AAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T08:04:36.674Z",
+              "WhenOpened": "2025-04-17T06:08:39.568Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\BL\\User.cs",
+              "RelativeDocumentMoniker": "BL\\User.cs",
+              "ToolTip": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\BL\\User.cs",
+              "RelativeToolTip": "BL\\User.cs",
+              "ViewState": "AQIAAEMAAAAAAAAAAAAUwCoAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T06:07:30.467Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\Controllers\\UserController.cs*",
+              "RelativeToolTip": "Controllers\\UserController.cs*",
+              "ViewState": "AQIAANYAAAAAAAAAAAAowOYAAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-17T06:02:18.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "StoryDBservices.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\DAL\\StoryDBservices.cs",
+              "DocumentMoniker": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\DAL\\StoryDBservices.cs",
               "RelativeDocumentMoniker": "DAL\\StoryDBservices.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\DAL\\StoryDBservices.cs",
+              "ToolTip": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\DAL\\StoryDBservices.cs",
               "RelativeToolTip": "DAL\\StoryDBservices.cs",
-              "ViewState": "AgIAACwAAAAAAAAAAAAYwEkAAAAJAAAAAAAAAA==",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T07:56:24.448Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Story.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\Story.cs",
+              "DocumentMoniker": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\BL\\Story.cs",
               "RelativeDocumentMoniker": "BL\\Story.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\Story.cs",
+              "ToolTip": "C:\\Users\\chena\\Final-Project\\react_native\\server_side\\BL\\Story.cs",
               "RelativeToolTip": "BL\\Story.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAYAAAAAAAAAA==",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-15T17:53:26.704Z",
               "EditorCaption": ""

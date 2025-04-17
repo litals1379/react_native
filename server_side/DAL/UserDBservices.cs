@@ -113,5 +113,50 @@ namespace Server_Side.DAL
                 return false;
             }
         }
+
+
+
+
+
+        // מחיקת משתמש
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            // מחיקת משתמש לפי מזהה
+            try
+            {
+                var result = await _usersCollection.DeleteOneAsync(u => u.Id == userId);
+                return result.DeletedCount > 0; // מחזירים true אם נמחק משתמש
+            }
+            catch (Exception ex)
+            {
+                // רישום השגיאה
+                Console.WriteLine($"Error deleting user {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
+        // עדכון פרטי משתמש
+        public async Task<bool> UpdateUserAsync(string userId, User updatedUser)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+                var update = Builders<User>.Update
+                    .Set(u => u.Username, updatedUser.Username)
+                    .Set(u => u.Password, updatedUser.Password)
+                    .Set(u => u.Email, updatedUser.Email)
+                    .Set(u => u.ParentDetails, updatedUser.ParentDetails)
+                    .Set(u => u.Children, updatedUser.Children);
+
+                var result = await _usersCollection.UpdateOneAsync(filter, update);
+                return result.ModifiedCount > 0; // מחזירים true אם העדכון הצליח
+            }
+            catch (Exception ex)
+            {
+                // רישום השגיאה
+                Console.WriteLine($"Error updating user {userId}: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

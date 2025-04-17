@@ -55,6 +55,9 @@ export default function Login() {
         router.push({ pathname: "(tabs)/userProfile" });
         // router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
         // שמור את ה-userId ב-AsyncStorage אם צריך
+        //מצפין את ה-userId
+        // const encryptedUserId = btoa(userId.toString());
+        // await AsyncStorage.setItem('userId', encryptedUserId);
         await AsyncStorage.setItem('userId', userId.toString());
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
