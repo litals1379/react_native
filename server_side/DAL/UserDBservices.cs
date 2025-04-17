@@ -101,18 +101,17 @@ namespace Server_Side.DAL
         {
             try
             {
-                var objectId = new ObjectId(userId);  // Convert string to ObjectId
-                var filter = Builders<User>.Filter.Eq("_id", objectId);
-                var update = Builders<User>.Update.Set("profileImage", imageUrl);
+                var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+                var update = Builders<User>.Update.Set(u => u.ProfileImage, imageUrl);
                 var result = await _usersCollection.UpdateOneAsync(filter, update);
                 return result.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
-                // Consider logging the error properly using ILogger
                 Console.WriteLine($"Error updating profile image for user {userId}: {ex.Message}");
                 return false;
             }
         }
+
     }
 }
