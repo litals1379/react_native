@@ -57,6 +57,21 @@ export default function RootLayout() {
     <UserProvider>
       <ChildProvider>
         <View style={{ flex: 1, backgroundColor: selectedColor }}>
+          {/* <Stack screenOptions={{
+            header: () => (
+              <CustomHeader
+                showPicker={showPicker}
+                setShowPicker={setShowPicker}
+                setSelectedColor={setSelectedColor}
+                selectedColor={selectedColor}
+              />
+            ),
+            headerStyle: { backgroundColor: selectedColor },
+            headerTintColor: "#000",
+            headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
+          }}> */}
+          {/* כאן אתה לא צריך לעטוף כל Screen - זה עטוף מלמעלה */}
+          {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
           <Stack screenOptions={{
             header: () => (
               <CustomHeader
@@ -70,18 +85,26 @@ export default function RootLayout() {
             headerTintColor: "#000",
             headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
           }}>
-            {/* כאן אתה לא צריך לעטוף כל Screen - זה עטוף מלמעלה */}
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="register" />
-            <Stack.Screen name="addChild" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="subjects" />
-            <Stack.Screen name="googleAuth" />
+            <Stack.Screen name="story" options={{ headerShown: false }} />
+            <ChildProvider>
+              <Stack.Screen name="register" />
+              <Stack.Screen name="addChild" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="subjects" />
+              {/* <Stack.Screen name="googleAuth" />
             <Stack.Screen name="story" options={{ headerShown: false }} />
           </Stack>
         </View>
       </ChildProvider>
+    </UserProvider> */}
+              <Stack.Screen name="googleAuth" />
+            </ChildProvider>
+          </Stack>
+        </View>
+      </ChildProvider>
     </UserProvider>
+
   );
 }
 
