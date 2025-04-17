@@ -194,11 +194,6 @@ namespace Server_Side.Controllers
             }
         }
 
-
-
-
-
-
         [HttpDelete("DeleteUser/{userId}")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
@@ -220,7 +215,6 @@ namespace Server_Side.Controllers
 
 
         [HttpPut("UpdateUser/{userId}")]
-
         public async Task<IActionResult> UpdateUser(string userId, [FromBody] User updatedUser)
         {
             if (string.IsNullOrEmpty(userId) || updatedUser == null)
