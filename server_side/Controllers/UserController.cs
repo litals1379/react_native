@@ -223,6 +223,11 @@ namespace Server_Side.Controllers
 
         public async Task<IActionResult> UpdateUser(string userId, [FromBody] User updatedUser)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (string.IsNullOrEmpty(userId) || updatedUser == null)
             {
                 return BadRequest(new { message = "User ID and updated user data are required." });
