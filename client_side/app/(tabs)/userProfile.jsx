@@ -3,33 +3,40 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useLocalSearchParams , useRouter  } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-  const params = useLocalSearchParams();
-  const { userId } = params;
+  // const params = useLocalSearchParams();
+  // const { userId } = params;
   const router = useRouter();
-  console.log(params);
+  // console.log(params);
 
   // הגדרת ה-API URL בצורה דינמית
-  const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
-  const uploadApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage'; // Replace with your actual backend upload endpoint
+  // const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
+  const uploadApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage'; 
 
   useEffect(() => {
-    // שליפת נתונים מה-API עם fetch
-    const fetchUserData = async () => {
+    const getUserId = async () => {
       try {
+        const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
+        const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
         setUserData(data); // עדכון הנתונים
       } catch (error) {
         console.error("שגיאה בטעינת נתוני המשתמש:", error);
       }
-    };
 
-    fetchUserData();
-  }, [apiUrl]); // אם ה-API משתנה, נבצע את הקריאה מחדש
+    }
+    getUserId();
+  }, []);
+
+  const logoutButton = async () => { // פונקציה להתנתקות ניתן לחזור חזרה ועדיין רואים את הפרטים של הפרופיל ************ צריך לתקן
+    await AsyncStorage.clear(); // ניקוי ה-AsyncStorage
+    router.push({ pathname: "login" }); // העברה לעמוד הכניסה
+  };
 
   if (!userData) {
     return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
@@ -113,10 +120,10 @@ export default function UserProfile() {
         {/* תמונת פרופיל */}
         {userData.profileImage ? (
           <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />) : (
-            <TouchableOpacity style={styles.plusIconContainer} onPress={pickImage}>
-              <AntDesign name="plus" size={24} color="#65558F" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity style={styles.plusIconContainer} >
+            <AntDesign name="plus" size={24} color="#65558F" />
+          </TouchableOpacity>
+        )}
 
         {/* שם המשתמש */}
         <View style={styles.infoContainer}>
@@ -198,7 +205,8 @@ export default function UserProfile() {
             <FontAwesome name="edit" size={16} color="white" />
             <Text style={styles.buttonText}> עדכון פרטים</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton}>
+          <TouchableOpacity style={styles.logoutButton} onPress={logoutButton}>
+
             <FontAwesome name="sign-out" size={16} color="white" />
             <Text style={styles.buttonText}> התנתקות</Text>
           </TouchableOpacity>
