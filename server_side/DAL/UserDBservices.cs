@@ -101,7 +101,8 @@ namespace Server_Side.DAL
         {
             try
             {
-                var filter = Builders<User>.Filter.Eq("_id", userId); // Adjust the filter based on the actual property name for the user's ID in your User model. If you are using MongoDB's default ObjectId, it might be "_id" and the userId might need to be converted.
+                var objectId = new ObjectId(userId);  // Convert string to ObjectId
+                var filter = Builders<User>.Filter.Eq("_id", objectId);
                 var update = Builders<User>.Update.Set("profileImage", imageUrl);
                 var result = await _usersCollection.UpdateOneAsync(filter, update);
                 return result.ModifiedCount > 0;
