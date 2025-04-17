@@ -20,7 +20,7 @@ export const UserProvider = ({ children }) => {
     // מחיקה מהשרת
     const DeleteUser = async (userId) => {
         try {
-            const response = await fetch(`https://localhost:7209/api/users/DeleteUser/${userId}`, {
+            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/${userId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error('שגיאה במחיקה');
@@ -34,8 +34,9 @@ export const UserProvider = ({ children }) => {
 
     // עריכה בשרת
     const EditUser = async (updatedUser) => {
+        console.log("Editing user:", updatedUser);
         try {
-            const response = await fetch(`https://your-api.com/api/users/${updatedUser.id}`, {
+            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/UpdateUser/${updatedUser.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
