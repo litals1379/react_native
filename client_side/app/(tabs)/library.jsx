@@ -75,7 +75,7 @@ export default function Library() {
           ))}
         </ScrollView>
       ) : (
-        <Text style={styles.noBooksText}>No books found.</Text>
+        <Text style={styles.text}>לא נמצאו סיפורים</Text>
       )}
 
       <TouchableOpacity
@@ -126,6 +126,9 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   bookTitle: {
+    alignContent: 'flex-start',
+    flex: 1,
+    textAlign: 'right',
     fontSize: 16,
     color: '#333',
     flexShrink: 1,
@@ -152,4 +155,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  text:{
+    fontSize: 16,
+    margin: 5,
+  }
 });

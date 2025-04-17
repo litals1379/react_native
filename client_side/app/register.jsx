@@ -54,13 +54,13 @@ export default function Register() {
         if (!firstName) {
             newErrors.firstName = 'שם פרטי הוא שדה חובה.';
         } else if (!nameRegex.test(firstName)) {
-            newErrors.firstName = 'שם פרטי לא תקני.';
+            newErrors.firstName = 'שם פרטי לא תקני, חייב להכיל רק אותיות בעברית.';
         }
 
         if (!lastName) {
             newErrors.lastName = 'שם משפחה הוא שדה חובה.';
         } else if (!nameRegex.test(lastName)) {
-            newErrors.lastName = 'שם משפחה לא תקני.';
+            newErrors.lastName = 'שם משפחה לא תקני, חייב להכיל רק אותיות בעברית.';
         }
 
         if (!phoneNumber) {

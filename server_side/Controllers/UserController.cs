@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net;
-using System.Text;
-//using System.Web.Script.Serialization;
 using MongoDB.Bson.IO;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging; // Added for potential logging
 
 namespace Server_Side.Controllers
 {
@@ -16,16 +18,29 @@ namespace Server_Side.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserDBservices _userDBservices; 
+        private readonly UserDBservices _userDBservices;
+        private readonly Cloudinary _cloudinary;
+        private readonly IOptions<CloudinarySettings> _cloudinarySettings;
+        private readonly ILogger<UserController> _logger; // Added for logging
 
-        public UserController(UserDBservices userDBservices) 
+        public UserController(UserDBservices userDBservices, IOptions<CloudinarySettings> cloudinarySettings, ILogger<UserController> logger)
         {
             _userDBservices = userDBservices;
+            _cloudinarySettings = cloudinarySettings;
+            _logger = logger;
+
+            Account account = new Account(
+                _cloudinarySettings.Value.CloudName,
+                _cloudinarySettings.Value.ApiKey,
+                _cloudinarySettings.Value.ApiSecret
+            );
+            _cloudinary = new Cloudinary(account);
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] User user)
         {
+            // Existing registration logic...
             if (user == null || string.IsNullOrWhiteSpace(user.Email) || string.IsNullOrWhiteSpace(user.Password))
             {
                 return BadRequest(new { message = "Invalid user data" });
@@ -43,16 +58,13 @@ namespace Server_Side.Controllers
             // בדיקת נתוני ילדים
             if (user.Children != null && user.Children.Any(c =>
                 string.IsNullOrWhiteSpace(c.FirstName) ||
-                //string.IsNullOrWhiteSpace(c.LastName) ||
-                //string.IsNullOrWhiteSpace(c.Username) ||
-                //string.IsNullOrWhiteSpace(c.Password) ||
                 c.Birthdate == default ||
                 c.ReadingLevel < 0))
             {
                 return BadRequest(new { message = "Invalid child data" });
             }
 
-            bool result = await _userDBservices.AddUserAsync(user); 
+            bool result = await _userDBservices.AddUserAsync(user);
             if (result)
             {
                 return Ok(new { message = "User created successfully" });
@@ -76,6 +88,7 @@ namespace Server_Side.Controllers
                 return BadRequest(new { message = "Bad request from client" });
             }
         }
+
         [HttpGet("all")]
         public async Task<IActionResult> GetUsersAsync()
         {
@@ -118,9 +131,67 @@ namespace Server_Side.Controllers
             var user = await _userDBservices.GetUserByIdAsync(userId);
             if (user == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
             return Ok(user);
+        }
+
+        [HttpPost("UpdateProfileImage")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateProfileImage([FromForm] string userId, [FromForm] IFormFile image)
+        {
+            _logger.LogInformation($"Received UpdateProfileImage request for userId: {userId}");
+
+            if (image == null || image.Length == 0)
+            {
+                _logger.LogWarning("Received request with null or empty image.");
+                return BadRequest(new { message = "Please provide an image file." });
+            }
+
+            _logger.LogInformation($"Received image: FileName={image.FileName}, Length={image.Length}");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { message = "User ID is required." });
+            }
+
+            try
+            {
+                using (var stream = image.OpenReadStream())
+                {
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(image.FileName, stream),
+                        PublicId = $"UserPictures/{userId}",
+                        Overwrite = true
+                    };
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                    if (uploadResult.Error != null)
+                    {
+                        _logger.LogError($"Cloudinary upload failed for user {userId}: {uploadResult.Error.Message}");
+                        return StatusCode(500, new { message = $"Cloudinary upload failed: {uploadResult.Error.Message}" });
+                    }
+
+                    var imageUrl = uploadResult.SecureUrl.ToString();
+
+                    bool updateResult = await _userDBservices.UpdateUserProfileImageAsync(userId, imageUrl);
+
+                    if (updateResult)
+                    {
+                        return Ok(new { message = "Profile image updated successfully!", imageUrl = imageUrl });
+                    }
+                    else
+                    {
+                        return NotFound(new { message = $"User with ID '{userId}' not found." });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while updating profile image for user {userId}: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while updating the profile image", error = ex.Message });
+            }
         }
     }
 }
