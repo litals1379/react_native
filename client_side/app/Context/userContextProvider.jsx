@@ -19,8 +19,9 @@ export const UserProvider = ({ children }) => {
 
     // מחיקה מהשרת
     const DeleteUser = async (userId) => {
+        console.log(userId);
         try {
-            const response = await fetch(`https://localhost:7209/api/users/DeleteUser/${userId}`, {
+            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/${userId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error('שגיאה במחיקה');
