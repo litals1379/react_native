@@ -70,7 +70,8 @@ export default function RootLayout() {
         headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
       }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="story" options={{ headerShown: false }} /> 
+        <Stack.Screen name="story" options={{ headerShown: false }} />
+        <Stack.Screen name="storyFromLibrary" options={{ headerShown: false }} />  
           <ChildProvider>
             <Stack.Screen name="register" />
             <Stack.Screen name="addChild" /> 
