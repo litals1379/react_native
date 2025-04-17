@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useLocalSearchParams , useRouter  } from 'expo-router';
@@ -74,48 +74,38 @@ export default function UserProfile() {
 
   const uploadImage = async (imageAsset) => {
     if (!imageAsset) {
-      Alert.alert('No image selected', 'Please select an image to upload.');
+      Alert.alert('לא נבחרה תמונה', 'בחר תמונה להעלאה.');
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append('userId', userId); // Assuming your backend needs the userId to associate the image
+    formData.append('userId', userId);
     formData.append('image', {
       uri: imageAsset.uri,
-      type: imageAsset.type || 'image/jpeg', // Ensure type is included
-      name: 'profileImage.jpg', // Or generate a unique name
+      type: 'image/jpeg', // or get it dynamically if needed
+      name: 'profileImage.jpg',
     });
-
-    console.log('FormData contains image?', formData.has('image')); // check if image is added
-
+  
     try {
-      console.log('Uploading image...');
       const response = await fetch(uploadApiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      body: formData,
+        body: formData, // leave headers alone — let fetch set the boundary itself
       });
-
-      console.log('Upload response:', response);
-
+  
+      const result = await response.json();
+      console.log('Upload response:', result);
+  
       if (response.ok) {
         Alert.alert('הצלחה', 'התמונה עודכנה בהצלחה!');
-        // After successful upload, refresh user data to display the new image
-        fetchUserData();
-        } else {
-        Alert.alert('שגיאה', 'העלאת התמונה נכשלה.');
-        const errorData = await response.text(); // Or response.json() if your backend sends JSON error
-        console.error('שגיאה בהעלאת התמונה:', errorData);
+        fetchUserData(); // or trigger a refresh
+      } else {
+        Alert.alert('שגיאה', result.message || 'העלאת התמונה נכשלה.');
       }
-      } catch (error) {
-      Alert.alert('שגיאת רשת', 'אירעה שגיאת רשת בעת העלאת התמונה.');
-      console.error('שגיאת העלאה:', error);
-      // } finally {
-      // setImageUri(null); // Clear the local preview after upload attempt
+    } catch (error) {
+      console.error('Upload error:', error);
+      Alert.alert('שגיאת רשת', 'אירעה שגיאה בעת העלאת התמונה.');
     }
-  };
+  };  
 
   return (
     <ScrollView style={styles.scrollView}>
