@@ -23,6 +23,9 @@ namespace Server_Side.BL
         [BsonElement("email")]
         public string? Email { get; set; } // הפיכת אימייל לשדה אופציונלי
 
+        [BsonElement("profileImage")]
+        public string ProfileImage { get; set; }
+
         [BsonElement("parentDetails")]
         public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>();
 
@@ -31,11 +34,12 @@ namespace Server_Side.BL
 
         
         // קונסטרקטור חדש שמאפשר יצירת משתמש ללא אימייל
-        public User(string username, string password, string? email = null)
+        public User(string username, string password, string? email = null, string? profileImage = null)
         {
             Username = username;
             Password = password;
             Email = email; // יכול להיות ריק
+            ProfileImage = profileImage;
             ParentDetails = new List<ParentDetail>();
             Children = new List<Child>();
         }
