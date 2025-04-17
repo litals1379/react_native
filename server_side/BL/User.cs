@@ -24,7 +24,7 @@ namespace Server_Side.BL
         public string? Email { get; set; } // הפיכת אימייל לשדה אופציונלי
 
         [BsonElement("profileImage")]
-        public string ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
         [BsonElement("parentDetails")]
         public List<ParentDetail> ParentDetails { get; set; } = new List<ParentDetail>();

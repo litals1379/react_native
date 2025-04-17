@@ -16,20 +16,19 @@ export default function UserProfile() {
   // הגדרת ה-API URL בצורה דינמית
   // const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
   const uploadApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage'; 
+  const getUserId = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
+      const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setUserData(data); // עדכון הנתונים
+    } catch (error) {
+      console.error("שגיאה בטעינת נתוני המשתמש:", error);
+    }
+  };
 
   useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
-        const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        setUserData(data); // עדכון הנתונים
-      } catch (error) {
-        console.error("שגיאה בטעינת נתוני המשתמש:", error);
-      }
-
-    }
     getUserId();
   }, []);
 
@@ -49,7 +48,7 @@ export default function UserProfile() {
     });
   };
 
-  // פונקציה לשינוי התמונה של פרופיל המשתמש עדיין לא עובדת
+  // פונקציה לשינוי התמונה של פרופיל המשתמש
   const pickImage = async () => {
     console.log('pickImage called');
     try {
@@ -80,19 +79,22 @@ export default function UserProfile() {
   };
 
   const uploadImage = async (imageAsset) => {
+    console.log('uploadImage called with:', imageAsset);
     if (!imageAsset) {
       Alert.alert('לא נבחרה תמונה', 'בחר תמונה להעלאה.');
       return;
     }
   
     const formData = new FormData();
-    formData.append('userId', userId);
+    formData.append('userId', userData.id); // הוספת ה-userId ל-FormData
     formData.append('image', {
       uri: imageAsset.uri,
       type: 'image/jpeg', // or get it dynamically if needed
       name: 'profileImage.jpg',
     });
   
+    console.log(formData);
+
     try {
       const response = await fetch(uploadApiUrl, {
         method: 'POST',
@@ -100,11 +102,17 @@ export default function UserProfile() {
       });
   
       const result = await response.json();
-      console.log('Upload response:', result);
   
       if (response.ok) {
         Alert.alert('הצלחה', 'התמונה עודכנה בהצלחה!');
-        fetchUserData(); // or trigger a refresh
+        // userData.profileImage = response.imageUrl; // עדכון התמונה ב-state
+
+        const updatedUserData = {
+          ...userData,
+          profileImage: result.imageUrl // assuming your API returns imageUrl
+        };
+        setUserData(updatedUserData); // עדכון ה-state עם התמונה החדשה
+        // fetchUserData(); // or trigger a refresh
       } else {
         Alert.alert('שגיאה', result.message || 'העלאת התמונה נכשלה.');
       }
@@ -112,15 +120,16 @@ export default function UserProfile() {
       console.error('Upload error:', error);
       Alert.alert('שגיאת רשת', 'אירעה שגיאה בעת העלאת התמונה.');
     }
-  };  
+  };    
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         {/* תמונת פרופיל */}
         {userData.profileImage ? (
-          <Image source={{ uri: userData.profileImage }} style={styles.profileImage} />) : (
-          <TouchableOpacity style={styles.plusIconContainer} >
+          <TouchableOpacity onPress={pickImage} >
+            <Image source={{ uri: userData.profileImage }} style={styles.profileImage}/> </TouchableOpacity> ): (
+          <TouchableOpacity style={styles.plusIconContainer} onPress={pickImage} >
             <AntDesign name="plus" size={24} color="#65558F" />
           </TouchableOpacity>
         )}
