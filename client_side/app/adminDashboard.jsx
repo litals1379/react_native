@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { UserContext } from './Context/userContextProvider'; // נניח שפה מאוחסן הסטייט
 import DateTimePicker from '@react-native-community/datetimepicker';  
+import { use } from 'react';
 
 
 export default function AdminDashboard() {
@@ -15,16 +16,20 @@ export default function AdminDashboard() {
   console.log(users);
 
   const handleEdit = (user) => {
-    console.log(user);
     setEditingUser(user);
     setUpdatedUserData({
       ...user,
-      ParentDetails: user.parentDetails || [],
-      Children: user.children || [],
+      username: user.username || '',
+      email: user.email || '',
+      password: user.password || '',
+      parentDetails: user.parentDetails || [],
+      children: user.children || [],
+
     });
   };
 
   const handleSave = () => {
+    console.log('Saving user:', updatedUserData);
     EditUser(updatedUserData);
     setEditingUser(null);
   };
@@ -86,16 +91,16 @@ export default function AdminDashboard() {
             onChangeText={(text) => setUpdatedUserData({ ...updatedUserData, email: text })}
           />
           <Text style={styles.section}>👨‍👩‍👧 עריכת פרטי הורים:</Text>
-          {updatedUserData.ParentDetails?.map((parent, index) => (
+          {updatedUserData.parentDetails?.map((parent, index) => (
             <View key={index} style={{ marginBottom: 10 }}>
               <TextInput
                 style={styles.input}
                 placeholder="שם פרטי"
                 value={parent.firstName}
                 onChangeText={(text) => {
-                  const updated = [...updatedUserData.ParentDetails];
+                  const updated = [...updatedUserData.parentDetails];
                   updated[index].firstName = text;
-                  setUpdatedUserData({ ...updatedUserData, ParentDetails: updated });
+                  setUpdatedUserData({ ...updatedUserData, parentDetails: updated });
                 }}
               />
               <TextInput
@@ -103,9 +108,9 @@ export default function AdminDashboard() {
                 placeholder="שם משפחה"
                 value={parent.lastName}
                 onChangeText={(text) => {
-                  const updated = [...updatedUserData.ParentDetails];
+                  const updated = [...updatedUserData.parentDetails];
                   updated[index].lastName = text;
-                  setUpdatedUserData({ ...updatedUserData, ParentDetails: updated });
+                  setUpdatedUserData({ ...updatedUserData, parentDetails: updated });
                 }}
               />
               <TextInput
@@ -113,25 +118,25 @@ export default function AdminDashboard() {
                 placeholder="טלפון"
                 value={parent.phoneNumber}
                 onChangeText={(text) => {
-                  const updated = [...updatedUserData.ParentDetails];
+                  const updated = [...updatedUserData.parentDetails];
                   updated[index].phoneNumber = text;
-                  setUpdatedUserData({ ...updatedUserData, ParentDetails: updated });
+                  setUpdatedUserData({ ...updatedUserData, parentDetails: updated });
                 }}
               />
             </View>
           ))}
 
           <Text style={styles.section}>👶 עריכת פרטי ילדים:</Text>
-          {updatedUserData.Children?.map((child, index) => (
+          {updatedUserData.children?.map((child, index) => (
             <View key={index} style={{ marginBottom: 10 }}>
             <TextInput
               style={styles.input}
               placeholder="שם פרטי"
               value={child.firstName}
               onChangeText={(text) => {
-                const updated = [...updatedUserData.Children];
+                const updated = [...updatedUserData.children];
                 updated[index].firstName = text;
-                setUpdatedUserData({ ...updatedUserData, Children: updated });
+                setUpdatedUserData({ ...updatedUserData, children: updated });
               }}
             />
             <TextInput
@@ -140,13 +145,13 @@ export default function AdminDashboard() {
               keyboardType="numeric"
               value={child.readingLevel?.toString()}
               onChangeText={(text) => {
-                const updated = [...updatedUserData.Children];
+                const updated = [...updatedUserData.children];
                 updated[index].readingLevel = parseInt(text) || 0;
-                setUpdatedUserData({ ...updatedUserData, Children: updated });
+                setUpdatedUserData({ ...updatedUserData, children: updated });
               }}
             />
           
-            {/* תאריך לידה - מותאם למובייל ו-Web */}
+            {/* תאריך לידה - מותאם למובייל ו-Web
             {Platform.OS === 'web' ? (
               <TextInput
                 style={styles.input}
@@ -157,9 +162,9 @@ export default function AdminDashboard() {
                     : ''
                 }
                 onChangeText={(text) => {
-                  const updated = [...updatedUserData.Children];
+                  const updated = [...updatedUserData.children];
                   updated[index].birthdate = new Date(text).toISOString();
-                  setUpdatedUserData({ ...updatedUserData, Children: updated });
+                  setUpdatedUserData({ ...updatedUserData, children: updated });
                 }}
                 keyboardType="default"
                 type="date" // רק ב-Web עובד
@@ -193,7 +198,7 @@ export default function AdminDashboard() {
                   />
                 )}
               </>
-            )}
+            )} */}
           </View>
           
           

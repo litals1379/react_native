@@ -19,7 +19,6 @@ export const UserProvider = ({ children }) => {
 
     // מחיקה מהשרת
     const DeleteUser = async (userId) => {
-        console.log(userId);
         try {
             const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/${userId}`, {
                 method: 'DELETE',
@@ -35,8 +34,9 @@ export const UserProvider = ({ children }) => {
 
     // עריכה בשרת
     const EditUser = async (updatedUser) => {
+        console.log("Editing user:", updatedUser);
         try {
-            const response = await fetch(`https://your-api.com/api/users/${updatedUser.id}`, {
+            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/UpdateUser/${updatedUser.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
