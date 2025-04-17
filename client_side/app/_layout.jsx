@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Stack, useRouter } from "expo-router";
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons, } from '@expo/vector-icons';
-import { Link } from 'expo-router'; 
+import { Link } from 'expo-router';
 import { ChildProvider } from './childContext';
-
+import { UserProvider } from './Context/userContextProvider'; // Assuming you have a context provider for user data
 const colorsList = [
-  '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', '#E6E6FA', '#87CEEB','#FFFFFF',
+  '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', '#E6E6FA', '#87CEEB', '#FFFFFF',
 ];
 
 const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedColor }) => {
@@ -14,19 +14,19 @@ const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedCol
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: selectedColor }]}>
-      <View style={[styles.header, { backgroundColor: selectedColor }]}> 
+      <View style={[styles.header, { backgroundColor: selectedColor }]}>
         <View style={styles.logoContainer}>
           <Image source={require('../assets/images/logo.png')} style={styles.logo} />
           <Text style={styles.storyText}>Story Time</Text>
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.colorButton, { backgroundColor: selectedColor }]}
           onPress={() => setShowPicker(!showPicker)}
         >
           <Text style={styles.colorButtonText}>🎨</Text>
         </TouchableOpacity>
-    
+
         {showPicker && (
           <FlatList
             data={colorsList}
@@ -54,7 +54,8 @@ export default function RootLayout() {
   const [showPicker, setShowPicker] = useState(false);
 
   return (
-    <ChildProvider>
+    <UserProvider>
+      <ChildProvider>
         <View style={{ flex: 1, backgroundColor: selectedColor }}>
       <Stack screenOptions={{
         header: () => (
@@ -82,9 +83,62 @@ export default function RootLayout() {
        </Stack>
     </View>
     </ChildProvider>
-    
+      </UserProvider>
   );
-}
+  }
+    
+          {/* <Stack screenOptions={{
+            header: () => (
+              <CustomHeader
+                showPicker={showPicker}
+                setShowPicker={setShowPicker}
+                setSelectedColor={setSelectedColor}
+                selectedColor={selectedColor}
+              />
+            ),
+            headerStyle: { backgroundColor: selectedColor },
+            headerTintColor: "#000",
+            headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
+          }}> */}
+          {/* כאן אתה לא צריך לעטוף כל Screen - זה עטוף מלמעלה */}
+          {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
+          {/* <Stack screenOptions={{
+            header: () => (
+              <CustomHeader
+                showPicker={showPicker}
+                setShowPicker={setShowPicker}
+                setSelectedColor={setSelectedColor}
+                selectedColor={selectedColor}
+              />
+            ),
+            headerStyle: { backgroundColor: selectedColor },
+            headerTintColor: "#000",
+            headerTitleStyle: { fontWeight: "bold", fontSize: 20 },
+          }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="story" options={{ headerShown: false }} />
+            <ChildProvider>
+              <Stack.Screen name="register" />
+              <Stack.Screen name="addChild" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="subjects" /> */}
+              {/* <Stack.Screen name="googleAuth" />
+            <Stack.Screen name="story" options={{ headerShown: false }} />
+          </Stack>
+        </View>
+      </ChildProvider>
+    </UserProvider> */}
+              {/* <Stack.Screen name="googleAuth" />
+            </ChildProvider>
+          </Stack>
+        </View>
+      </ChildProvider>
+    </UserProvider> */}
+
+  // );
+// }
+
+
 
 const styles = StyleSheet.create({
   safeArea: { backgroundColor: "#B3E7F2" },
@@ -112,20 +166,20 @@ const styles = StyleSheet.create({
   storyText: {
     position: 'absolute',
     top: '70%',
-    left: '38%', 
-    width: 100, 
+    left: '38%',
+    width: 100,
     textAlign: 'center',
-    transform: [{ translateX: -50 }], 
-    fontSize: 14, 
+    transform: [{ translateX: -50 }],
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#65558F',
   },
-  
+
   colorButton: {
     padding: 10,
     borderRadius: 20,
     marginTop: -10,
-    alignSelf: 'flex-end', 
+    alignSelf: 'flex-end',
   },
   colorButtonText: {
     fontSize: 24,

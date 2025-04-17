@@ -193,5 +193,50 @@ namespace Server_Side.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the profile image", error = ex.Message });
             }
         }
+
+
+
+
+
+
+        [HttpDelete("DeleteUser/{userId}")]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest(new { message = "User ID is required." });
+            }
+
+            bool result = await _userDBservices.DeleteUserAsync(userId);
+            if (result)
+            {
+                return Ok(new { message = "User deleted successfully" });
+            }
+            else
+            {
+                return NotFound(new { message = $"User with ID '{userId}' not found." });
+            }
+        }
+
+
+        [HttpPut("UpdateUser/{userId}")]
+
+        public async Task<IActionResult> UpdateUser(string userId, [FromBody] User updatedUser)
+        {
+            if (string.IsNullOrEmpty(userId) || updatedUser == null)
+            {
+                return BadRequest(new { message = "User ID and updated user data are required." });
+            }
+
+            bool result = await _userDBservices.UpdateUserAsync(userId, updatedUser);
+            if (result)
+            {
+                return Ok(new { message = "User updated successfully" });
+            }
+            else
+            {
+                return NotFound(new { message = $"User with ID '{userId}' not found." });
+            }
+        }
     }
 }

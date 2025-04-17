@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvo
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
   const router = useRouter();
@@ -51,7 +52,13 @@ export default function Login() {
       if (data.user) {
         // חלץ את userId מהתגובה מה-API
         const userId = data.user.id;
-        router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
+        router.push({ pathname: "(tabs)/userProfile" });
+        // router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
+        // שמור את ה-userId ב-AsyncStorage אם צריך
+        //מצפין את ה-userId
+        // const encryptedUserId = btoa(userId.toString());
+        // await AsyncStorage.setItem('userId', encryptedUserId);
+        await AsyncStorage.setItem('userId', userId.toString());
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
       }
