@@ -91,9 +91,7 @@ export default function HomeScreen() {
 
       {showMainImage && (
         <Animated.View style={{ transform: [{ translateY: slideAnim }] }}>
-          <TouchableOpacity onPress={() => router.push('/info')}>
             <Image source={require('../assets/images/HomePage.png')} style={styles.image} />
-          </TouchableOpacity>
         </Animated.View>
       )}
 

@@ -15,7 +15,7 @@ export default function UserProfile() {
 
   // הגדרת ה-API URL בצורה דינמית
   // const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
-  const uploadApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage'; 
+  const uploadApiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage`; 
   const getUserId = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
@@ -125,28 +125,23 @@ export default function UserProfile() {
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        {/* תמונת פרופיל */}
-        {userData.profileImage ? (
-          <TouchableOpacity onPress={pickImage} >
-            <Image source={{ uri: userData.profileImage }} style={styles.profileImage}/> </TouchableOpacity> ): (
-          <TouchableOpacity style={styles.plusIconContainer} onPress={pickImage} >
-            <AntDesign name="plus" size={24} color="#65558F" />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity onPress={pickImage} style={styles.profileImage}>
+          {userData.profileImage ? (
+              <Image source={{ uri: userData.profileImage }} /> ): (
+              <AntDesign name="plus" size={40} color="#65558F" />
+          )}
+        </TouchableOpacity> 
 
-        {/* שם המשתמש */}
         <View style={styles.infoContainer}>
           <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
           <Text style={styles.name}>שם משתמש:{userData.username}</Text>
         </View>
 
-        {/* אימייל המשתמש */}
         <View style={styles.infoContainer}>
           <FontAwesome name="envelope" size={20} color="gray" style={styles.icon} />
           <Text style={styles.email}>אימייל:{userData.email}</Text>
         </View>
 
-        {/* פרטי הורים */}
         {/*
         {userData.parentDetails && userData.parentDetails.length > 0 && (
           <View style={styles.sectionContainer}>
@@ -167,7 +162,6 @@ export default function UserProfile() {
         )}
         */}
 
-        {/* רשימת ילדים */}
         {userData.children && userData.children.length > 0 && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>ילדים:</Text>
@@ -175,10 +169,9 @@ export default function UserProfile() {
               <TouchableOpacity
                 key={index}
                 style={styles.childCard}
-                onPress={() => handleChildSelection(child)} // שליחת אובייקט הילד
+                onPress={() => handleChildSelection(child)}
               >
                 <View style={styles.childCardContent}>
-                  {/* עיגול לתמונה */}
                   <View style={styles.childImagePlaceholder}>
                     {child.profileImage ? (
                       <Image source={{ uri: child.profileImage }} style={styles.childImage} />
@@ -208,7 +201,6 @@ export default function UserProfile() {
           </View>
         )}
 
-        {/* כפתורים */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.updateButton}>
             <FontAwesome name="edit" size={16} color="white" />
@@ -244,6 +236,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 2,
     borderColor: '#65558F',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   plusIconContainer: {
     width: 100,
