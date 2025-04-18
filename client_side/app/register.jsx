@@ -45,7 +45,7 @@ export default function Register() {
     const validate = () => {
         const newErrors = {};
 
-        const nameRegex = /^[א-ת]{2,30}$/;  // for names (first name, last name in Hebrew)
+        const nameRegex = /^[א-ת]{1,30}$/;  // for names (first name, last name in Hebrew)
         const phoneRegex = /^[0-9]{10}$/;  // for phone number (assuming 10 digits)
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;  // for email (basic)
         const usernameRegex = /^[a-zA-Z0-9]{5,15}$/;  // for username (alphanumeric, 5-15 chars)

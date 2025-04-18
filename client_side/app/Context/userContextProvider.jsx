@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 
 export const UserContext = createContext();
 
@@ -24,7 +25,7 @@ export const UserProvider = ({ children }) => {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error('שגיאה במחיקה');
-
+            Alert.alert('הצלחה', 'המשתמש נמחק בהצלחה!');
             // הסרה מהסטייט
             setUsers((prev) => prev.filter((user) => user.id !== userId));
         } catch (error) {
@@ -45,6 +46,7 @@ export const UserProvider = ({ children }) => {
             });
 
             if (!response.ok) throw new Error('שגיאה בעדכון');
+            Alert.alert('הצלחה', 'המשתמש עודכן בהצלחה!');
 
             // עדכון בסטייט
             setUsers((prev) =>
@@ -60,7 +62,7 @@ export const UserProvider = ({ children }) => {
     // שליפה ראשונית
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [users]);
 
     return (
         <UserContext.Provider value={{ users, DeleteUser, EditUser }}>
