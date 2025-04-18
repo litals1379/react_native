@@ -101,15 +101,55 @@ namespace Server_Side.DAL
         {
             try
             {
-                var filter = Builders<User>.Filter.Eq("_id", userId); // Adjust the filter based on the actual property name for the user's ID in your User model. If you are using MongoDB's default ObjectId, it might be "_id" and the userId might need to be converted.
-                var update = Builders<User>.Update.Set("profileImage", imageUrl);
+                var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+                var update = Builders<User>.Update.Set(u => u.ProfileImage, imageUrl);
                 var result = await _usersCollection.UpdateOneAsync(filter, update);
                 return result.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
-                // Consider logging the error properly using ILogger
                 Console.WriteLine($"Error updating profile image for user {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
+        // מחיקת משתמש
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            // מחיקת משתמש לפי מזהה
+            try
+            {
+                var result = await _usersCollection.DeleteOneAsync(u => u.Id == userId);
+                return result.DeletedCount > 0; // מחזירים true אם נמחק משתמש
+            }
+            catch (Exception ex)
+            {
+                // רישום השגיאה
+                Console.WriteLine($"Error deleting user {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
+        // עדכון פרטי משתמש
+        public async Task<bool> UpdateUserAsync(string userId, User updatedUser)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
+                var update = Builders<User>.Update
+                    .Set(u => u.Username, updatedUser.Username)
+                    .Set(u => u.Password, updatedUser.Password)
+                    .Set(u => u.Email, updatedUser.Email)
+                    .Set(u => u.ParentDetails, updatedUser.ParentDetails)
+                    .Set(u => u.Children, updatedUser.Children);
+
+                var result = await _usersCollection.UpdateOneAsync(filter, update);
+                return result.ModifiedCount > 0; // מחזירים true אם העדכון הצליח
+            }
+            catch (Exception ex)
+            {
+                // רישום השגיאה
+                Console.WriteLine($"Error updating user {userId}: {ex.Message}");
                 return false;
             }
         }

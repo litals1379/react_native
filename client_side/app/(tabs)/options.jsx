@@ -1,9 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
+import { useRouter } from 'expo-router';
 
+const router = useRouter();
 export default function Options() {
   return (
+    <ScrollView style={{ flex: 1 }}>
     <View style={styles.container}>
       <View style={styles.header} />
 
@@ -14,7 +17,7 @@ export default function Options() {
         <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
+      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/addChild'})}>
         <Icon name="user-plus" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>הוספת ילד</Text>
       </TouchableOpacity>
@@ -33,7 +36,13 @@ export default function Options() {
         <Icon name="users" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>משתמשי ילדים</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/adminDashboard'})}>
+        <Icon name="admin" size={30} style={styles.optionIcon} />
+        <Text style={styles.optionText}>מסך מנהל</Text>
+      </TouchableOpacity>
     </View>
+    </ScrollView>
   );
 }
 
