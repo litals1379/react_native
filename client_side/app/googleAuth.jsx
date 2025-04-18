@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import { Text, View, Button, StyleSheet, ActivityIndicator, Platform, Image, Alert } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -20,8 +20,7 @@ const CLIENT_ID = Platform.select({
 const isWeb = Platform.OS === 'web';
 
 const REDIRECT_URI = AuthSession.makeRedirectUri({
-  native: 'myapp://redirect',
-  useProxy: false,
+  useProxy: isWeb,
 });
 
 const discovery = {
@@ -32,35 +31,37 @@ const discovery = {
 
 export default function GoogleAuthScreen() {
   const router = useRouter();
-  const [authCode, setAuthCode] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 📲 Mobile: configure Google Sign-In once
+  const authRequestConfig = isWeb
+    ? {
+        clientId: CLIENT_ID,
+        redirectUri: REDIRECT_URI,
+        scopes: ['openid', 'profile', 'email'],
+        responseType: 'token',
+        usePKCE: false,
+      }
+    : {
+        clientId: 'placeholder',
+        redirectUri: 'placeholder://redirect',
+        scopes: ['openid'],
+        responseType: 'token',
+        usePKCE: false,
+      };
+
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(authRequestConfig, discovery);
+
   useEffect(() => {
     if (!isWeb) {
       GoogleSignin.configure({
         webClientId: WEB_CLIENT_ID,
         offlineAccess: true,
+        scopes: ['email', 'profile', 'openid'],
       });
     }
   }, []);
 
-  // 🌐 Web Auth Request
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    isWeb
-      ? {
-          clientId: CLIENT_ID,
-          redirectUri: REDIRECT_URI,
-          scopes: ['openid', 'profile', 'email'],
-          responseType: 'token',
-          usePKCE: false,
-        }
-      : null,
-    discovery
-  );
-
-  // 🌐 Web: handle token response
   useEffect(() => {
     if (isWeb && response?.type === 'success') {
       const token = response.params.access_token;
@@ -68,43 +69,14 @@ export default function GoogleAuthScreen() {
     }
   }, [response]);
 
-  // 📱 Mobile: exchange auth code (if needed – not used here)
-  useEffect(() => {
-    if (!authCode || isWeb || !request) return;
-
-    const getToken = async () => {
-      try {
-        const tokenResult = await AuthSession.exchangeCodeAsync(
-          {
-            clientId: CLIENT_ID,
-            code: authCode,
-            redirectUri: REDIRECT_URI,
-            extraParams: {
-              code_verifier: request.codeVerifier,
-            },
-          },
-          discovery
-        );
-
-        console.log('✅ Access Token:', tokenResult.accessToken);
-        fetchUserInfo(tokenResult.accessToken);
-      } catch (err) {
-        console.error('❌ Error exchanging code:', err);
-      }
-    };
-
-    getToken();
-  }, [authCode]);
-
   const fetchUserInfo = async (token) => {
     try {
       const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const user = await res.json();
-      console.log('👤 User Info:', user);
+      console.log('👤 Web User Info:', user);
       setUserInfo(user);
-      router.replace('/tabs/userProfile');
     } catch (err) {
       console.error('❌ Failed fetching user info:', err);
     }
@@ -114,7 +86,9 @@ export default function GoogleAuthScreen() {
     try {
       setLoading(true);
       await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signOut(); // מאפשר החלפת חשבון
       const result = await GoogleSignin.signIn();
+
 
       if (result?.user) {
         const userData = {
@@ -123,23 +97,38 @@ export default function GoogleAuthScreen() {
           picture: result.user.photo,
         };
         console.log('✅ Native Sign-In:', userData);
+        Alert.alert('התחברות הצליחה', `שלום, ${userData.name}`);
         setUserInfo(userData);
-        router.replace('/tabs/userProfile');
       } else {
         console.warn('⚠️ Native sign-in cancelled or failed');
+        Alert.alert('שגיאה', ' אנא נסה שוב.');
       }
     } catch (err) {
       console.error('❌ Native sign-in error:', err);
+      Alert.alert('שגיאה', 'ההתחברות נכשלה. אנא נסה שוב.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (isWeb) {
+      await handleLogout(); // מאפשר החלפת חשבון בווב
       promptAsync({ useProxy: true });
     } else {
       signInWithGoogleNative();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      if (!isWeb) {
+        await GoogleSignin.signOut();
+      }
+      setUserInfo(null);
+      console.log('🚪 Logged out');
+    } catch (err) {
+      console.error('❌ Error during logout:', err);
     }
   };
 
@@ -148,6 +137,15 @@ export default function GoogleAuthScreen() {
       <Text style={styles.title}>התחברות עם Google</Text>
       {loading ? (
         <ActivityIndicator size="large" />
+      ) : userInfo ? (
+        <View style={styles.profile}>
+          {userInfo.picture && (
+            <Image source={{ uri: userInfo.picture }} style={styles.avatar} />
+          )}
+          <Text>שלום, {userInfo.name}</Text>
+          <Text>{userInfo.email}</Text>
+          <Button title="התנתק" onPress={handleLogout} />
+        </View>
       ) : (
         <Button title="התחבר עם חשבון Google" onPress={handleLogin} />
       )}
@@ -158,4 +156,6 @@ export default function GoogleAuthScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, marginBottom: 20 },
+  profile: { alignItems: 'center', gap: 10 },
+  avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: 10 },
 });
