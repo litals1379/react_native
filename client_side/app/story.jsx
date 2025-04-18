@@ -11,13 +11,14 @@ import {
   requestPermissionsAsync,
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
-import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();
 
-  const [paragraph, setParagraph] = useState(null);
-  const [image, setImage] = useState(null);
+  const [paragraphs, setParagraphs] = useState([]);
+  const [images, setImages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comparisonResult, setComparisonResult] = useState(null);
@@ -36,19 +37,19 @@ export default function Story() {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
     try {
       const response = await fetch(apiUrl);
-      const text = await response.text(); 
-  
+      const text = await response.text();
+
       if (!response.ok) {
         throw new Error(`Server returned error: ${text}`);
       }
-  
+
       const data = JSON.parse(text);
-  
-      const firstParagraph = data?.paragraphs?.p1 || "אין פסקה זמינה.";
-      const imageUrl = data?.imagesUrls?.img1 || null;
-  
-      setParagraph(firstParagraph);
-      setImage(imageUrl);
+
+      const loadedParagraphs = Object.values(data?.paragraphs || {});
+      const loadedImages = Object.values(data?.imagesUrls || {});
+
+      setParagraphs(loadedParagraphs);
+      setImages(loadedImages);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -64,8 +65,8 @@ export default function Story() {
 
   const speakStory = () => {
     console.log('speakStory pressed');
-    if (paragraph) {
-      Speech.speak(paragraph, { language: 'he-IL' });
+    if (paragraphs[currentIndex]) {
+      Speech.speak(paragraphs[currentIndex], { language: 'he-IL' });
     }
   };
 
@@ -97,6 +98,7 @@ export default function Story() {
   };
 
   const handleLiveComparison = (spokenText) => {
+    const paragraph = paragraphs[currentIndex];
     if (!paragraph) return;
 
     const originalWords = paragraph.trim().split(/\s+/);
@@ -124,6 +126,24 @@ export default function Story() {
       }
     } else {
       Speech.speak("נסה שוב את המילה הזו", { language: 'he-IL' });
+    }
+  };
+
+  const goToNextParagraph = () => {
+    if (currentIndex < paragraphs.length - 1) {
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      setComparisonResult(null);
+      setSpokenText('');
+    }
+  };
+
+  const goToPreviousParagraph = () => {
+    if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      setCurrentIndex(prevIndex);
+      setComparisonResult(null);
+      setSpokenText('');
     }
   };
 
@@ -164,14 +184,14 @@ export default function Story() {
             <Text style={styles.errorText}>{error}</Text>
           ) : (
             <>
-              {image && (
+              {images[currentIndex] && (
                 <Image
-                  source={{ uri: image }}
+                  source={{ uri: images[currentIndex] }}
                   style={styles.image}
                   resizeMode="cover"
                 />
               )}
-              <Text style={styles.paragraph}>{paragraph}</Text>
+              <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
 
               <View style={{ flexDirection: 'row', gap: 16 }}>
                 <TouchableOpacity onPress={speakStory}>
@@ -190,6 +210,18 @@ export default function Story() {
                     size={30}
                     color={isRecording ? '#C0392B' : '#2980B9'}
                   />
+                </TouchableOpacity>
+              </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 }}>
+                <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+                  <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+                </TouchableOpacity>
+
+                <Text>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+
+                <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+                  <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
                 </TouchableOpacity>
               </View>
 

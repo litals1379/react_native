@@ -224,7 +224,7 @@ export default function AdminDashboard() {
                       display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                       onChange={(event, selectedDate) => {
                         if (selectedDate) {
-                          const updated = [...updatedUserData.Children];
+                          const updated = [...updatedUserData.children];
                           updated[index].birthdate = selectedDate.toISOString();
                           setUpdatedUserData({ ...updatedUserData, Children: updated });
                         }
