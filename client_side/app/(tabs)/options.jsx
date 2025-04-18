@@ -27,16 +27,6 @@ export default function Options() {
         <Text style={styles.optionText}>צפיה בפרטים</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
-        <Icon name="pencil-square-o" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>עדכון פרטים</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.optionButton}>
-        <Icon name="users" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>משתמשי ילדים</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/adminDashboard'})}>
         <Icon name="admin" size={30} style={styles.optionIcon} />
         <Text style={styles.optionText}>מסך מנהל</Text>
