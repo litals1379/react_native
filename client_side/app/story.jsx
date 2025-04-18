@@ -12,6 +12,7 @@ import {
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Progress from 'react-native-progress';
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();
@@ -213,17 +214,30 @@ export default function Story() {
                 </TouchableOpacity>
               </View>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 16 }}>
+              <View style={styles.navigation}>
                 <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
                   <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
                 </TouchableOpacity>
 
-                <Text>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+                <View style={styles.progressContainer}>
+                  <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+                  <Progress.Bar
+                    progress={(currentIndex + 1) / paragraphs.length}
+                    width={200}
+                    height={10}
+                    borderRadius={8}
+                    color="#65558F"
+                    unfilledColor="#E0E0E0"
+                    borderWidth={0}
+                    animated={true}
+                  />
+                </View>
 
                 <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
                   <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
                 </TouchableOpacity>
               </View>
+
 
               {comparisonResult && (
                 <>
@@ -267,4 +281,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 16,
   },
+  navigation: {
+    marginTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressContainer: {
+    alignItems: 'center',
+  },
+  progressText: {
+    marginBottom: 4,
+    fontSize: 14,
+  },
+  
 });

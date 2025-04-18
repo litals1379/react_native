@@ -1,11 +1,16 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import * as Progress from 'react-native-progress';
 
 const StoryFromLibrary = () => {
-  const { storyId } = useLocalSearchParams();  // שליפת ה-`storyId` מהפרמטרים
+  const { storyId } = useLocalSearchParams();
 
   const [story, setStory] = useState(null);
+  const [paragraphs, setParagraphs] = useState([]);
+  const [images, setImages] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,6 +25,8 @@ const StoryFromLibrary = () => {
         }
 
         setStory(data);
+        setParagraphs(Object.values(data.paragraphs || {}));
+        setImages(Object.values(data.imagesUrls || {}));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -31,6 +38,18 @@ const StoryFromLibrary = () => {
       fetchStory();
     }
   }, [storyId]);
+
+  const goToNextParagraph = () => {
+    if (currentIndex < paragraphs.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const goToPreviousParagraph = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
   if (loading) {
     return (
@@ -46,16 +65,40 @@ const StoryFromLibrary = () => {
         <Text style={styles.errorText}>{error}</Text>
       ) : (
         <>
-          {story?.imagesUrls?.img1 && (
+          {images[currentIndex] && (
             <Image
-              source={{ uri: story.imagesUrls.img1 }} // מציגים את התמונה הראשונה
+              source={{ uri: images[currentIndex] }}
               style={styles.image}
               resizeMode="cover"
             />
           )}
-          {story?.paragraphs?.p1 && (
-            <Text style={styles.content}>{story.paragraphs.p1}</Text> // מציגים את הפסקה הראשונה
+          {paragraphs[currentIndex] && (
+            <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
           )}
+
+          <View style={styles.navigation}>
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+              <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+            </TouchableOpacity>
+
+            <View style={styles.progressContainer}>
+              <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+              <Progress.Bar
+                progress={(currentIndex + 1) / paragraphs.length}
+                width={200}
+                height={10}
+                borderRadius={8}
+                color="#65558F"
+                unfilledColor="#E0E0E0"
+                borderWidth={0}
+                animated={true}
+              />
+            </View>
+
+            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+              <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+            </TouchableOpacity>
+          </View>
         </>
       )}
     </View>
@@ -70,7 +113,6 @@ const styles = StyleSheet.create({
   },
   content: {
     textAlign: 'right',
-    alignSelf: 'flex-start',
     fontSize: 16,
     marginTop: 20,
     color: '#333',
@@ -85,6 +127,19 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 12,
     marginBottom: 16,
+  },
+  navigation: {
+    marginTop: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progressContainer: {
+    alignItems: 'center',
+  },
+  progressText: {
+    marginBottom: 4,
+    fontSize: 14,
   },
 });
 
