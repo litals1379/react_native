@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';
 import {
   start,
@@ -10,7 +11,7 @@ import {
   requestPermissionsAsync,
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
-import Icon from 'react-native-vector-icons/MaterialIcons'; // מיובא מחבילת האייקונים
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();
@@ -62,16 +63,19 @@ export default function Story() {
   }, [childID, topic]);
 
   const speakStory = () => {
+    console.log('speakStory pressed');
     if (paragraph) {
       Speech.speak(paragraph, { language: 'he-IL' });
     }
   };
 
   const stopStory = () => {
+    console.log('stopStory pressed');
     Speech.stop();
   };
 
   const startListening = async () => {
+    console.log('startListening pressed');
     const available = await isRecognitionAvailable();
     if (!available) {
       alert("זיהוי דיבור לא זמין במכשיר זה.");
@@ -87,6 +91,7 @@ export default function Story() {
   };
 
   const stopListening = async () => {
+    console.log('stopListening pressed');
     setIsRecording(false);
     await stop();
   };
@@ -168,16 +173,24 @@ export default function Story() {
               )}
               <Text style={styles.paragraph}>{paragraph}</Text>
 
-              <Icon name="volume-up" size={30} color="#2980B9" onPress={speakStory} />
-              <Icon name="stop" size={30} color="#C0392B" onPress={stopStory} />
-              
-              <View style={{ marginVertical: 20 }}>
-                <Icon
-                  name={isRecording ? "stop" : "mic"}
-                  size={30}
-                  color={isRecording ? '#C0392B' : '#2980B9'}
+              <View style={{ flexDirection: 'row', gap: 16 }}>
+                <TouchableOpacity onPress={speakStory}>
+                  <Icon name="volume-up" size={30} color="#2980B9" />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={stopStory}>
+                  <Icon name="stop" size={30} color="#C0392B" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   onPress={isRecording ? stopListening : startListening}
-                />
+                >
+                  <Icon
+                    name={isRecording ? "stop" : "mic"}
+                    size={30}
+                    color={isRecording ? '#C0392B' : '#2980B9'}
+                  />
+                </TouchableOpacity>
               </View>
 
               {comparisonResult && (
