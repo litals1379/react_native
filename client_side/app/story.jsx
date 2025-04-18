@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image, Modal, Button } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';
-import {
-  start,
-  stop,
-  isRecognitionAvailable,
-  requestPermissionsAsync,
-  useSpeechRecognitionEvent,
-} from 'expo-speech-recognition';
+import * as SpeechRecognition from 'expo-speech-recognition'; // <-- זהו התיקון
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Progress from 'react-native-progress';
+import LottieView from 'lottie-react-native';
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();
@@ -26,8 +21,10 @@ export default function Story() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [spokenText, setSpokenText] = useState('');
+  const [showEndModal, setShowEndModal] = useState(false);
+  const [rating, setRating] = useState(0);
 
-  useSpeechRecognitionEvent('onSpeechResults', (event) => {
+  SpeechRecognition.useSpeechRecognitionEvent('onSpeechResults', (event) => {
     if (event.value?.[0]) {
       setSpokenText(event.value[0]);
       handleLiveComparison(event.value[0]);
@@ -45,7 +42,6 @@ export default function Story() {
       }
 
       const data = JSON.parse(text);
-
       const loadedParagraphs = Object.values(data?.paragraphs || {});
       const loadedImages = Object.values(data?.imagesUrls || {});
 
@@ -65,37 +61,28 @@ export default function Story() {
   }, [childID, topic]);
 
   const speakStory = () => {
-    console.log('speakStory pressed');
     if (paragraphs[currentIndex]) {
       Speech.speak(paragraphs[currentIndex], { language: 'he-IL' });
     }
   };
 
-  const stopStory = () => {
-    console.log('stopStory pressed');
-    Speech.stop();
-  };
+  const stopStory = () => Speech.stop();
 
   const startListening = async () => {
-    console.log('startListening pressed');
-    const available = await isRecognitionAvailable();
-    if (!available) {
-      alert("זיהוי דיבור לא זמין במכשיר זה.");
-      return;
-    }
+    const available = await SpeechRecognition.isRecognitionAvailable();
+    if (!available) return alert("זיהוי דיבור לא זמין במכשיר זה.");
 
-    await requestPermissionsAsync();
+    await SpeechRecognition.requestPermissionsAsync();
     setComparisonResult(null);
     setCurrentWordIndex(0);
     setSpokenText('');
     setIsRecording(true);
-    await start({ language: 'he-IL' });
+    await SpeechRecognition.start({ language: 'he-IL' });
   };
 
   const stopListening = async () => {
-    console.log('stopListening pressed');
     setIsRecording(false);
-    await stop();
+    await SpeechRecognition.stop();
   };
 
   const handleLiveComparison = (spokenText) => {
@@ -104,24 +91,19 @@ export default function Story() {
 
     const originalWords = paragraph.trim().split(/\s+/);
     const spokenWords = spokenText.trim().split(/\s+/);
-
     const index = spokenWords.length - 1;
-    const originalWord = originalWords[index];
-    const spokenWord = spokenWords[index];
 
-    if (!originalWord || !spokenWord) return;
-
-    const isMatch = originalWord.toLowerCase() === spokenWord.toLowerCase();
+    if (!originalWords[index] || !spokenWords[index]) return;
 
     const result = originalWords.map((word, i) => ({
       word,
-      match: spokenWords[i] && spokenWords[i].toLowerCase() === word.toLowerCase(),
+      match: spokenWords[i]?.toLowerCase() === word.toLowerCase(),
     }));
 
     setComparisonResult(result);
     setCurrentWordIndex(index);
 
-    if (isMatch) {
+    if (result[index].match) {
       if (index % 5 === 0) {
         Speech.speak("כל הכבוד!", { language: 'he-IL' });
       }
@@ -132,123 +114,134 @@ export default function Story() {
 
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
+      setCurrentIndex(currentIndex + 1);
       setComparisonResult(null);
       setSpokenText('');
+    } else {
+      setShowEndModal(true);
     }
   };
 
   const goToPreviousParagraph = () => {
     if (currentIndex > 0) {
-      const prevIndex = currentIndex - 1;
-      setCurrentIndex(prevIndex);
+      setCurrentIndex(currentIndex - 1);
       setComparisonResult(null);
       setSpokenText('');
     }
   };
 
-  const renderComparison = () => {
-    if (!comparisonResult) return null;
+  const renderComparison = () => comparisonResult && (
+    <Text style={styles.paragraph}>
+      {comparisonResult.map((item, index) => {
+        let style = { color: item.match ? 'black' : 'red' };
+        if (index === currentWordIndex) {
+          style.backgroundColor = '#FFFF99';
+        }
+        return <Text key={index} style={style}>{item.word + ' '}</Text>;
+      })}
+    </Text>
+  );
 
-    return (
-      <Text style={styles.paragraph}>
-        {comparisonResult.map((item, index) => {
-          let style = { color: item.match ? 'black' : 'red' };
-          if (index === currentWordIndex) {
-            style = { ...style, backgroundColor: '#FFFF99' };
-          }
-
-          return (
-            <Text key={index} style={style}>
-              {item.word + ' '}
-            </Text>
-          );
-        })}
-      </Text>
-    );
+  const getProgressColor = () => {
+    const progress = (currentIndex + 1) / paragraphs.length;
+    if (progress < 0.34) return '#E74C3C';
+    if (progress < 0.67) return '#F39C12';
+    return '#27AE60';
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#65558F" />
-      </SafeAreaView>
-    );
-  }
+  const getEncouragementEmoji = () => {
+    const progress = (currentIndex + 1) / paragraphs.length;
+    if (progress < 0.34) return '🚀';
+    if (progress < 0.67) return '🌟';
+    return '🏆';
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View>
-          {error ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : (
-            <>
-              {images[currentIndex] && (
-                <Image
-                  source={{ uri: images[currentIndex] }}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
-              )}
-              <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
+     <ScrollView>
+  {loading ? (
+    <ActivityIndicator size="large" color="#2980B9" style={{ marginTop: 20 }} />
+  ) : error ? (
+    <Text style={styles.errorText}>{error}</Text>
+  ) : (
+    <View>
+      {images[currentIndex] && (
+        <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
+      )}
+      <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
 
-              <View style={{ flexDirection: 'row', gap: 16 }}>
-                <TouchableOpacity onPress={speakStory}>
-                  <Icon name="volume-up" size={30} color="#2980B9" />
+      <View style={{ flexDirection: 'row', gap: 16 }}>
+        <TouchableOpacity onPress={speakStory}><Icon name="volume-up" size={30} color="#2980B9" /></TouchableOpacity>
+        <TouchableOpacity onPress={stopStory}><Icon name="stop" size={30} color="#C0392B" /></TouchableOpacity>
+        <TouchableOpacity onPress={isRecording ? stopListening : startListening}>
+          <Icon name={isRecording ? "stop" : "mic"} size={30} color={isRecording ? '#C0392B' : '#2980B9'} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.navigation}>
+        <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+          <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+        </TouchableOpacity>
+
+        {/* ✅ כאן תחליף את קטע ה-Progress הזה בחדש */}
+        {!loading && paragraphs.length > 0 && (
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+            <View style={styles.progressRow}>
+              <Progress.Bar
+                progress={(currentIndex + 1) / paragraphs.length}
+                width={160}
+                height={10}
+                borderRadius={8}
+                color={getProgressColor()}
+                unfilledColor="#E0E0E0"
+                borderWidth={0}
+                animated={true}
+              />
+              <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
+            </View>
+          </View>
+        )}
+
+        <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+          <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+        </TouchableOpacity>
+      </View>
+
+      {comparisonResult && (
+        <>
+          <Text style={styles.title}>השוואת קריאה:</Text>
+          {renderComparison()}
+        </>
+      )}
+    </View>
+  )}
+</ScrollView>
+
+
+      {/* סיום וסקר */}
+      <Modal visible={showEndModal} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <LottieView
+              source={require('../assets/animations/confetti.json')}
+              autoPlay
+              loop={false}
+              style={styles.confetti}
+            />
+            <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
+            <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
+            <View style={styles.starsRow}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                  <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={stopStory}>
-                  <Icon name="stop" size={30} color="#C0392B" />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={isRecording ? stopListening : startListening}
-                >
-                  <Icon
-                    name={isRecording ? "stop" : "mic"}
-                    size={30}
-                    color={isRecording ? '#C0392B' : '#2980B9'}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.navigation}>
-                <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                  <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
-                </TouchableOpacity>
-
-                <View style={styles.progressContainer}>
-                  <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-                  <Progress.Bar
-                    progress={(currentIndex + 1) / paragraphs.length}
-                    width={200}
-                    height={10}
-                    borderRadius={8}
-                    color="#65558F"
-                    unfilledColor="#E0E0E0"
-                    borderWidth={0}
-                    animated={true}
-                  />
-                </View>
-
-                <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                  <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
-                </TouchableOpacity>
-              </View>
-
-
-              {comparisonResult && (
-                <>
-                  <Text style={styles.title}>השוואת קריאה:</Text>
-                  {renderComparison()}
-                </>
-              )}
-            </>
-          )}
+              ))}
+            </View>
+            <Button title="סיים" onPress={() => setShowEndModal(false)} />
+          </View>
         </View>
-      </ScrollView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -294,5 +287,43 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 14,
   },
-  
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  emoji: {
+    fontSize: 20,
+    marginLeft: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  starsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  confetti: {
+    width: '100%',
+    height: '100%',
+  },
 });
