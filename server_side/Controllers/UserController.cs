@@ -136,6 +136,17 @@ namespace Server_Side.Controllers
             return Ok(user);
         }
 
+        [HttpGet("GetUserByEmail/{email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+            var user = await _userDBservices.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound(new { meassge="User not exist"});
+            }
+            return Ok(user);
+        }
+
         [HttpPost("UpdateProfileImage")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateProfileImage([FromForm] string userId, [FromForm] IFormFile image)
