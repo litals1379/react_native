@@ -32,9 +32,9 @@ export default function UserProfile() {
     getUserId();
   }, []);
 
-  const logoutButton = async () => { // פונקציה להתנתקות ניתן לחזור חזרה ועדיין רואים את הפרטים של הפרופיל ************ צריך לתקן
+  const logoutButton = async () => { // פונקציה להתנתקות ניתן לחזור חזרה ועדיין רואים את הפרטים של הפרופיל
     await AsyncStorage.clear(); // ניקוי ה-AsyncStorage
-    router.push({ pathname: "login" }); // העברה לעמוד הכניסה
+    router.replace({ pathname: "login" }); // העברה לעמוד הכניסה ומחיקת היסטוריית הניווט
   };
 
   if (!userData) {

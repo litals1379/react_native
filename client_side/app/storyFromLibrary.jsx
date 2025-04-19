@@ -76,10 +76,12 @@ const StoryFromLibrary = () => {
             <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
           )}
 
+          {/* בגלל השפה העברית נהפוך את החצים */}
           <View style={styles.navigation}>
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-              <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
-            </TouchableOpacity>
+            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+                <Icon name="arrow-back" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+              </TouchableOpacity>
+
 
             <View style={styles.progressContainer}>
               <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
@@ -92,12 +94,13 @@ const StoryFromLibrary = () => {
                 unfilledColor="#E0E0E0"
                 borderWidth={0}
                 animated={true}
+                style={{ transform: [{ scaleX: -1 }] }}
               />
             </View>
+              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+                <Icon name="arrow-forward" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+                </TouchableOpacity>
 
-            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
-            </TouchableOpacity>
           </View>
         </>
       )}
