@@ -59,7 +59,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-// שליפת משתמשים מהשרת כשיש שינוי בסטייט
+    // שליפת משתמשים מהשרת כשיש שינוי בסטייט
     useEffect(() => {
         fetchUsers();
     }, [users]);

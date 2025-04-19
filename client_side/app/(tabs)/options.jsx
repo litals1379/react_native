@@ -37,9 +37,11 @@ export default function Options() {
           <Text style={styles.optionText}>הוספת ילד</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
-          <Icon name="eye" size={30} style={styles.optionIcon} />
-          <Text style={styles.optionText}>צפיה בפרטים</Text>
+        <TouchableOpacity style={styles.optionButton}
+          onPress={() => router.push('/editUserDetails')}
+        >
+          <Icon name="edit" size={30} style={styles.optionIcon} />
+          <Text style={styles.optionText}>עריכת בפרטים</Text>
         </TouchableOpacity>
 
         {/* הצג את כפתור המנהל רק אם המשתמש הוא admin */}
