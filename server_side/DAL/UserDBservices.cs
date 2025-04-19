@@ -153,5 +153,19 @@ namespace Server_Side.DAL
                 return false;
             }
         }
+
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _usersCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving user by email {email}: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

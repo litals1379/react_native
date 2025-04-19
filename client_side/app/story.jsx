@@ -7,7 +7,7 @@ import * as Speech from 'expo-speech';  // מודול להפעלת דיבור
 import * as SpeechRecognition from 'expo-speech-recognition';  // מודול לזיהוי דיבור
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Progress from 'react-native-progress';  // מודול לתצוגת בר התקדמות
-import LottieView from 'lottie-react-native';  // מודול לאנימציות Lottie
+// import LottieView from 'lottie-react-native';  // מודול לאנימציות Lottie
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();  // קבלת מזהה הילד והנושא מתוך הכתובת של הדף
