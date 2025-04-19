@@ -89,15 +89,16 @@ export default function GoogleAuthScreen() {
       await GoogleSignin.signOut(); // מאפשר החלפת חשבון
       const result = await GoogleSignin.signIn();
 
-
-      if (result?.user) {
+      if (result.data.user) {
         const userData = {
-          name: result.user.name,
-          email: result.user.email,
-          picture: result.user.photo,
+          parentsDetails:[{
+            firstName: result.data.user.givenName,
+            lastName: result.data.user.familyName}],
+          email: result.data.user.email,
+          profileImage: result.data.user.photo,
         };
         console.log('✅ Native Sign-In:', userData);
-        Alert.alert('התחברות הצליחה', `שלום, ${userData.name}`);
+        Alert.alert('התחברות הצליחה', `שלום, ${result.data.user.name}`);
         setUserInfo(userData);
       } else {
         console.warn('⚠️ Native sign-in cancelled or failed');
