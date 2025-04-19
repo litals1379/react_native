@@ -79,6 +79,7 @@ export default function RootLayout() {
             <Stack.Screen name="login" /> 
             <Stack.Screen name="subjects" />
             <Stack.Screen name="googleAuth" /> 
+            <Stack.Screen name="editUserDetails" options={{ headerShown: false }} />
           </ChildProvider>
        </Stack>
     </View>
