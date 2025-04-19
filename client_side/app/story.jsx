@@ -7,7 +7,7 @@ import * as Speech from 'expo-speech';  // מודול להפעלת דיבור
 import * as SpeechRecognition from 'expo-speech-recognition';  // מודול לזיהוי דיבור
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import * as Progress from 'react-native-progress';  // מודול לתצוגת בר התקדמות
-// import LottieView from 'lottie-react-native';  // מודול לאנימציות Lottie
+import LottieView from 'lottie-react-native';  // מודול לאנימציות Lottie
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();  // קבלת מזהה הילד והנושא מתוך הכתובת של הדף
@@ -19,24 +19,10 @@ export default function Story() {
   const [loading, setLoading] = useState(true);  // מצב טעינה
   const [error, setError] = useState(null);  // מצב שגיאה
   const [comparisonResult, setComparisonResult] = useState(null);  // תוצאה של השוואת קריאה
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);  // אינדקס המילה הנוכחית בהשוואת קריאה
   const [isRecording, setIsRecording] = useState(false);  // מצב אם נרשם דיבור
   const [spokenText, setSpokenText] = useState('');  // טקסט מדובר
   const [showEndModal, setShowEndModal] = useState(false);  // מצב להראות את מודל הסיום
   const [rating, setRating] = useState(0);  // דירוג הסיפור
-
-  // הדפסת המודול של SpeechRecognition למעקב אם הוא נטען
-  console.log('📦 SpeechRecognition module:', SpeechRecognition);
-
-  // שמיעה לאירועים של זיהוי דיבור ושמירת התוצאה
-  SpeechRecognition.useSpeechRecognitionEvent('onSpeechResults', (event) => {
-    console.log('🎙️ SpeechRecognition result event:', event);
-    if (event.value?.[0]) {
-      console.log('🗣️ Detected speech:', event.value[0]);
-      setSpokenText(event.value[0]);  // עדכון הטקסט המדובר
-      handleLiveComparison(event.value[0]);  // השוואת טקסט
-    }
-  });
 
   // פונקציה להבאת הסיפור מהשרת
   const fetchStory = async (childID, topic) => {
@@ -79,58 +65,57 @@ export default function Story() {
   // עצירת הדיבור
   const stopStory = () => Speech.stop();
 
-  // התחלת הקשבה לדיבור
+  // התחלת הקשבה לדיבור (לא מדובר בזמן אמת)
   const startListening = async () => {
     const available = await SpeechRecognition.isRecognitionAvailable();
     console.log('🔍 isRecognitionAvailable:', available);
     if (!available) return alert("זיהוי דיבור לא זמין במכשיר זה.");
-  
+
     await SpeechRecognition.requestPermissionsAsync();
     console.log('✅ Permissions granted');
-  
-    setComparisonResult(null);
-    setCurrentWordIndex(0);
+
     setSpokenText('');
     setIsRecording(true);
-  
-    await SpeechRecognition.start({ language: 'he-IL' });  // התחלת זיהוי דיבור בעברית
+
+    // התחלת הקלטת הדיבור (אין זיהוי בזמן אמת, רק בסוף ההקלטה)
+    await SpeechRecognition.start({ language: 'he-IL' });
     console.log('🎙️ Started listening...');
   };
 
   // עצירת ההקלטה
   const stopListening = async () => {
     setIsRecording(false);
-    await SpeechRecognition.stop();
+    const result = await SpeechRecognition.stop();  // מקבלים את התוצאה לאחר ההקלטה
+    console.log('🎙️ Speech results:', result);
+    setSpokenText(result?.value?.[0] || '');  // שמירה על הטקסט המלא
+    handleComparison(result?.value?.[0] || '');  // השוואת טקסט אחרי סיום ההקלטה
   };
 
   // השוואת הטקסט המדובר עם הפסקה הנוכחית
-  const handleLiveComparison = (spokenText) => {
+  const handleComparison = (spokenText) => {
     const paragraph = paragraphs[currentIndex];
     if (!paragraph) return;
 
     const originalWords = paragraph.trim().split(/\s+/);  // פיצול הפסקה למילים
     const spokenWords = spokenText.trim().split(/\s+/);  // פיצול הטקסט המדובר למילים
-    const index = spokenWords.length - 1;  // אינדקס המילה הנוכחית בהשוואה
 
-    if (!originalWords[index] || !spokenWords[index]) return;
-
-    // השוואת המילים והצגת התוצאה
     const result = originalWords.map((word, i) => ({
       word,
       match: spokenWords[i]?.toLowerCase() === word.toLowerCase(),
     }));
 
     setComparisonResult(result);  // עדכון התוצאה
-    setCurrentWordIndex(index);  // עדכון אינדקס המילה הנוכחית
-
-    if (result[index].match) {
-      if (index % 5 === 0) {
-        Speech.speak("כל הכבוד!", { language: 'he-IL' });  // חיזוק חיובי
-      }
-    } else {
-      Speech.speak("נסה שוב את המילה הזו", { language: 'he-IL' });  // חיזוק למילה לא נכונה
-    }
   };
+
+  // פונקציה להדפסת התוצאה של השוואת הקריאה
+  const renderComparison = () => comparisonResult && (
+    <Text style={styles.paragraph}>
+      {comparisonResult.map((item, index) => {
+        let style = { color: item.match ? 'black' : 'red' };  // צבע המילים
+        return <Text key={index} style={style}>{item.word + ' '}</Text>;
+      })}
+    </Text>
+  );
 
   // מעבר לפסקה הבאה
   const goToNextParagraph = () => {
@@ -150,35 +135,6 @@ export default function Story() {
       setComparisonResult(null);
       setSpokenText('');
     }
-  };
-
-  // פונקציה להדפסת התוצאה של השוואת הקריאה
-  const renderComparison = () => comparisonResult && (
-    <Text style={styles.paragraph}>
-      {comparisonResult.map((item, index) => {
-        let style = { color: item.match ? 'black' : 'red' };  // צבע המילים
-        if (index === currentWordIndex) {
-          style.backgroundColor = '#FFFF99';  // סימון המילה הנוכחית
-        }
-        return <Text key={index} style={style}>{item.word + ' '}</Text>;
-      })}
-    </Text>
-  );
-
-  // קביעת צבע בר ההתקדמות לפי אחוז התקדמות
-  const getProgressColor = () => {
-    const progress = (currentIndex + 1) / paragraphs.length;
-    if (progress < 0.34) return '#E74C3C';  // אדום
-    if (progress < 0.67) return '#F39C12';  // צהוב
-    return '#27AE60';  // ירוק
-  };
-
-  // קביעת האימוג'י להמרצה לפי אחוז ההתקדמות
-  const getEncouragementEmoji = () => {
-    const progress = (currentIndex + 1) / paragraphs.length;
-    if (progress < 0.34) return '🚀';  // התחלה
-    if (progress < 0.67) return '🌟';  // חצי הדרך
-    return '🏆';  // סיום
   };
 
   return (
@@ -209,26 +165,6 @@ export default function Story() {
                 <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
               </TouchableOpacity>
 
-              {/* בר התקדמות */}
-              {!loading && paragraphs.length > 0 && (
-                <View style={styles.progressContainer}>
-                  <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-                  <View style={styles.progressRow}>
-                    <Progress.Bar
-                      progress={(currentIndex + 1) / paragraphs.length}
-                      width={160}
-                      height={10}
-                      borderRadius={8}
-                      color={getProgressColor()}
-                      unfilledColor="#E0E0E0"
-                      borderWidth={0}
-                      animated={true}
-                    />
-                    <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-                  </View>
-                </View>
-              )}
-
               <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
                 <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
               </TouchableOpacity>
@@ -255,14 +191,8 @@ export default function Story() {
               style={styles.confetti}
             />
             <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
-            <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
-            <View style={styles.starsRow}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => setRating(star)}>
-                  <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Progress.Bar progress={rating / 10} width={200} />
+            <Button title="הערך את הסיפור" onPress={() => setRating(8)} />
             <Button title="סיים" onPress={() => setShowEndModal(false)} />
           </View>
         </View>
@@ -272,83 +202,14 @@ export default function Story() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#F8F8F8',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  paragraph: {
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 16,
-    flexWrap: 'wrap',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  image: {
-    width: '100%',
-    height: 250,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  navigation: {
-    marginTop: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  progressContainer: {
-    alignItems: 'center',
-  },
-  progressText: {
-    marginBottom: 4,
-    fontSize: 14,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  emoji: {
-    fontSize: 20,
-    marginLeft: 8,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalSubtitle: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  starsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  confetti: {
-    width: '100%',
-    height: '100%',
-  },
+  container: { flex: 1, padding: 10, justifyContent: 'center' },
+  paragraph: { fontSize: 18, marginVertical: 10, lineHeight: 25 },
+  image: { width: '100%', height: 200, marginBottom: 10 },
+  navigation: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
+  title: { fontSize: 24, fontWeight: 'bold', marginVertical: 10 },
+  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalContent: { width: 300, backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' },
+  modalTitle: { fontSize: 20, marginBottom: 20 },
+  confetti: { width: 200, height: 200 },
+  errorText: { color: 'red', textAlign: 'center' }
 });
