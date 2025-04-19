@@ -184,12 +184,12 @@ export default function Story() {
       <Modal visible={showEndModal} transparent={true} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <LottieView
+            {/* <LottieView
               source={require('../assets/animations/confetti.json')}
               autoPlay
               loop={false}
               style={styles.confetti}
-            />
+            /> */}
             <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
             <Progress.Bar progress={rating / 10} width={200} />
             <Button title="הערך את הסיפור" onPress={() => setRating(8)} />
