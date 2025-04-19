@@ -125,9 +125,9 @@ export default function UserProfile() {
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <TouchableOpacity onPress={pickImage} style={styles.profileImage}>
+        <TouchableOpacity onPress={pickImage} style={styles.profileImageContainer}>
           {userData.profileImage ? (
-              <Image source={{ uri: userData.profileImage }} /> ): (
+              <Image source={{ uri: userData.profileImage }} style={styles.profileImage} /> ): (
               <AntDesign name="plus" size={40} color="#65558F" />
           )}
         </TouchableOpacity> 
@@ -229,13 +229,20 @@ const styles = StyleSheet.create({
     padding: 20,
     direction: 'rtl',
   },
-  profileImage: {
+  profileImageContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
     marginBottom: 15,
     borderWidth: 2,
     borderColor: '#65558F',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
