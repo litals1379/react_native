@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,7 +24,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login'; 
+  const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login';
 
   const validate = () => {
     const newErrors = {};
@@ -23,13 +34,15 @@ export default function Login() {
     if (!username) {
       newErrors.username = 'שם משתמש הוא שדה חובה.';
     } else if (!usernameRegex.test(username)) {
-      newErrors.username = 'שם משתמש יכול להכיל רק אותיות ומספרים, בין 5 ל-15 תווים.';
+      newErrors.username =
+        'שם משתמש יכול להכיל רק אותיות ומספרים, בין 5 ל-15 תווים.';
     }
 
     if (!password) {
       newErrors.password = 'סיסמה היא שדה חובה.';
     } else if (!passwordRegex.test(password)) {
-      newErrors.password = 'סיסמה חייבת לכלול לפחות 1 אות גדולה, 1 אות קטנה ו-1 מספר, בין 6 ל-12 תווים.';
+      newErrors.password =
+        'סיסמה חייבת לכלול לפחות 1 אות גדולה, 1 אות קטנה ו-1 מספר, בין 6 ל-12 תווים.';
     }
 
     setErrors(newErrors);
@@ -50,20 +63,18 @@ export default function Login() {
       const data = await response.json();
 
       if (data.user) {
-        // חלץ את userId מהתגובה מה-API
         const userId = data.user.id;
-        router.push({ pathname: "(tabs)/userProfile" });
-        // router.push({ pathname: "(tabs)/userProfile", params: { userId: userId } });
-        // שמור את ה-userId ב-AsyncStorage אם צריך
-        //מצפין את ה-userId
-        // const encryptedUserId = btoa(userId.toString());
-        // await AsyncStorage.setItem('userId', encryptedUserId);
+        router.push({ pathname: '(tabs)/userProfile' });
         await AsyncStorage.setItem('userId', userId.toString());
+        await AsyncStorage.setItem('userName', username);
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
       }
     } catch (error) {
-      Alert.alert('שגיאה', 'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
+      Alert.alert(
+        'שגיאה',
+        'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.'
+      );
     } finally {
       setLoading(false);
     }
@@ -74,7 +85,10 @@ export default function Login() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>כניסה</Text>
 
         <View style={styles.form}>
@@ -88,7 +102,9 @@ export default function Login() {
               onChangeText={setUsername}
             />
           </View>
-          {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+          {errors.username && (
+            <Text style={styles.errorText}>{errors.username}</Text>
+          )}
 
           <Text style={styles.label}>סיסמה:</Text>
           <View style={styles.inputContainer}>
@@ -100,20 +116,46 @@ export default function Login() {
               value={password}
               onChangeText={setPassword}
             />
-            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-              <Ionicons name={passwordVisible ? 'eye-off' : 'eye'} size={24} color="#65558F" />
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+            >
+              <Ionicons
+                name={passwordVisible ? 'eye-off' : 'eye'}
+                size={24}
+                color="#65558F"
+              />
             </TouchableOpacity>
           </View>
-          {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
           <Text style={styles.buttonText}>התחבר</Text>
         </TouchableOpacity>
 
-        {loading && <ActivityIndicator size="large" color="#65558F" style={styles.loadingIndicator} />}
+        {loading && (
+          <ActivityIndicator
+            size="large"
+            color="#65558F"
+            style={styles.loadingIndicator}
+          />
+        )}
 
         <Text style={styles.helpText}>שכחתי סיסמה</Text>
+
+        {/* כפתור הרשמה */}
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>לא רשום?</Text>
+          <TouchableOpacity onPress={() => router.push('/register')}>
+            <Text style={styles.registerLink}>הרשם עכשיו</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -126,17 +168,17 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#F8F8F8',
     flexDirection: 'column',
-    direction: 'rtl', 
+    direction: 'rtl',
   },
   loadingIndicator: {
-    marginTop: 20, 
+    marginTop: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#65558F',
     marginBottom: 20,
-    textAlign: 'right', 
+    textAlign: 'right',
     writingDirection: 'rtl',
   },
   form: {
@@ -151,26 +193,25 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     width: '100%',
     height: 45,
     borderWidth: 1,
-    borderColor: '#ccc', 
+    borderColor: '#ccc',
     borderRadius: 8,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     paddingHorizontal: 10,
     marginBottom: 10,
-    flexDirection: 'row-reverse',
   },
   icon: {
-    marginLeft: 10, 
+    marginLeft: 10,
   },
   input: {
     flex: 1,
     textAlign: 'right',
     writingDirection: 'rtl',
-    fontSize: 16, 
+    fontSize: 16,
     color: '#333',
   },
   errorText: {
@@ -198,11 +239,31 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   },
   helpText: {
-    fontSize: 15, 
-    color: '#007bff', 
+    fontSize: 15,
+    color: '#007bff',
     textDecorationLine: 'underline',
     textAlign: 'center',
-    marginTop: 10, 
+    marginTop: 10,
+    writingDirection: 'rtl',
+  },
+  registerContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  registerText: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 6,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
+  registerLink: {
+    fontSize: 16,
+    color: '#007bff',
+    textDecorationLine: 'underline',
+    textAlign: 'right',
     writingDirection: 'rtl',
   },
 });

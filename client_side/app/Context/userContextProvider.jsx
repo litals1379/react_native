@@ -59,7 +59,7 @@ export const UserProvider = ({ children }) => {
         }
     };
 
-    // שליפה ראשונית
+// שליפת משתמשים מהשרת כשיש שינוי בסטייט
     useEffect(() => {
         fetchUsers();
     }, [users]);

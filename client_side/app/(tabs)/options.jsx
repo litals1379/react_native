@@ -1,44 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const router = useRouter();
 export default function Options() {
+  const router = useRouter();
+  const [userName, setUserName] = useState('');
+
+  // שליפת שם משתמש מה-AsyncStorage
+  useEffect(() => {
+    const getUserName = async () => {
+      const storedName = await AsyncStorage.getItem('userName');
+      setUserName(storedName);
+    };
+
+    getUserName();
+  }, []);
+
   return (
     <ScrollView style={{ flex: 1 }}>
-    <View style={styles.container}>
-      <View style={styles.header} />
+      <View style={styles.container}>
+        <View style={styles.header} />
+        <Text style={styles.title}>אפשרויות</Text>
 
-      <Text style={styles.title}>אפשרויות</Text>
+        <TouchableOpacity style={styles.optionButton}>
+          <Icon name="file-text" size={30} style={styles.optionIcon} />
+          <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
-        <Icon name="file-text" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={() => router.push('/addChild')}
+        >
+          <Icon name="user-plus" size={30} style={styles.optionIcon} />
+          <Text style={styles.optionText}>הוספת ילד</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/addChild'})}>
-        <Icon name="user-plus" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>הוספת ילד</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.optionButton}>
+          <Icon name="eye" size={30} style={styles.optionIcon} />
+          <Text style={styles.optionText}>צפיה בפרטים</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
-        <Icon name="eye" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>צפיה בפרטים</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.optionButton} onPress={() => router.push({ pathname: '/adminDashboard'})}>
-        <Icon name="admin" size={30} style={styles.optionIcon} />
-        <Text style={styles.optionText}>מסך מנהל</Text>
-      </TouchableOpacity>
-    </View>
+        {/* הצג את כפתור המנהל רק אם המשתמש הוא admin */}
+        {userName === 'admin' && (
+          <TouchableOpacity
+            style={styles.optionButton}
+            onPress={() => router.push('/adminDashboard')}
+          >
+            <Icon name="user-secret" size={30} style={styles.optionIcon} />
+            <Text style={styles.optionText}>מסך מנהל</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    direction: 'rtl',
+    direction: 'rtl', // RTL
     flex: 1,
     backgroundColor: '#f8f8f8',
     padding: 20,
@@ -59,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
-    flexDirection: 'row',
+    flexDirection: 'row-reverse', // RTL
     alignItems: 'center',
     elevation: 2, // Android shadow
     shadowColor: '#000', // iOS shadow
@@ -69,10 +90,12 @@ const styles = StyleSheet.create({
   },
   optionIcon: {
     marginLeft: 10,
-    color: '#65558F', // צבע האייקון
+    color: '#65558F',
   },
   optionText: {
     fontSize: 18,
-    color: '#65558F', // צבע הטקסט
+    color: '#65558F',
+    textAlign: 'right',
+    flex: 1,
   },
 });
