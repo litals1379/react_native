@@ -10,9 +10,8 @@ WebBrowser.maybeCompleteAuthSession();
 const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
 const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
 const IOS_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
-// const apiUrlRegister = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
-const apiUrlRegister = 'https://localhost:7209/api/User/register/';
-const apiUrlLogin = 'https://localhost:7209/api/User/login/GetUserByEmail/';
+const apiUrlRegister = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
+const apiUrlLogin = 'http://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/';
 //Platform.select בוחרת את הCLIENT_ID המתאים לפי הפלטפורמה
 // Android, iOS או Web. זה מאפשר לקוד לפעול בצורה חלקה על כל הפלטפורמות מבלי לשנות את הקוד בכל פעם.
 // זה חשוב כי כל פלטפורמה דורשת CLIENT_ID שונה כדי להתחבר לשירותים שלהן.
@@ -84,6 +83,10 @@ export default function GoogleAuthScreen() {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
+      if (!res.ok) {
+        console.error('❌ Failed to fetch user data:', res.statusText);
+        return;
+      }
       const data = await res.json();
       console.log('✅ User logged in:', data);
       if (data) {
