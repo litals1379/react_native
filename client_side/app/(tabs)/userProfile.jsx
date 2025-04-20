@@ -182,7 +182,7 @@ export default function UserProfile() {
         )}
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.updateButton}>
+          <TouchableOpacity style={styles.updateButton} onPress={() => router.push('/editUserDetails')}>
             <FontAwesome name="edit" size={16} color="white" />
             <Text style={styles.buttonText}> עדכון פרטים</Text>
           </TouchableOpacity>
