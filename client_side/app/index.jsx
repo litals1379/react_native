@@ -109,6 +109,9 @@ export default function HomeScreen() {
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/pn')}>
+            <Text style={styles.buttonText}>Push Notifications </Text>
+          </TouchableOpacity>
 
         </>
       )}

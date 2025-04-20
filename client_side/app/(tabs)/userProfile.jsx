@@ -142,26 +142,6 @@ export default function UserProfile() {
           <Text style={styles.email}>אימייל:{userData.email}</Text>
         </View>
 
-        {/*
-        {userData.parentDetails && userData.parentDetails.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>פרטי הורים:</Text>
-            {userData.parentDetails.map((parent, index) => (
-              <View key={index} style={styles.parentContainer}>
-                <View style={styles.parentInfoRow}>
-                  <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
-                  <Text>שם מלא:{parent.firstName} {parent.lastName}</Text>
-                </View>
-                <View style={styles.parentInfoRow}>
-                  <FontAwesome name="phone" size={20} color="gray" style={styles.icon} />
-                  <Text>טלפון: {parent.phoneNumber}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-        */}
-
         {userData.children && userData.children.length > 0 && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>ילדים:</Text>

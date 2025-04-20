@@ -14,7 +14,6 @@ export default function Options() {
       const storedName = await AsyncStorage.getItem('userName');
       setUserName(storedName);
     };
-
     getUserName();
   }, []);
 
@@ -41,7 +40,7 @@ export default function Options() {
           onPress={() => router.push('/editUserDetails')}
         >
           <Icon name="edit" size={30} style={styles.optionIcon} />
-          <Text style={styles.optionText}>עריכת בפרטים</Text>
+          <Text style={styles.optionText}>עריכת פרטים</Text>
         </TouchableOpacity>
 
         {/* הצג את כפתור המנהל רק אם המשתמש הוא admin */}

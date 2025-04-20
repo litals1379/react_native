@@ -24,7 +24,8 @@
       },
       "package": "com.litals1379.react_native",
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "RECORD_AUDIO",
+        "NOTIFICATIONS"
       ],
       "intentFilters": [
     {

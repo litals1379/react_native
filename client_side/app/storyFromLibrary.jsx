@@ -17,13 +17,17 @@ const StoryFromLibrary = () => {
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${storyId}`);
+        const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${storyId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+    
         const data = await response.json();
-
+    
         if (!response.ok) {
           throw new Error(`Server returned error: ${data.message || 'Unknown error'}`);
         }
-
+    
         setStory(data);
         setParagraphs(Object.values(data.paragraphs || {}));
         setImages(Object.values(data.imagesUrls || {}));
@@ -33,6 +37,7 @@ const StoryFromLibrary = () => {
         setLoading(false);
       }
     };
+    
 
     if (storyId) {
       fetchStory();
