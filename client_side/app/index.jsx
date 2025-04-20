@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View, Image, TouchableOpacity, Button } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Animated, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Audio, Video } from 'expo-av';
+
 export default function HomeScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -82,9 +83,7 @@ export default function HomeScreen() {
         </>
       ) : (
         <Animated.View style={styles.logoContainer}> 
-          <TouchableOpacity onPress={() => router.push('/home')}>
             <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-          </TouchableOpacity>
           {showStoryTime && <Text style={styles.storyTimeText}>Story Time</Text>} 
         </Animated.View>
       )}
@@ -108,6 +107,9 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.googleButton} onPress={() => router.push('/googleAuth')}>
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
             <Text style={styles.googleText}>המשך עם Google</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/pn')}>
+            <Text style={styles.buttonText}>Push Notifications </Text>
           </TouchableOpacity>
 
         </>

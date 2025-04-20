@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome'; // ייבוא אייקונים
 
 // קומפוננטה שמציגה משתמש בודד עם פרטי הורים, ילדים וכפתורי פעולה
 export default function UserCard({ user, onEdit, onDelete }) {
@@ -29,12 +30,12 @@ export default function UserCard({ user, onEdit, onDelete }) {
 
       {/* כפתורי פעולה */}
       <View style={styles.actions}>
-        <TouchableOpacity onPress={() => onEdit(user)} style={styles.editBtn}>
-          <Text style={styles.btnText}>ערוך</Text>
+        <TouchableOpacity onPress={() => onEdit(user)} style={styles.actionBtn}>
+          <Icon name="edit" size={20} color="blue" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => onDelete(user.id)} style={styles.deleteBtn}>
-          <Text style={styles.btnText}>מחק</Text>
+        <TouchableOpacity onPress={() => onDelete(user.id)} style={styles.actionBtn}>
+          <Icon name="trash" size={20} color="red" />
         </TouchableOpacity>
       </View>
     </View>
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 6,
+    color: '#65558F',
     textAlign: 'right',
   },
   section: {
@@ -66,24 +68,13 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   },
   actions: {
-    flexDirection: 'row-reverse', // RTL: כפתור שמור בצד ימין
+    flexDirection: 'row-reverse', // RTL: אייקונים בצד ימין
     marginTop: 10,
     justifyContent: 'flex-start',
     gap: 10,
   },
-  editBtn: {
-    backgroundColor: '#007bff',
+  actionBtn: {
     padding: 8,
     borderRadius: 6,
-    marginLeft: 5,
-  },
-  deleteBtn: {
-    backgroundColor: '#dc3545',
-    padding: 8,
-    borderRadius: 6,
-  },
-  btnText: {
-    color: '#fff',
-    textAlign: 'center',
   },
 });

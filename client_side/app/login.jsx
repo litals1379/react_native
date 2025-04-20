@@ -150,12 +150,9 @@ export default function Login() {
         <Text style={styles.helpText}>שכחתי סיסמה</Text>
 
         {/* כפתור הרשמה */}
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>לא רשום?</Text>
-          <TouchableOpacity onPress={() => router.push('/register')}>
-            <Text style={styles.registerLink}>הרשם עכשיו</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity onPress={() => router.push('/register')}>
+            <Text style={styles.registerText}>לא נרשמת? הירשם עכשיו</Text>
+        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -253,10 +250,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   registerText: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 6,
-    textAlign: 'right',
+    fontSize: 15,
+    color: '#007bff',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    marginTop: 10,
     writingDirection: 'rtl',
   },
   registerLink: {
