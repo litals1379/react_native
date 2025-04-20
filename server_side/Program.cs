@@ -4,7 +4,6 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using Server_Side.DAL;
 using Server_Side.BL;
-using Microsoft.Data.SqlClient;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
@@ -30,8 +29,9 @@ namespace Server_Side
                 new MongoClient(builder.Configuration.GetConnectionString("MongoDB")));
 
             // רישום SqlConnection כ-Scoped (נפתח חדש לכל בקשה)
-            builder.Services.AddScoped<SqlConnection>(sp =>
-                new SqlConnection(builder.Configuration.GetConnectionString("SqlServer")));
+            builder.Services.AddScoped<DBservices>(provider =>
+                new DBservices(builder.Configuration.GetConnectionString("SqlServer"))
+            );
 
 
             builder.Services.AddScoped<UserDBservices>();

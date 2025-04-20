@@ -1,26 +1,45 @@
-﻿//using Microsoft.Data.SqlClient;  
+﻿using System.Data.SqlClient;
+using System;
+using System.Collections.Generic; // Add this for List<string>
 
-//public class UserDBservices
-//{
-//    private readonly SqlConnection _sqlConnection;
+public class DBservices
+{
+    private readonly SqlConnection _msSqlConnection;
 
-//    //public UserDBservices(SqlConnection sqlConnection)
-//    //{
-//    //    _sqlConnection = sqlConnection;
-//    //}
+    // קונסטרוקטור המתחבר למסד הנתונים
+    public DBservices(string connectionString)
+    {
+        _msSqlConnection = new SqlConnection(connectionString);
+    }
 
-//    public void SomeSqlMethod()
-//    {
-//        _sqlConnection.Open();
-//        // כאן תבצעי שאילתות SQL, לדוגמה:
-//        SqlCommand cmd = new SqlCommand("SELECT * FROM Users", _sqlConnection);
-//        var reader = cmd.ExecuteReader();
+    public List<string> GetRandomWords()
+    {
+        List<string> words = new List<string>();
+        try
+        {
+            _msSqlConnection.Open();
 
-//        while (reader.Read())
-//        {
-//            Console.WriteLine(reader["UserName"]);  // כאן תבצעי פעולה עם הנתונים
-//        }
+            // קריאה ל- Stored Procedure GetRandomWords
+            SqlCommand cmd = new SqlCommand("EXEC GetRandomWords", _msSqlConnection);
+            SqlDataReader reader = cmd.ExecuteReader(); // Use SqlDataReader
 
-//        _sqlConnection.Close();
-//    }
-//}
+            // איסוף המילים שנשלפו
+            while (reader.Read())
+            {
+                words.Add(reader["word"].ToString());
+            }
+
+            reader.Close(); // explicitly close the reader
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"שגיאה: {ex.Message}");
+            return new List<string>();
+        }
+        finally
+        {
+            _msSqlConnection.Close();
+        }
+        return words;
+    }
+}
