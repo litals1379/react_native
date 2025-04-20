@@ -10,11 +10,13 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+  
 
 export default function Login() {
   const router = useRouter();
@@ -146,6 +148,10 @@ export default function Login() {
             style={styles.loadingIndicator}
           />
         )}
+         <TouchableOpacity style={styles.googleButton} onPress={() => router.push('/googleAuth')}>
+            <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
+            <Text style={styles.googleText}>המשך עם Google</Text>
+          </TouchableOpacity>
 
         <Text style={styles.helpText}>שכחתי סיסמה</Text>
 
@@ -263,5 +269,30 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textAlign: 'right',
     writingDirection: 'rtl',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#AAA',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginTop: 10,
+  },
+  googleIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  googleText: {
+    fontSize: 16,
+    color: '#555',
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
 });
