@@ -55,7 +55,9 @@ export default function Register() {
   const validate = () => {
     const newErrors = {};
 
-    const nameRegex = /^[א-ת]{1,30}$/;
+    // change regex to match hebrew and english letters only
+    // const nameRegex = /^[א-ת]{1,30}$/;
+    const nameRegex = /^[a-zA-Zא-ת]{1,30}$/; // English and Hebrew letters only
     const phoneRegex = /^[0-9]{10}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
     const usernameRegex = /^[a-zA-Z0-9]{5,15}$/;
@@ -137,6 +139,7 @@ export default function Register() {
         if (expoPushToken) {
           PushNotifications.sendPushNotification(expoPushToken);
         }
+        await AsyncStorage.setItem('userEmail', email);
         router.push('./addChild');
       } else {
         console.error('Registration failed');

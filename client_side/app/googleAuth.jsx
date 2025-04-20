@@ -85,7 +85,8 @@ export default function GoogleAuthScreen() {
         headers: { 'Content-Type': 'application/json' },
       });
       if (!res.ok) {
-        console.error('❌ Failed to fetch user data:', res.statusText);
+        console.log('❌ Failed to fetch user data:', res.statusText);
+        await registerUser(userData);
         return;
       }
       const data = await res.json();
@@ -105,16 +106,17 @@ export default function GoogleAuthScreen() {
     }
   };
 
-  const registerUser = async () => {
+  const registerUser = async (userData) => {
     try {
       const res = await fetch(apiUrlRegister, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userInfo),
+        body: JSON.stringify(userData),
       });
       const data = await res.json();
       console.log('✅ User registered:', data);
-      router.push(pathname = '/addChild'); // Redirect to home after successful registration
+      await AsyncStorage.setItem('userEmail', userData.email);
+      router.push('/addChild'); // Redirect to home after successful registration
     } catch (err) {
       console.error('❌ Registration error:', err);
     }
@@ -128,7 +130,7 @@ export default function GoogleAuthScreen() {
       const user = await res.json();
       console.log('👤 Web User Info:', user);
       const userData = {
-        parentsDetails:[{
+        parentDetails:[{
           firstName: user.given_name,
           lastName: user.family_name
         }],
@@ -150,10 +152,16 @@ export default function GoogleAuthScreen() {
       const result = await GoogleSignin.signIn();
 
       if (result.data.user) {
+        console.log('👤 Native User Info:', result.data.user);
         const userData = {
-          parentsDetails:[{
+          username: result.data.user.email.split('@')[0],
+          // add special characters to the password uppercase, lowercase, numbers and special characters
+          password: Math.random().toString(36).slice(-8),
+          parentDetails:[{
             firstName: result.data.user.givenName,
-            lastName: result.data.user.familyName}],
+            lastName: result.data.user.familyName,
+            phoneNumber: (Math.floor(Math.random() * 1000000000) + 1000000000).toString(),
+          }],
           email: result.data.user.email,
           profileImage: result.data.user.photo,
         };

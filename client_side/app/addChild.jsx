@@ -20,7 +20,9 @@ export default function AddChild() {
             birthDate: birthDate.toISOString(),  // מוודא שהתאריך יהיה בתצורה נכונה
             readingLevel: readingLevel,  // רמת קריאה
         };
+        console.log('Child data:', childData);  // מדפיס את המידע של הילד לקונסולה
         const userEmail = await AsyncStorage.getItem('userEmail');  // משיג את האימייל של המשתמש
+        console.log('User email:', userEmail);  // מדפיס את האימייל של המשתמש לקונסולה
         const response = await fetch(addChildApiUrl + userEmail, {
             method: 'PUT',
             headers: {
