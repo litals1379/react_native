@@ -23,10 +23,10 @@ export default function Options() {
         <View style={styles.header} />
         <Text style={styles.title}>אפשרויות</Text>
 
-        <TouchableOpacity style={styles.optionButton}>
+        {/* <TouchableOpacity style={styles.optionButton}>
           <Icon name="file-text" size={30} style={styles.optionIcon} />
           <Text style={styles.optionText}>הפקת דוחות קריאה</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           style={styles.optionButton}
@@ -42,6 +42,15 @@ export default function Options() {
           <Icon name="edit" size={30} style={styles.optionIcon} />
           <Text style={styles.optionText}>עריכת פרטים</Text>
         </TouchableOpacity>
+          
+        <TouchableOpacity style={styles.optionButton}
+          onPress={() => router.push('/quiz')}
+        >
+          {/*אייקון של חידון */ }
+          <Icon name="question-circle" size={30} style={styles.optionIcon} />
+          <Text style={styles.optionText}>שאלון</Text>
+        </TouchableOpacity>
+
 
         {/* הצג את כפתור המנהל רק אם המשתמש הוא admin */}
         {userName === 'admin' && (
