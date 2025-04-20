@@ -4,6 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -93,14 +94,14 @@ export default function GoogleAuthScreen() {
         const userId = data.id;
         router.push({ pathname: '/userProfile' }); // Redirect to home after successful login
         await AsyncStorage.setItem('userId', userId.toString());
-        await AsyncStorage.setItem('userName', userInfo.name);
+        // await AsyncStorage.setItem('userName', userInfo.name);
       } else {
         console.warn('⚠️ User not found, registering...');
         
       } 
     } catch (err) {
       console.error('❌ Login error:', err);
-      // await registerUser(); // Register the user if login fails
+      await registerUser(userData); // Register the user if login fails
     }
   };
 
@@ -158,7 +159,7 @@ export default function GoogleAuthScreen() {
         };
         console.log('✅ Native Sign-In:', userData);
         Alert.alert('התחברות הצליחה', `שלום, ${result.data.user.name}`);
-        setUserInfo(userData);
+        loginUser(userData); // Call loginUser after fetching user info
       } else {
         console.warn('⚠️ Native sign-in cancelled or failed');
         Alert.alert('שגיאה', ' אנא נסה שוב.');

@@ -8,6 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "owner": "storytime_proj",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lital.storytime",
@@ -25,18 +26,22 @@
       "package": "com.litals1379.react_native",
       "permissions": [
         "RECORD_AUDIO",
-        "NOTIFICATIONS"
+        "NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
       ],
       "intentFilters": [
-    {
-      "action": "VIEW",
-      "data": {
-        "scheme": "myapp",
-        "host": "redirect"
-      },
-      "category": ["BROWSABLE", "DEFAULT"]
-    }
-  ]
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "myapp",
+            "host": "redirect"
+          },
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -74,9 +79,8 @@
         "origin": false
       },
       "eas": {
-        "projectId": "61b45e63-fd1a-4a05-ae58-8129fe0ad176"
+        "projectId": "a9d4da10-700c-43f1-87cf-d14b8bb74dc9"
       }
-    },
-    "owner": "litals1379"
+    }
   }
 }
