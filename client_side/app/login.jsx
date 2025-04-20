@@ -154,8 +154,6 @@ export default function Login() {
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
 
-        <Text style={styles.helpText}>שכחתי סיסמה</Text>
-
         {/* כפתור הרשמה */}
         <TouchableOpacity onPress={() => router.push('/register')}>
             <Text style={styles.registerText}>לא נרשמת? הירשם עכשיו</Text>
