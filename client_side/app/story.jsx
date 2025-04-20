@@ -4,9 +4,10 @@ import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';  // מודול להפעלת דיבור
-import Icon from 'react-native-vector-icons/MaterialIcons';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';  // מודול לתצוגת בר התקדמות
-
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent} from "expo-speech-recognition";
 
 export default function Story() {
   const { childID, topic } = useLocalSearchParams();  // קבלת מזהה הילד והנושא מתוך הכתובת של הדף
@@ -20,6 +21,10 @@ export default function Story() {
   const [error, setError] = useState(null);  // מצב שגיאה
   const [rating, setRating] = useState(0);  // דירוג הסיפור
   const [showEndModal, setShowEndModal] = useState(false);  // מצב להצגת מודל סיום הסיפור
+
+  // adding speech recognition
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
 
 
   // פונקציה להבאת הסיפור מהשרת
@@ -105,6 +110,49 @@ export default function Story() {
     return '🏆';  // סיום
   };
 
+  // speech recognition functions
+  useEffect(() => {
+    // Request permissions when component mounts
+    ExpoSpeechRecognitionModule.requestPermissionsAsync();
+
+    // Register result event listener
+    const resultListener = ExpoSpeechRecognitionModule.addListener(
+      "result",
+      (event) => {
+        console.log("Results:", event.results);
+        const latestResult = event.results[0]?.transcript || "";
+        setTranscript(latestResult);
+      }
+    );
+
+    // Clean up listener when component unmounts
+    return () => {
+      resultListener.remove();
+    };
+  }, []);
+
+  const startListening = () => {
+    setTranscript(""); // Clear previous result
+    ExpoSpeechRecognitionModule.start({
+      lang: "he-IL",
+      interimResults: true,
+      continuous: true,
+    });
+    setIsListening(true);
+  };
+
+  const stopListening = () => {
+    ExpoSpeechRecognitionModule.stop();
+    setIsListening(false);
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -120,17 +168,10 @@ export default function Story() {
             )}
             <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
 
-
-            <View style={{ flexDirection: 'row', gap: 16 }}>
-              <TouchableOpacity onPress={speakStory}><Icon name="volume-up" size={30} color="#2980B9" /></TouchableOpacity>
-              <TouchableOpacity onPress={stopStory}><Icon name="stop" size={30} color="#C0392B" /></TouchableOpacity>
-            </View>
-
-
             {/* ניווט לפסקאות */}
             <View style={styles.navigation}>
-              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                <Icon name="arrow-back" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+              <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
               </TouchableOpacity>
 
 
@@ -148,6 +189,7 @@ export default function Story() {
                       unfilledColor="#E0E0E0"
                       borderWidth={0}
                       animated={true}
+                      style={{ transform: [{ scaleX: -1 }] }}
                     />
                     <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
                   </View>
@@ -155,11 +197,29 @@ export default function Story() {
               )}
 
 
-              <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                <Icon name="arrow-forward" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
               </TouchableOpacity>
             </View>
 
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
+              <TouchableOpacity onPress={speakStory}>
+                <Icon name="volume-up" size={30} color="#2980B9" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={stopStory}>
+                <Icon name="stop" size={30} color="#C0392B" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, isListening && styles.buttonListening]}
+                onPress={toggleListening}
+              >
+                {isListening ? (
+                  <Icon name="stop" size={30} color="#C0392B" />
+                ) : (
+                  <Icon name="microphone" size={30} color="#2980B9" />
+                )}
+              </TouchableOpacity>
+            </View>
 
             {/* כפתור סיום הסיפור */}
             {currentIndex === paragraphs.length - 1 && (
@@ -185,7 +245,7 @@ export default function Story() {
                 </TouchableOpacity>
               ))}
             </View>
-            <Button title="סיים" onPress={() => setShowEndModal(false)} />
+            <Button style={styles.endButton} title="סיים" onPress={() => setShowEndModal(false)} />
           </View>
         </View>
       </Modal>
@@ -206,6 +266,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   paragraph: {
+    textAlign: 'right',
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 16,
@@ -275,13 +336,15 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   endButton: {
+    width: '80%',
+    alignSelf: 'center',
     backgroundColor: '#B3E7F2',
     borderWidth: 1,
     borderColor: '#65558F',
     borderRadius: 10,
     paddingVertical: 10,
-    paddingHorizontal: 30,
-    marginVertical: 10,
+    paddingHorizontal: 10,
+    marginVertical: 20,
   },
   endButtonText: {
     fontSize: 18,
@@ -291,6 +354,3 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   }
 });
-
-
-

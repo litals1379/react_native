@@ -1,13 +1,15 @@
 import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
-import Icon from 'react-native-vector-icons/FontAwesome'; // שימוש באייקונים מ־FontAwesome
+import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
+import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
 
 const StoryFromLibrary = () => {
   const { storyId } = useLocalSearchParams();
 
+  // State Hooks
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
   const [images, setImages] = useState([]);
@@ -15,7 +17,10 @@ const StoryFromLibrary = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
 
+  // Data Fetch
   useEffect(() => {
     const fetchStory = async () => {
       try {
@@ -45,6 +50,22 @@ const StoryFromLibrary = () => {
     }
   }, [storyId]);
 
+  // Speech Recognition setup
+  useEffect(() => {
+    ExpoSpeechRecognitionModule.requestPermissionsAsync();
+
+    const resultListener = ExpoSpeechRecognitionModule.addListener("result", (event) => {
+      console.log("Results:", event.results);
+      const latestResult = event.results[0]?.transcript || "";
+      setTranscript(latestResult);
+    });
+
+    return () => {
+      resultListener.remove();
+    };
+  }, []);
+
+  // Navigation Functions
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -57,6 +78,7 @@ const StoryFromLibrary = () => {
     }
   };
 
+  // UI Utility Functions
   const getProgressColor = () => {
     const progress = (currentIndex + 1) / paragraphs.length;
     if (progress < 0.34) return '#E74C3C';
@@ -71,6 +93,7 @@ const StoryFromLibrary = () => {
     return '🏆';
   };
 
+  // Text-to-Speech Functions
   const speakStory = () => {
     if (paragraphs[currentIndex]) {
       Speech.speak(paragraphs[currentIndex], { language: 'he-IL' });
@@ -83,6 +106,27 @@ const StoryFromLibrary = () => {
     setIsSpeaking(false);
   };
 
+  // Speech Recognition Functions
+  const startListening = () => {
+    setTranscript("");
+    ExpoSpeechRecognitionModule.start({
+      lang: "he-IL",
+      interimResults: true,
+      continuous: true,
+    });
+    setIsListening(true);
+  };
+
+  const stopListening = () => {
+    ExpoSpeechRecognitionModule.stop();
+    setIsListening(false);
+  };
+
+  const toggleListening = () => {
+    isListening ? stopListening() : startListening();
+  };
+
+  // Render Section
   if (loading) {
     return (
       <View style={styles.container}>
@@ -98,20 +142,17 @@ const StoryFromLibrary = () => {
       ) : (
         <>
           {images[currentIndex] && (
-            <Image
-              source={{ uri: images[currentIndex] }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+            <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
           )}
+
           {paragraphs[currentIndex] && (
             <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
           )}
 
-          {/* ניווט עם חצים + בר התקדמות */}
+          {/* Navigation */}
           <View style={styles.navigation}>
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-              <Icon name="arrow-left" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+              <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
 
             <View style={styles.progressContainer}>
@@ -125,25 +166,35 @@ const StoryFromLibrary = () => {
                   color={getProgressColor()}
                   unfilledColor="#E0E0E0"
                   borderWidth={0}
-                  animated={true}
+                  animated
                   style={{ transform: [{ scaleX: -1 }] }}
                 />
                 <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
               </View>
             </View>
 
-            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-right" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+              <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
           </View>
 
-          {/* כפתורי שליטה על הקריאה */}
+          {/* Controls */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
             <TouchableOpacity onPress={speakStory}>
               <Icon name="volume-up" size={30} color="#2980B9" />
             </TouchableOpacity>
             <TouchableOpacity onPress={stopStory}>
               <Icon name="stop" size={30} color="#C0392B" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, isListening && styles.buttonListening]}
+              onPress={toggleListening}
+            >
+              {isListening ? (
+                <Icon name="stop" size={30} color="#C0392B" />
+              ) : (
+                <Icon name="microphone" size={30} color="#2980B9" />
+              )}
             </TouchableOpacity>
           </View>
         </>
@@ -152,6 +203,7 @@ const StoryFromLibrary = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

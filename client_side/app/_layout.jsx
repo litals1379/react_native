@@ -3,7 +3,6 @@ import { Stack, useRouter } from "expo-router";
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons, } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { ChildProvider } from './childContext';
 import { UserProvider } from './Context/userContextProvider'; // Assuming you have a context provider for user data
 const colorsList = [
   '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', '#E6E6FA', '#87CEEB', '#FFFFFF',
