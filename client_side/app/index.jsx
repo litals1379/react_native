@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View, Image, TouchableOpacity, Button } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Animated, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Audio, Video } from 'expo-av';
+
 export default function HomeScreen() {
   const router = useRouter();
   const fadeAnim = useRef(new Animated.Value(0)).current;
