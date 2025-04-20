@@ -18,8 +18,19 @@ export default function App() {
         console.log('הרשאה לא ניתנה');
       }
     };
-
+  
+    // קריאה לפונקציה
     getPushToken();
+  
+    // ✅ האזנה להודעות נכנסות
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log('📩 התקבלה הודעת פוש:', notification);
+      setNotification(notification);
+    });
+  
+    return () => {
+      subscription.remove(); // מנקה את ההאזנה ביציאה מהמסך
+    };
   }, []);
 
   const sendPushNotification = async (expoPushToken) => {
