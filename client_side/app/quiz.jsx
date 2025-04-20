@@ -31,7 +31,7 @@ export default function Quiz() {
         const randomIndex = Math.floor(Math.random() * selectedWords.length);
         const wordToSpeak = selectedWords[randomIndex];
         setSpokenWord(wordToSpeak);
-        Speech.speak(wordToSpeak);
+        Speech.speak(wordToSpeak, { language: 'he-IL' });
       })
       .catch((err) => {
         console.error(err);
@@ -66,7 +66,8 @@ export default function Quiz() {
   
   const repeatWord = () => {
     if (spokenWord) {
-      Speech.speak(spokenWord);
+      console.log('Repeating word:', spokenWord);
+      Speech.speak(spokenWord, { language: 'he-IL' });
     }
   };
 
