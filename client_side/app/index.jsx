@@ -82,9 +82,7 @@ export default function HomeScreen() {
         </>
       ) : (
         <Animated.View style={styles.logoContainer}> 
-          <TouchableOpacity onPress={() => router.push('/home')}>
             <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-          </TouchableOpacity>
           {showStoryTime && <Text style={styles.storyTimeText}>Story Time</Text>} 
         </Animated.View>
       )}
