@@ -70,4 +70,11 @@ export const styles = StyleSheet.create({
     left: 10,
     top: 10,
   },
+  backButton:{
+    position: 'absolute',
+    left: 15,
+    bottom: 10,
+    padding: 5,
+    zIndex: 1,
+  }
 });
