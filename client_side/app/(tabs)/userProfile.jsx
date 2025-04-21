@@ -1,20 +1,15 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { FontAwesome, AntDesign } from '@expo/vector-icons';
-import { useLocalSearchParams , useRouter  } from 'expo-router';
+import { useRouter  } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
   const [imageUri, setImageUri] = useState(null);
-  // const params = useLocalSearchParams();
-  // const { userId } = params;
   const router = useRouter();
-  // console.log(params);
 
-  // הגדרת ה-API URL בצורה דינמית
-  // const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
   const uploadApiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage`; 
   const getUserId = async () => {
     try {

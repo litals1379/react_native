@@ -10,6 +10,7 @@ import * as Progress from 'react-native-progress';  // מודול לתצוגת �
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent} from "expo-speech-recognition";
 
 export default function Story() {
+  
   const { childID, topic } = useLocalSearchParams();  // קבלת מזהה הילד והנושא מתוך הכתובת של הדף
 
 
