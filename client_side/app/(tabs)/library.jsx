@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import {styles} from './tabsStyle/library'; // סגנונות
@@ -48,6 +48,9 @@ export default function Library() {
     if (child && child.id && books.length === 0) {
       console.log('Child object:', child);
       fetchBooksReadByChild(child.id);
+    }
+    else{
+      Alert.alert("לא נבחר ילד"); // אם לא נבחר ילד
     }
   }, [child, books]);
 
