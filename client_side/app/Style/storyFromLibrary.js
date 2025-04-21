@@ -45,4 +45,21 @@ export const styles = StyleSheet.create({
       fontSize: 20,
       marginLeft: 8,
     },
+    endButton: {
+      backgroundColor: '#B3E7F2',
+      borderWidth: 1,
+      borderColor: '#65558F',
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 30,
+      marginVertical: 10,
+    },
+    endButtonText: {
+      fontSize: 18,
+      color: '#65558F',
+      fontWeight: 'bold',
+      textAlign: 'center',
+      writingDirection: 'rtl',
+    },
+    
   });

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
@@ -8,8 +8,8 @@ import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
 import {styles} from './Style/storyFromLibrary'; // Assuming you have a styles file for this component
 
 const StoryFromLibrary = () => {
+  const router = useRouter();
   const { storyId } = useLocalSearchParams();
-
   // State Hooks
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
@@ -180,24 +180,36 @@ const StoryFromLibrary = () => {
           </View>
   
           {/* Controls */}
-          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
-            <TouchableOpacity onPress={speakStory}>
-              <Icon name="volume-up" size={30} color="#2980B9" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={stopStory}>
-              <Icon name="stop" size={30} color="#C0392B" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, isListening && styles.buttonListening]}
-              onPress={toggleListening}
-            >
-              {isListening ? (
-                <Icon name="stop" size={30} color="#C0392B" />
-              ) : (
-                <Icon name="microphone" size={30} color="#2980B9" />
-              )}
-            </TouchableOpacity>
-          </View>
+<View style={{ alignItems: 'center', marginTop: 20 }}>
+  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
+    <TouchableOpacity onPress={speakStory}>
+      <Icon name="volume-up" size={30} color="#2980B9" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress={stopStory}>
+      <Icon name="stop" size={30} color="#C0392B" />
+    </TouchableOpacity>
+    <TouchableOpacity
+      style={[styles.button, isListening && styles.buttonListening]}
+      onPress={toggleListening}
+    >
+      {isListening ? (
+        <Icon name="stop" size={30} color="#C0392B" />
+      ) : (
+        <Icon name="microphone" size={30} color="#2980B9" />
+      )}
+    </TouchableOpacity>
+  </View>
+
+  {currentIndex === paragraphs.length - 1 && (
+    <TouchableOpacity
+      onPress={() => router.push('/userProfile')}
+      style={[styles.endButton, { marginTop: 20 }]}
+    >
+      <Text style={styles.endButtonText}>סיים את הסיפור</Text>
+    </TouchableOpacity>
+  )}
+</View>
+
         </ScrollView>
       )}
     </View>

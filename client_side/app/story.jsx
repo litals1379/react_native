@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image, Modal, Bu
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';  // מודול להפעלת דיבור
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -11,10 +12,8 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent} from "expo-spee
 import {styles} from './Style/story';  // קובץ סגנונות מותאם אישית
 
 export default function Story() {
-  
+  const router = useRouter();
   const { childID, topic } = useLocalSearchParams();  // קבלת מזהה הילד והנושא מתוך הכתובת של הדף
-
-
   // הגדרת מצב (state) לאחסון נתונים שונים
   const [paragraphs, setParagraphs] = useState([]);  // אחסון הפסקאות של הסיפור
   const [images, setImages] = useState([]);  // אחסון תמונות הקשורות לפסקאות
@@ -247,7 +246,11 @@ export default function Story() {
                 </TouchableOpacity>
               ))}
             </View>
-            <Button style={styles.endButton} title="סיים" onPress={() => setShowEndModal(false)} />
+            <Button title="סיים" onPress={() => {
+              setShowEndModal(false);
+              router.push('/userProfile');
+            }} />
+
           </View>
         </View>
       </Modal>
