@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
       elevation: 2,
     },
     bookImage: {
-      width: 60,
+      width: 90,
       height: 90,
       resizeMode: 'cover',
       borderRadius: 5,
