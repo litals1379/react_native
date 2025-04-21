@@ -34,7 +34,7 @@ export default function AddChild() {
 
         if (response.ok) {
             console.log('Child added:', childData);
-            router.push('/login');  // מעביר לעמוד הבא אם ההוספה הצליחה
+            router.push('/(tabs)/userProfile');  // מעביר לעמוד הבא אם ההוספה הצליחה
         } else {
             console.error("Failed to add child");
         }

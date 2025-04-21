@@ -4,50 +4,9 @@ import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity
 import { Ionicons, } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { UserProvider } from './Context/userContextProvider'; // Assuming you have a context provider for user data
+import CustomHeader from './Components/customHeader';
 import {styles} from './Style/layout'
-const colorsList = [
-  '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0', '#E6E6FA', '#87CEEB', '#FFFFFF',
-];
 
-const CustomHeader = ({ showPicker, setShowPicker, setSelectedColor, selectedColor }) => {
-  const router = useRouter();
-
-  return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: selectedColor }]}>
-      <View style={[styles.header, { backgroundColor: selectedColor }]}>
-        <View style={styles.logoContainer}>
-          <Image source={require('../assets/images/logo.png')} style={styles.logo} />
-          <Text style={styles.storyText}>Story Time</Text>
-        </View>
-
-        <TouchableOpacity
-          style={[styles.colorButton, { backgroundColor: selectedColor }]}
-          onPress={() => setShowPicker(!showPicker)}
-        >
-          <Text style={styles.colorButtonText}>🎨</Text>
-        </TouchableOpacity>
-
-        {showPicker && (
-          <FlatList
-            data={colorsList}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[styles.colorOption, { backgroundColor: item }]}
-                onPress={() => {
-                  setSelectedColor(item);
-                  setShowPicker(false);
-                }}
-              />
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            contentContainerStyle={styles.colorsList}
-          />
-        )}
-      </View>
-    </SafeAreaView>
-  );
-};
 
 export default function RootLayout() {
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
@@ -77,7 +36,7 @@ export default function RootLayout() {
             <Stack.Screen name="login" /> 
             <Stack.Screen name="subjects" />
             <Stack.Screen name="googleAuth" /> 
-            <Stack.Screen name="editUserDetails" options={{ headerShown: false }} />
+            <Stack.Screen name="editUserDetails" />
        </Stack>
      </View>
     </UserProvider>

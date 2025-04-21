@@ -96,6 +96,7 @@ export default function GoogleAuthScreen() {
         const userId = data.id;
         router.push({ pathname: '/userProfile' }); // Redirect to home after successful login
         await AsyncStorage.setItem('userId', userId.toString());
+        await AsyncStorage.setItem('userEmail', userData.email);
         // await AsyncStorage.setItem('userName', userInfo.name);
       } else {
         console.warn('⚠️ User not found, registering...');
