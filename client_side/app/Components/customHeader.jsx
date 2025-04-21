@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from '../Style/layout'; 
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';  // ייבוא של useRouter
 
 const colorsList = [
   '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0',
@@ -9,14 +10,27 @@ const colorsList = [
 ];
 
 export default function CustomHeader({ showPicker, setShowPicker, selectedColor, setSelectedColor }) {
+  const router = useRouter();  // יצירת משתנה router
+
+  // פונקציה לחזרה לדף הקודם
+  const handleBackPress = () => {
+    router.back();  // חוזר לדף הקודם
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: selectedColor }]}>
       <View style={[styles.header, { backgroundColor: selectedColor }]}>
+        {/* כפתור חזור */}
+        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
+        </TouchableOpacity>
+
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
           <Text style={styles.storyText}>Story Time</Text>
         </View>
 
+        {/* כפתור לבחור צבע */}
         <TouchableOpacity
           style={[styles.colorButton, { backgroundColor: selectedColor }]}
           onPress={() => setShowPicker(prev => !prev)}
@@ -24,6 +38,7 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
           <Text style={styles.colorButtonText}>🎨</Text>
         </TouchableOpacity>
 
+        {/* אפשרויות בחירת צבע */}
         {showPicker && (
           <FlatList
             data={colorsList}
@@ -42,11 +57,6 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
           />
         )}
       </View>
-        {/* add an arrow for back to my last page but not yo all of them*/ }
-        <TouchableOpacity style={styles.backButton} >
-          
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
     </SafeAreaView>
   );
 }
