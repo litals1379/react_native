@@ -45,14 +45,14 @@ export default function Library() {
   };
 
   useEffect(() => {
-    if (child && child.id && books.length === 0) {
-      console.log('Child object:', child);
-      fetchBooksReadByChild(child.id);
+    if (params.child) {
+      const parsedChild = JSON.parse(params.child);
+      console.log('Child object:', parsedChild);
+      fetchBooksReadByChild(parsedChild.id);
+    } else {
+      Alert.alert("לא נבחר ילד");
     }
-    else{
-      Alert.alert("לא נבחר ילד"); // אם לא נבחר ילד
-    }
-  }, [child, books]);
+  }, [params.child]);
 
   return (
     <View style={styles.container}>
