@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { StyleSheet } from 'react-native';
+import {styles} from './tabsStyle/layout'; // Assuming you have a styles file for this component
 
 export default function TabsLayout() {
   return (
@@ -39,10 +40,4 @@ export default function TabsLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-  },
-});
+

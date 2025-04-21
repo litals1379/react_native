@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { UserContext } from './Context/userContextProvider'; // קונטקסט לניהול רשימת המשתמשים
 import UserCard from './Components/userCard'; // קומפוננטה להצגת משתמש בודד
 import EditUserModal from './Components/editUserModal'; // קומפוננטה לעריכת משתמש
+import { styles } from './Style/adminDashboard'; // סגנונות
 
 export default function AdminDashboard() {
   const { users, DeleteUser, EditUser } = useContext(UserContext); // שליפת הפונקציות והנתונים מה-Context
@@ -53,17 +54,3 @@ export default function AdminDashboard() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 12,
-    color: '#65558F',
-  },
-});
