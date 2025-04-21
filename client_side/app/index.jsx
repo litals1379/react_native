@@ -105,9 +105,7 @@ export default function HomeScreen() {
         body: JSON.stringify(userData),
       });
       console.log('🔑 Registration response:', res);
-      // await AsyncStorage.setItem('userEmail', userData.email);
       loginUser(userData);
-      // router.push('/(tabs)/userProfile');
     } catch (err) {
       console.error('❌ Registration error:', err);
     }

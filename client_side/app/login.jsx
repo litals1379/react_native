@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,6 +17,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from './Style/login'; // Assuming you have a styles file for this component
+import * as AuthSession from 'expo-auth-session';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import * as WebBrowser from 'expo-web-browser';
   
 
 export default function Login() {
@@ -28,6 +31,143 @@ export default function Login() {
   const [errors, setErrors] = useState({});
 
   const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login';
+
+  const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
+  const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
+  const IOS_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
+  const apiUrlRegister = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
+  const apiUrlLogin = 'http://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/';
+
+  const CLIENT_ID = Platform.select({
+    ios: IOS_CLIENT_ID,
+    android: ANDROID_CLIENT_ID,
+    web: WEB_CLIENT_ID,
+  });
+
+  const isWeb = Platform.OS === 'web';
+
+  const REDIRECT_URI = AuthSession.makeRedirectUri({ useProxy: isWeb });
+
+  const discovery = {
+    authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+    tokenEndpoint: 'https://oauth2.googleapis.com/token',
+    revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+  };
+
+  const [request, response, promptAsync] = AuthSession.useAuthRequest({
+    clientId: CLIENT_ID,
+    redirectUri: REDIRECT_URI,
+    scopes: ['openid', 'profile', 'email'],
+    responseType: 'token',
+    usePKCE: false,
+  }, discovery);
+
+  useEffect(() => {
+    if (!isWeb) {
+      GoogleSignin.configure({
+        webClientId: WEB_CLIENT_ID,
+        offlineAccess: true,
+        scopes: ['email', 'profile', 'openid'],
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isWeb && response?.type === 'success') {
+      const token = response.params.access_token;
+      fetchUserInfo(token);
+    }
+  }, [response]);
+
+  const loginUser = async (userData) => {
+    try {
+      const res = await fetch(apiUrlLogin + userData.email);
+      if (!res.ok) {
+        await registerUser(userData);
+        return;
+      }
+      const data = await res.json();
+      if (data) {
+        await AsyncStorage.setItem('userId', data.id.toString());
+        await AsyncStorage.setItem('userEmail', userData.email);
+        router.push('/userProfile');
+      } else {
+        await registerUser(userData);
+      }
+    } catch (err) {
+      console.error('❌ Login error:', err);
+      await registerUser(userData);
+    }
+  };
+
+  const registerUser = async (userData) => {
+    console.log('🔑 Registering user:', userData);
+    try {
+      const res = await fetch(apiUrlRegister, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+      console.log('🔑 Registration response:', res);
+      loginUser(userData);
+    } catch (err) {
+      console.error('❌ Registration error:', err);
+    }
+  };
+
+  const fetchUserInfo = async (token) => {
+    try {
+      const res = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = await res.json();
+      const userData = {
+        parentDetails: [{
+          firstName: user.given_name,
+          lastName: user.family_name,
+        }],
+        email: user.email,
+        profileImage: user.picture,
+      };
+      await loginUser(userData);
+    } catch (err) {
+      console.error('❌ Failed fetching user info:', err);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    if (isWeb) {
+      await promptAsync({ useProxy: true });
+    } else {
+      try {
+        await GoogleSignin.hasPlayServices();
+        await GoogleSignin.signOut();
+        const result = await GoogleSignin.signIn();
+        
+        if (result?.data?.user) {
+          const userData = {
+            username: result.data.user.email.split('@')[0],
+            password: Math.random().toString(36).slice(-8),
+            parentDetails: [{
+              firstName: result.data.user.givenName,
+              lastName: result.data.user.familyName,
+              phoneNumber: (Math.floor(Math.random() * 1000000000) + 1000000000).toString(),
+            }],
+            email: result.data.user.email,
+            profileImage: result.data.user.photo,
+          };
+
+          Alert.alert('התחברות הצליחה', `שלום, ${result.data.user.givenName}`);
+          await loginUser(userData);
+        } else {
+          Alert.alert('שגיאה', 'ההתחברות נכשלה');
+        }
+      } catch (err) {
+        console.error('❌ Native sign-in error:', err);
+        Alert.alert('שגיאה', 'שגיאה בהתחברות עם גוגל');
+      }
+    }
+  };
 
   const validate = () => {
     const newErrors = {};
@@ -150,7 +290,7 @@ export default function Login() {
             style={styles.loadingIndicator}
           />
         )}
-         <TouchableOpacity style={styles.googleButton} onPress={() => router.push('/googleAuth')}>
+         <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
             <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
             <Text style={styles.googleText}>המשך עם Google</Text>
           </TouchableOpacity>
