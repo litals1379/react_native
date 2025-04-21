@@ -1,0 +1,95 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    video: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      zIndex: -1,
+    },
+    unicornImage: {
+      width: 400,
+      height: 400,
+      marginBottom: 20,
+      resizeMode: 'contain',
+    },
+    logo: {
+      width: 400,
+      height: 200,
+      marginBottom: 20,
+      resizeMode: 'contain',
+    },
+    title: {
+      fontSize: 26,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: '#65558F',
+    },
+    image: {
+      width: 300,
+      height: 200,
+      marginBottom: 30,
+      resizeMode: 'contain',
+    },
+    button: {
+      backgroundColor: '#B3E7F2',
+      borderWidth: 1,
+      borderColor: '#65558F',
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      marginVertical: 10,
+      alignItems: 'center',
+    },
+    googleButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#AAA',
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      marginTop: 10,
+    },
+    googleIcon: {
+      width: 20,
+      height: 20,
+      marginRight: 10,
+    },
+    googleText: {
+      fontSize: 16,
+      color: '#555',
+    },
+    buttonText: {
+      color: '#65558F',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    logoContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    storyTimeText: {
+      position: 'absolute',
+      fontSize: 40,
+      fontWeight: 'bold',
+      color: '#65558F',
+      top: 130,
+    },
+    registerText: {
+      fontSize: 15,
+      color: '#007bff',
+      textDecorationLine: 'underline',
+      textAlign: 'center',
+      marginTop: 10,
+      writingDirection: 'rtl',
+    },
+  });

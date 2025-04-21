@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
 import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
+import {styles} from './Style/storyFromLibrary'; // Assuming you have a styles file for this component
 
 const StoryFromLibrary = () => {
   const { storyId } = useLocalSearchParams();
@@ -140,21 +141,21 @@ const StoryFromLibrary = () => {
       {error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <>
           {images[currentIndex] && (
             <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
           )}
-  
+
           {paragraphs[currentIndex] && (
             <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
           )}
-  
+
           {/* Navigation */}
           <View style={styles.navigation}>
             <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
               <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
-  
+
             <View style={styles.progressContainer}>
               <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
               <View style={styles.progressRow}>
@@ -172,12 +173,12 @@ const StoryFromLibrary = () => {
                 <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
               </View>
             </View>
-  
+
             <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
               <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
           </View>
-  
+
           {/* Controls */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
             <TouchableOpacity onPress={speakStory}>
@@ -197,59 +198,11 @@ const StoryFromLibrary = () => {
               )}
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </>
       )}
     </View>
   );
-  
 };
 
-// Styles
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#f8f8f8',
-  },
-  content: {
-    textAlign: 'right',
-    fontSize: 16,
-    marginTop: 20,
-    color: '#333',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  image: {
-    width: '100%',
-    height: 400,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  navigation: {
-    marginTop: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  progressContainer: {
-    alignItems: 'center',
-  },
-  progressText: {
-    marginBottom: 4,
-    fontSize: 14,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  emoji: {
-    fontSize: 20,
-    marginLeft: 8,
-  },
-});
 
 export default StoryFromLibrary;
