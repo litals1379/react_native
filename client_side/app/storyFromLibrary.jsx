@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -140,21 +140,21 @@ const StoryFromLibrary = () => {
       {error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : (
-        <>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {images[currentIndex] && (
             <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
           )}
-
+  
           {paragraphs[currentIndex] && (
             <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
           )}
-
+  
           {/* Navigation */}
           <View style={styles.navigation}>
             <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
               <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
-
+  
             <View style={styles.progressContainer}>
               <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
               <View style={styles.progressRow}>
@@ -172,12 +172,12 @@ const StoryFromLibrary = () => {
                 <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
               </View>
             </View>
-
+  
             <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
               <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
             </TouchableOpacity>
           </View>
-
+  
           {/* Controls */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
             <TouchableOpacity onPress={speakStory}>
@@ -197,10 +197,11 @@ const StoryFromLibrary = () => {
               )}
             </TouchableOpacity>
           </View>
-        </>
+        </ScrollView>
       )}
     </View>
   );
+  
 };
 
 // Styles
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 250,
+    height: 400,
     borderRadius: 12,
     marginBottom: 16,
   },
