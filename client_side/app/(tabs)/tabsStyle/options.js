@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     container: {
-      direction: 'rtl', // RTL
+      textAlign: 'right', // RTL
       flex: 1,
       backgroundColor: '#f8f8f8',
       padding: 20,

@@ -116,7 +116,18 @@ export default function UserProfile() {
       console.error('Upload error:', error);
       Alert.alert('שגיאת רשת', 'אירעה שגיאה בעת העלאת התמונה.');
     }
-  };    
+  };
+
+  const formatBirthdate = (isoDate) => {
+    if (!isoDate) return '';
+  
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -162,7 +173,7 @@ export default function UserProfile() {
                     </View>
                     <View style={styles.childInfoRow}>
                       <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
-                      <Text>תאריך לידה: {child.birthdate}</Text>
+                      <Text>תאריך לידה: {formatBirthdate(child.birthdate)}</Text>
                     </View>
                     {child.readingLevel && (
                       <View style={styles.childInfoRow}>
