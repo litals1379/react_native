@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,10 +14,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
-import PushNotifications from './pushNotifications';
 import { Ionicons } from '@expo/vector-icons';
-import {styles} from './Style/register'; // Assuming you have a styles file for this component
+import { styles } from './Style/register';
 
 export default function Register() {
   const router = useRouter();
@@ -29,36 +27,11 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState(undefined);
-  const notificationListener = useRef();
-  const responseListener = useRef();
-
-  // useEffect(() => {
-  //   PushNotifications.registerForPushNotificationsAsync()
-  //     .then((token) => setExpoPushToken(token ?? ''))
-  //     .catch((error) => setExpoPushToken(`${error}`));
-
-  //   notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
-  //     setNotification(notification);
-  //   });
-
-  //   responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
-  //     console.log(response);
-  //   });
-
-  //   return () => {
-  //     notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-  //     responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
-  //   };
-  // }, []);
 
   const validate = () => {
     const newErrors = {};
 
-    // change regex to match hebrew and english letters only
-    // const nameRegex = /^[א-ת]{1,30}$/;
-    const nameRegex = /^[a-zA-Zא-ת]{1,30}$/; // English and Hebrew letters only
+    const nameRegex = /^[a-zA-Zא-ת]{1,30}$/;
     const phoneRegex = /^[0-9]{10}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
     const usernameRegex = /^[a-zA-Z0-9]{5,15}$/;
@@ -101,7 +74,6 @@ export default function Register() {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -122,7 +94,6 @@ export default function Register() {
       username,
       password,
       children: [],
-      expoPushToken,
     };
 
     try {
@@ -137,9 +108,6 @@ export default function Register() {
 
       if (response.ok) {
         console.log('Registration successful');
-        if (expoPushToken) {
-          PushNotifications.sendPushNotification(expoPushToken);
-        }
         await AsyncStorage.setItem('userEmail', email);
         router.push('./addChild');
       } else {
@@ -223,10 +191,8 @@ export default function Register() {
 
             <TouchableOpacity style={styles.button} onPress={handleRegister}>
               <Text style={styles.buttonText}>הרשמה</Text>
-              {notification && <Text>📢 התקבלה התראה: {notification.request.content.body}</Text>}
             </TouchableOpacity>
 
-            {/* קישור להתחברות */}
             <View style={styles.loginLinkContainer}>
               <Text style={styles.loginText}>כבר רשום?</Text>
               <TouchableOpacity onPress={() => router.push('/login')}>
@@ -239,4 +205,3 @@ export default function Register() {
     </KeyboardAvoidingView>
   );
 }
-
