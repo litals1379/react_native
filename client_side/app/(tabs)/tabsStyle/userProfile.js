@@ -42,8 +42,8 @@ export const styles = StyleSheet.create({
     },
     name: {
       fontSize: 15,
-      marginBottom: 8,
       color: '#65558F',
+      marginLeft: 8,
     },
     infoContainer: {
       flexDirection: 'row',

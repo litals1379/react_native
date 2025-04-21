@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Audio, Video } from 'expo-av';
-import {styles} from './Style/index'; // Assuming you have a styles file for this component
+import {styles} from './Style/index'; 
 
 export default function HomeScreen() {
   const router = useRouter();

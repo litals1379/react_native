@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Button, StyleSheet, ActivityIndicator, Platform, Image, Alert } from 'react-native';
+import { Text, View, Button, ActivityIndicator, Platform, Image, Alert, TouchableOpacity } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { styles } from './Style/googleAuth'; 
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -216,15 +217,16 @@ export default function GoogleAuthScreen() {
           <Button title="התנתק" onPress={handleLogout} />
         </View>
       ) : (
-        <Button title="התחבר עם חשבון Google" onPress={handleLogin} />
+      <TouchableOpacity style={styles.googleButton} onPress={handleLogin}>
+        <Image
+          source={require('../assets/images/google-icon.png')} 
+          style={styles.googleIcon}
+        />
+        <Text style={styles.googleText}>התחבר עם חשבון Google</Text>
+      </TouchableOpacity>
       )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24, marginBottom: 20 },
-  profile: { alignItems: 'center', gap: 10 },
-  avatar: { width: 80, height: 80, borderRadius: 40, marginBottom: 10 },
-});
+
