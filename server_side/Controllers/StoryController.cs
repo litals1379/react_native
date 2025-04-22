@@ -45,7 +45,7 @@ namespace Server_Side.Controllers
             }
             else if (booksRead.Count == 0)
             {
-                return Ok(new {Message = $"לא נמצאו סיפורים שנקראו" });
+                return Ok(booksRead);
             }
 
             // החזרת הסיפורים המלאים

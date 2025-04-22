@@ -29,15 +29,17 @@ export default function Library() {
       const data = await response.json();
       console.log('Books fetched from API:', data);
 
-      // שומרים רק title ו־coverImg מכל ספר
-      const simplifiedBooks = data.map(book => ({
-        id: book.id, // הוספתי את ה-id של הספר
-        title: book.title,
-        coverImg: book.coverImg,
-      }));
+      if(data.length > 0) {
+        // שומרים רק title ו־coverImg מכל ספר
+        const simplifiedBooks = data.map(book => ({
+          id: book.id, // הוספתי את ה-id של הספר
+          title: book.title,
+          coverImg: book.coverImg,
+        }));
 
-      console.log('Simplified books:', simplifiedBooks);
-      setBooks(simplifiedBooks);
+        console.log('Simplified books:', simplifiedBooks);
+        setBooks(simplifiedBooks);
+      }
     } catch (err) {
       console.error('Error fetching books:', err);
       setError(err.message);
