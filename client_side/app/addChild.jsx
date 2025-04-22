@@ -1,12 +1,14 @@
-import React, { useState } from 'react';  
+import React, { useState,useEffect } from 'react';  
 import { Platform, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';  
 import { useRouter } from 'expo-router';  
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';  
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from './Style/addChild';  
+import { use } from 'react';
 
 const addChildApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/addChild/'; 
+const apiGetUserIdUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/getUserByEmail/';
 
 export default function AddChild() {
     const router = useRouter();  
@@ -16,6 +18,22 @@ export default function AddChild() {
     const [showDatePicker, setShowDatePicker] = useState(false);  
     //validators for the inputs
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        const fetchUserId = async () => {
+            const userEmail = await AsyncStorage.getItem('userEmail');
+            const response = await fetch(apiGetUserIdUrl + userEmail,{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const data = await response.json();
+            await AsyncStorage.setItem('userId', data.id.toString());
+        };
+        fetchUserId();
+    }, []);
 
     const validate = () => {
         const newErrors = {};
