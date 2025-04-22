@@ -45,14 +45,30 @@ export default function Library() {
   };
 
   useEffect(() => {
-    if (params.child) {
-      const parsedChild = JSON.parse(params.child);
-      console.log('Child object:', parsedChild);
-      fetchBooksReadByChild(parsedChild.id);
-    } else {
-      Alert.alert("לא נבחר ילד");
+    if (!params.child) {
+      Alert.alert("לא נבחר ילד", "", [
+        {
+          text: "אוקי",
+          onPress: () => {
+            // שולחים את המשתמש לדף profile אם לא נבחר ילד
+            router.push({ pathname: '/userProfile' });
+          },
+        },
+      ]);
+      return;
     }
+  
+    const parsedChild = JSON.parse(params.child);
+    console.log('Child object:', parsedChild);
+  
+    // נקה את הספרים הקיימים מיד, לפני הבאת החדשים
+    setBooks([]);
+  
+    fetchBooksReadByChild(parsedChild.id);
+  
   }, [params.child]);
+  
+  
 
   return (
     <View style={styles.container}>
