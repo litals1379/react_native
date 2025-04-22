@@ -72,7 +72,6 @@ export default function Library() {
 
   return (
     <View style={styles.container}>
-      {error && <Text style={styles.error}>{error}</Text>}
 
       <Text style={styles.header}>הספרייה של: {child?.firstName}</Text>
 

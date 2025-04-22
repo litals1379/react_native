@@ -39,9 +39,13 @@ namespace Server_Side.Controllers
             var booksRead = await _storyDBservices.GetBooksReadByChildAsync(childID);
 
             // בדיקה אם נמצא משהו
-            if (booksRead == null || booksRead.Count == 0)
+            if (booksRead == null)
             {
                 return NotFound($"No books found for child ID {childID}.");
+            }
+            else if (booksRead.Count == 0)
+            {
+                return Ok(new {Message = $"לא נמצאו סיפורים שנקראו" });
             }
 
             // החזרת הסיפורים המלאים
