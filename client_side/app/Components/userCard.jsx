@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // ייבוא אייקונים
+import { styles } from '../Style/userCard'; // סגנונות
 
 // קומפוננטה שמציגה משתמש בודד עם פרטי הורים, ילדים וכפתורי פעולה
 export default function UserCard({ user, onEdit, onDelete }) {
@@ -13,7 +14,7 @@ export default function UserCard({ user, onEdit, onDelete }) {
       <Text style={styles.text}>אימייל: {user.email || 'לא צויין'}</Text>
 
       {/* פרטי הורים */}
-      <Text style={styles.section}>👨‍👩‍👧 פרטי הורים:</Text>
+      <Text style={styles.section}> פרטי הורים:👨‍👩‍👧</Text>
       {user.parentDetails?.map((parent, index) => (
         <Text key={index} style={styles.text}>
           - {parent.firstName} {parent.lastName}, {parent.phoneNumber}
@@ -21,7 +22,7 @@ export default function UserCard({ user, onEdit, onDelete }) {
       ))}
 
       {/* פרטי ילדים */}
-      <Text style={styles.section}>👶 ילדים:</Text>
+      <Text style={styles.section}>ילדים:👶</Text>
       {user.children?.map((child, index) => (
         <Text key={index} style={styles.text}>
           - {child.firstName}, רמה: {child.readingLevel}
@@ -41,40 +42,3 @@ export default function UserCard({ user, onEdit, onDelete }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 10,
-    direction: 'rtl', // עיצוב RTL כללי
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 6,
-    color: '#65558F',
-    textAlign: 'right',
-  },
-  section: {
-    marginTop: 8,
-    fontWeight: 'bold',
-    textAlign: 'right',
-  },
-  text: {
-    textAlign: 'right',
-    writingDirection: 'rtl',
-  },
-  actions: {
-    flexDirection: 'row-reverse', // RTL: אייקונים בצד ימין
-    marginTop: 10,
-    justifyContent: 'flex-start',
-    gap: 10,
-  },
-  actionBtn: {
-    padding: 8,
-    borderRadius: 6,
-  },
-});

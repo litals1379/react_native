@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   header: {
     fontSize: 22,
     fontWeight: 'bold',
-    textAlign: 'right',
+    textAlign: 'center',
     writingDirection: 'rtl',
     marginVertical: 12,
     color: '#65558F',
