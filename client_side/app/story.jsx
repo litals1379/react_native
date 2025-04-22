@@ -40,7 +40,8 @@ export default function Story() {
 
 
       if (!response.ok) {
-        throw new Error(`Server returned error: ${text}`);
+        console.log("Response not OK:", response.status, text);
+        throw new Error('לא נמצא סיפור מתאים');
       }
 
 
