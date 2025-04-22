@@ -13,6 +13,7 @@ import { UserContext } from './Context/userContextProvider';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {styles} from './Style/editUserDetails'; // Assuming you have a styles file for this component
+import { router } from 'expo-router';
 
 export default function EditUserDetailsScreen() {
   const { users, EditUser } = useContext(UserContext);
@@ -34,6 +35,7 @@ export default function EditUserDetailsScreen() {
   const handleSave = () => {
     if (!user) return;
     EditUser(user);
+    router.push({ pathname: '/userProfile' });
   };
 
   if (!user) {

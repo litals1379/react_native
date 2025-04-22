@@ -99,18 +99,25 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         writingDirection: 'rtl',
     },
+    button: {
+        marginVertical: 5,
+        marginHorizontal: 35,
+      },
     transcriptContainer: {
+        textAlign: 'right',
         marginTop: 10,
         backgroundColor: '#f0f0f0',
         padding: 10,
         borderRadius: 10,
       },
       transcriptLabel: {
+        textAlign: 'right',
         fontWeight: 'bold',
         marginBottom: 4,
         color: '#333',
       },
       transcriptText: {
+        textAlign: 'right',
         fontSize: 16,
         color: '#65558F',
       },

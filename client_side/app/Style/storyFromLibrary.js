@@ -62,6 +62,7 @@ export const styles = StyleSheet.create({
       writingDirection: 'rtl',
     },
     transcriptContainer: {
+      textAlign: 'right',
       marginTop: 20,
       backgroundColor: '#F0F0F0',
       padding: 10,
@@ -69,17 +70,21 @@ export const styles = StyleSheet.create({
       width: '90%',
       alignSelf: 'center',
     },
-    
+    button: {
+      marginVertical: 5,
+      marginHorizontal: 35,
+    },
     transcriptLabel: {
+      textAlign: 'right',
       fontWeight: 'bold',
       marginBottom: 5,
       fontSize: 16,
     },
     
     transcriptText: {
+      textAlign: 'right',
       fontSize: 16,
       color: '#65558F',
     },
-    
     
   });
