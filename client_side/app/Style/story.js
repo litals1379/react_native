@@ -98,5 +98,21 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         writingDirection: 'rtl',
-    }
+    },
+    transcriptContainer: {
+        marginTop: 10,
+        backgroundColor: '#f0f0f0',
+        padding: 10,
+        borderRadius: 10,
+      },
+      transcriptLabel: {
+        fontWeight: 'bold',
+        marginBottom: 4,
+        color: '#333',
+      },
+      transcriptText: {
+        fontSize: 16,
+        color: '#65558F',
+      },
+      
 });
