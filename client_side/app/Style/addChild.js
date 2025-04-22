@@ -64,4 +64,11 @@ export const styles = StyleSheet.create({
     textAlign: 'right',
     writingDirection: 'rtl',
   },
+  error: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'right',
+    writingDirection: 'rtl',
+  },
 });

@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';  
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { styles } from './Style/addChild';  // Importing styles from the addChild style file  
+import { styles } from './Style/addChild';  
 
 const addChildApiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/addChild/'; 
 
@@ -14,8 +14,38 @@ export default function AddChild() {
     const [birthDate, setBirthDate] = useState(null);  
     const [readingLevel, setReadingLevel] = useState('1');  
     const [showDatePicker, setShowDatePicker] = useState(false);  
+    //validators for the inputs
+    const [errors, setErrors] = useState({});
+
+    const validate = () => {
+        const newErrors = {};
+        const nameRegex = /^[a-zA-Zא-ת]{1,30}$/; 
+        const readingLevelRegex = /^[1-5]$/;   
+        const currentDate = new Date();
+        if (!childFirstName) {
+            newErrors.childFirstName = 'שם פרטי הוא שדה חובה.';  
+        } else if (!nameRegex.test(childFirstName)) {
+            newErrors.childFirstName = 'שם פרטי לא תקני, חייב להכיל רק אותיות בעברית.';  
+        }
+        if (!birthDate) {
+            newErrors.birthDate = 'תאריך לידה הוא שדה חובה.';  
+        } else if (birthDate > currentDate) {
+            newErrors.birthDate = 'תאריך לידה לא יכול להיות בעתיד.';  
+        } 
+        if (!readingLevel) {
+            newErrors.readingLevel = 'רמת קריאה היא שדה חובה.';  
+        } else if (!readingLevelRegex.test(readingLevel)) {
+            newErrors.readingLevel = 'רמת קריאה לא תקנית, חייבת להיות בין 1 ל-5.';  
+        }
+        setErrors(newErrors);  
+        return Object.keys(newErrors).length === 0;  
+    };
+
+
 
     const handleAddChild = async () => {
+        if (!validate()) return;
+
         const childData = {
             firstName: childFirstName,
             birthDate: birthDate.toISOString(),  // מוודא שהתאריך יהיה בתצורה נכונה
@@ -59,6 +89,7 @@ export default function AddChild() {
                 value={childFirstName}
                 onChangeText={setChildFirstName}  
             />
+             {errors.childFirstName && <Text style={styles.error}>{errors.childFirstName}</Text>}  
             {/* Birth date picker */}
             <Text style={styles.label}>תאריך לידה:</Text>
 
@@ -91,6 +122,7 @@ export default function AddChild() {
                     )}
                 </>
             )}
+             {errors.birthDate && <Text style={styles.error}>{errors.birthDate}</Text>}  
 
             {/* Reading level input */}
             <Text style={styles.label}>רמת קריאה:</Text>
@@ -100,6 +132,7 @@ export default function AddChild() {
                 value={readingLevel}
                 onChangeText={setReadingLevel}
             />
+            {errors.readingLevel && <Text style={styles.error}>{errors.readingLevel}</Text>}  
 
             {/* Submit button */}
             <TouchableOpacity style={styles.button} onPress={handleAddChild}>

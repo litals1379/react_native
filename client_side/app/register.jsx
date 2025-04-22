@@ -34,7 +34,7 @@ export default function Register() {
     const nameRegex = /^[a-zA-Zא-ת]{1,30}$/;
     const phoneRegex = /^[0-9]{10}$/;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.com$/;
-    const usernameRegex = /^[a-zA-Z0-9]{5,15}$/;
+    const usernameRegex = /^[a-zA-Zא-ת0-9]{5,15}$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,12}$/;
 
     if (!firstName) {
@@ -107,7 +107,7 @@ export default function Register() {
       });
 
       if (response.ok) {
-        console.log('Registration successful');
+        Alert.alert('הרשמה הצליחה', 'המשתמש נרשם בהצלחה!');
         await AsyncStorage.setItem('userEmail', email);
         await AsyncStorage.setItem('userName', username);
         router.push('./addChild');
