@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
 import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
-import {styles} from './Style/storyFromLibrary'; // Assuming you have a styles file for this component
+import {styles} from './Style/storyFromLibrary'; 
 
 const StoryFromLibrary = () => {
   const router = useRouter();
@@ -70,12 +70,14 @@ const StoryFromLibrary = () => {
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setTranscript("");  // איפוס התוצאה הקולית
     }
   };
 
   const goToPreviousParagraph = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setTranscript("");  // איפוס התוצאה הקולית
     }
   };
 
@@ -97,16 +99,21 @@ const StoryFromLibrary = () => {
   // Text-to-Speech Functions
   const speakStory = () => {
     if (paragraphs[currentIndex]) {
-      Speech.speak(paragraphs[currentIndex], { language: 'he-IL' });
       setIsSpeaking(true);
+      Speech.speak(paragraphs[currentIndex], {
+        language: 'he-IL',
+        onDone: () => setIsSpeaking(false),
+        onStopped: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
     }
   };
-
+  
   const stopStory = () => {
     Speech.stop();
     setIsSpeaking(false);
   };
-
+  
   // Speech Recognition Functions
   const startListening = () => {
     setTranscript("");
@@ -153,7 +160,7 @@ const StoryFromLibrary = () => {
           {/* Navigation */}
           <View style={styles.navigation}>
             <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+              <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
   
             <View style={styles.progressContainer}>
@@ -175,40 +182,47 @@ const StoryFromLibrary = () => {
             </View>
   
             <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-              <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+              <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
           </View>
   
           {/* Controls */}
-<View style={{ alignItems: 'center', marginTop: 20 }}>
-  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
-    <TouchableOpacity onPress={speakStory}>
-      <Icon name="volume-up" size={30} color="#2980B9" />
-    </TouchableOpacity>
-    <TouchableOpacity onPress={stopStory}>
-      <Icon name="stop" size={30} color="#C0392B" />
-    </TouchableOpacity>
-    <TouchableOpacity
-      style={[styles.button, isListening && styles.buttonListening]}
-      onPress={toggleListening}
-    >
-      {isListening ? (
-        <Icon name="stop" size={30} color="#C0392B" />
-      ) : (
-        <Icon name="microphone" size={30} color="#2980B9" />
-      )}
-    </TouchableOpacity>
-  </View>
+      <View style={{ alignItems: 'center', marginTop: 20 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
+          {/* כפתור דיבור/עצירה */}
+          <TouchableOpacity
+            style={[styles.button, isSpeaking && styles.buttonListening]}
+            onPress={isSpeaking ? stopStory : speakStory}
+          >
+            <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
+          </TouchableOpacity>
 
-  {currentIndex === paragraphs.length - 1 && (
-    <TouchableOpacity
-      onPress={() => router.push('/userProfile')}
-      style={[styles.endButton, { marginTop: 20 }]}
-    >
-      <Text style={styles.endButtonText}>סיים את הסיפור</Text>
-    </TouchableOpacity>
-  )}
-</View>
+          {/* כפתור מיקרופון/עצירה */}
+          <TouchableOpacity
+            style={[styles.button, isListening && styles.buttonListening]}
+            onPress={toggleListening}
+          >
+            <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
+          </TouchableOpacity>
+        </View>
+
+
+        {transcript !== "" && (
+          <View style={styles.transcriptContainer}>
+            <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
+            <Text style={styles.transcriptText}>{transcript}</Text>
+          </View>
+        )}
+
+        {currentIndex === paragraphs.length - 1 && (
+          <TouchableOpacity
+            onPress={() => router.push('/userProfile')}
+            style={[styles.endButton, { marginTop: 20 }]}
+          >
+            <Text style={styles.endButtonText}>סיים את הסיפור</Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
         </ScrollView>
       )}

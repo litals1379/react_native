@@ -23,6 +23,9 @@ export default function Story() {
   const [rating, setRating] = useState(0);  // דירוג הסיפור
   const [showEndModal, setShowEndModal] = useState(false);  // מצב להצגת מודל סיום הסיפור
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+
   // adding speech recognition
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
@@ -64,22 +67,30 @@ export default function Story() {
   }, [childID, topic]);
 
 
-  // דיבור פסקה נוכחית
   const speakStory = () => {
     if (paragraphs[currentIndex]) {
-      Speech.speak(paragraphs[currentIndex], { language: 'he-IL' });  // דיבור בעברית
+      setIsSpeaking(true);
+      Speech.speak(paragraphs[currentIndex], {
+        language: 'he-IL',
+        onDone: () => setIsSpeaking(false),
+        onStopped: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
     }
   };
 
-
-  // עצירת הדיבור
-  const stopStory = () => Speech.stop();
+  const stopStory = () => {
+    Speech.stop();
+    setIsSpeaking(false);
+  };
+  
 
 
   // מעבר לפסקה הבאה
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setTranscript("");  // איפוס התוצאה הקולית
     } else {
       setShowEndModal(true);  // הצגת מודל סיום אם זה הסיפור האחרון
     }
@@ -90,6 +101,7 @@ export default function Story() {
   const goToPreviousParagraph = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setTranscript("");  // איפוס התוצאה הקולית
     }
   };
 
@@ -168,11 +180,18 @@ export default function Story() {
               <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
             )}
             <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
+            {transcript !== "" && (
+              <View style={styles.transcriptContainer}>
+                <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
+                <Text style={styles.transcriptText}>{transcript}</Text>
+              </View>
+            )}
+
 
             {/* ניווט לפסקאות */}
             <View style={styles.navigation}>
               <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#2980B9'} />
+                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
               </TouchableOpacity>
 
 
@@ -199,28 +218,28 @@ export default function Story() {
 
 
               <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#2980B9'} />
+                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
               </TouchableOpacity>
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
-              <TouchableOpacity onPress={speakStory}>
-                <Icon name="volume-up" size={30} color="#2980B9" />
+              {/* כפתור דיבור/עצירה */}
+              <TouchableOpacity
+                style={[styles.button, isSpeaking && styles.buttonListening]}
+                onPress={isSpeaking ? stopStory : speakStory}
+              >
+                <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={stopStory}>
-                <Icon name="stop" size={30} color="#C0392B" />
-              </TouchableOpacity>
+
+              {/* כפתור מיקרופון/עצירה */}
               <TouchableOpacity
                 style={[styles.button, isListening && styles.buttonListening]}
                 onPress={toggleListening}
               >
-                {isListening ? (
-                  <Icon name="stop" size={30} color="#C0392B" />
-                ) : (
-                  <Icon name="microphone" size={30} color="#2980B9" />
-                )}
+                <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
             </View>
+
 
             {/* כפתור סיום הסיפור */}
             {currentIndex === paragraphs.length - 1 && (
