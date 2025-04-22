@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from '../Style/layout'; 
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';  // ייבוא של useRouter
+import { useRouter } from 'expo-router';  
 
 const colorsList = [
   '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0',
@@ -10,9 +10,8 @@ const colorsList = [
 ];
 
 export default function CustomHeader({ showPicker, setShowPicker, selectedColor, setSelectedColor }) {
-  const router = useRouter();  // יצירת משתנה router
-
-  // פונקציה לחזרה לדף הקודם
+  const router = useRouter();  
+  
   const handleBackPress = () => {
     router.back();  // חוזר לדף הקודם
   };

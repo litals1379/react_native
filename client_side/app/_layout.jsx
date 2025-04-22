@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
-import { Stack, useRouter } from "expo-router";
-import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, TouchableOpacity } from 'react-native';
-import { Ionicons, } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import { UserProvider } from './Context/userContextProvider'; // Assuming you have a context provider for user data
+import { Stack} from "expo-router";
+import { View} from 'react-native';
+import { UserProvider } from './Context/userContextProvider'; 
 import CustomHeader from './Components/customHeader';
-import {styles} from './Style/layout'
-
 
 export default function RootLayout() {
   const [selectedColor, setSelectedColor] = useState('#FFFFFF');
@@ -35,7 +31,6 @@ export default function RootLayout() {
             <Stack.Screen name="addChild" /> 
             <Stack.Screen name="login" /> 
             <Stack.Screen name="subjects" />
-            <Stack.Screen name="googleAuth" /> 
             <Stack.Screen name="editUserDetails" />
        </Stack>
      </View>
