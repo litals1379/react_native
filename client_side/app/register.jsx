@@ -109,6 +109,7 @@ export default function Register() {
       if (response.ok) {
         console.log('Registration successful');
         await AsyncStorage.setItem('userEmail', email);
+        await AsyncStorage.setItem('userName', username);
         router.push('./addChild');
       } else {
         console.error('Registration failed');
