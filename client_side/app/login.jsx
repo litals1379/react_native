@@ -211,6 +211,7 @@ export default function Login() {
         router.push({ pathname: '(tabs)/userProfile' });
         await AsyncStorage.setItem('userId', userId.toString());
         await AsyncStorage.setItem('userEmail', userEmail );
+        await AsyncStorage.setItem('userName', username );
       } else {
         Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
       }
