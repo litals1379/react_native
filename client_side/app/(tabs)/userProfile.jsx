@@ -4,7 +4,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useRouter  } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { styles } from './tabsStyle/userProfile'; // Assuming you have a styles file for this component
+import { styles } from './tabsStyle/userProfile';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
@@ -14,7 +14,7 @@ export default function UserProfile() {
   const uploadApiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage`; 
   const getUserId = async () => {
     try {
-      const userId = await AsyncStorage.getItem('userId'); // קבלת ה-userId מ-AsyncStorage
+      const userId = await AsyncStorage.getItem('userId');
       const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
       const response = await fetch(apiUrl);
       const data = await response.json();
@@ -28,19 +28,19 @@ export default function UserProfile() {
     getUserId();
   }, []);
 
-  const logoutButton = async () => { // פונקציה להתנתקות ניתן לחזור חזרה ועדיין רואים את הפרטים של הפרופיל
-    await AsyncStorage.clear(); // ניקוי ה-AsyncStorage
-    router.replace({ pathname: "login" }); // העברה לעמוד הכניסה ומחיקת היסטוריית הניווט
+  const logoutButton = async () => { 
+    await AsyncStorage.clear();
+    router.replace({ pathname: "login" }); 
   };
 
   if (!userData) {
-    return <Text>טוען...</Text>; // במקרה שהנתונים לא נטענו
+    return <Text>טוען...</Text>; 
   }
 
   const handleChildSelection = (child) => {
     router.push({
       pathname: "/library",
-      params: { child: JSON.stringify(child) }, // המרה למחרוזת JSON
+      params: { child: JSON.stringify(child) }, 
     });
   };
 
@@ -58,8 +58,8 @@ export default function UserProfile() {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaType,
         allowsEditing: true,
-        aspect: [1, 1], // Keep aspect ratio for profile image
-        quality: 0.7, // Adjust as needed
+        aspect: [1, 1], 
+        quality: 0.7, 
       });
   
       console.log('ImagePicker result:', result);
@@ -82,10 +82,10 @@ export default function UserProfile() {
     }
   
     const formData = new FormData();
-    formData.append('userId', userData.id); // הוספת ה-userId ל-FormData
+    formData.append('userId', userData.id); 
     formData.append('image', {
       uri: imageAsset.uri,
-      type: 'image/jpeg', // or get it dynamically if needed
+      type: 'image/jpeg', 
       name: 'profileImage.jpg',
     });
   
@@ -94,7 +94,7 @@ export default function UserProfile() {
     try {
       const response = await fetch(uploadApiUrl, {
         method: 'POST',
-        body: formData, // leave headers alone — let fetch set the boundary itself
+        body: formData, 
       });
   
       const result = await response.json();
@@ -105,9 +105,9 @@ export default function UserProfile() {
 
         const updatedUserData = {
           ...userData,
-          profileImage: result.imageUrl // assuming your API returns imageUrl
+          profileImage: result.imageUrl 
         };
-        setUserData(updatedUserData); // עדכון ה-state עם התמונה החדשה
+        setUserData(updatedUserData); 
         // fetchUserData(); // or trigger a refresh
       } else {
         Alert.alert('שגיאה', result.message || 'העלאת התמונה נכשלה.');

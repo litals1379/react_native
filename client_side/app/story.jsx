@@ -50,12 +50,12 @@ export default function Story() {
       const loadedImages = Object.values(data?.imagesUrls || {});
 
 
-      setParagraphs(loadedParagraphs);  // שמירת הפסקאות
-      setImages(loadedImages);  // שמירת התמונות
+      setParagraphs(loadedParagraphs); 
+      setImages(loadedImages);  
     } catch (err) {
-      setError(err.message);  // במקרה של שגיאה
+      setError(err.message);  
     } finally {
-      setLoading(false);  // סיום טעינה
+      setLoading(false);  
     }
   };
 
