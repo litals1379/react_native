@@ -4,7 +4,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useRouter  } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { styles } from './tabsStyle/userProfile'; // Assuming you have a styles file for this component
+import { styles } from './tabsStyle/userProfile'; 
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);

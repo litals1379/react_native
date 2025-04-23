@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import * as Speech from 'expo-speech';
-import {styles} from './Style/quiz'; // Assuming you have a styles file for this component
+import {styles} from './Style/quiz'; 
 
 export default function Quiz() {
   const TOTAL_ROUNDS = 5;
