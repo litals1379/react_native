@@ -41,12 +41,15 @@ export default function Story() {
       }
 
       const data = JSON.parse(text);
-      setParagraphs(Object.values(data?.paragraphs || {}));
-      setImages(Object.values(data?.imagesUrls || {}));
+      const loadedParagraphs = Object.values(data?.paragraphs || {});
+      const loadedImages = Object.values(data?.imagesUrls || {});
+
+      setParagraphs(loadedParagraphs); 
+      setImages(loadedImages);  
     } catch (err) {
-      setError(err.message);
+      setError(err.message);  
     } finally {
-      setLoading(false);
+      setLoading(false);  
     }
   };
 

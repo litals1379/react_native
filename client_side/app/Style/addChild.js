@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    alignItems: 'center',
+
     padding: 16,
     backgroundColor: '#F8F8F8',
   },
@@ -12,17 +12,13 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#65558F',
     marginBottom: 20,
-    textAlign: 'right',
-    writingDirection: 'rtl',
-    alignSelf: 'flex-start',
+    textAlign: 'center',
   },
   label: {
-    alignSelf: 'flex-start',
     fontSize: 16,
     color: '#65558F',
     marginBottom: 5,
     textAlign: 'right',
-    writingDirection: 'rtl',
   },
   input: {
     width: '100%',
@@ -55,14 +51,12 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 30,
     marginVertical: 10,
-    flexDirection: 'row-reverse',
   },
   buttonText: {
     fontSize: 18,
     color: '#65558F',
     fontWeight: 'bold',
-    textAlign: 'right',
-    writingDirection: 'rtl',
+    textAlign: 'center',
   },
   error: {
     color: 'red',
