@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\dal\\userdbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -52,32 +52,32 @@
               "RelativeDocumentMoniker": "DAL\\UserDBservices.cs",
               "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\DAL\\UserDBservices.cs",
               "RelativeToolTip": "DAL\\UserDBservices.cs",
-              "ViewState": "AQIAAFAAAAAAAAAAAAAUwF8AAAAMAAAA",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-17T06:08:39.568Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "UserController.cs",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
               "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\UserController.cs",
               "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIgAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAFYAAAAAAAAAAAAgwGsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-17T06:02:18.316Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\User.cs",
               "RelativeDocumentMoniker": "BL\\User.cs",
               "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\User.cs",
               "RelativeToolTip": "BL\\User.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwBYAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAAAwwBYAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-17T06:07:30.467Z",
               "EditorCaption": ""
