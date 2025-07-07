@@ -31,6 +31,7 @@ export default function RootLayout() {
             <Stack.Screen name="addChild" /> 
             <Stack.Screen name="login" /> 
             <Stack.Screen name="subjects" />
+            <Stack.Screen name="characters" />
             <Stack.Screen name="editUserDetails" />
        </Stack>
      </View>

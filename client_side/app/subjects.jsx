@@ -16,6 +16,7 @@ const subjectsData = [
 export default function Subjects() {
   const params = useLocalSearchParams();
   const childID = params.childID; // קבלת ה-childID מהעמוד הקודם
+  const characterID = params.characterID;
   const router = useRouter();
 
   // הדפסת ה-ID של הילד לבדיקות
@@ -24,7 +25,7 @@ export default function Subjects() {
   }, [childID]);
 
   const handleSubjectSelect = (topic) => {
-    router.push({ pathname: "./story", params: { childID: childID, topic: topic } });
+    router.push({ pathname: "./story", params: { childID: childID, characterID: characterID, topic: topic } });
   };
 
   const renderSubject = ({ item }) => (
