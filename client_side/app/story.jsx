@@ -7,7 +7,7 @@ import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
-// import stringSimilarity from 'string-similarity';
+import stringSimilarity from 'string-similarity';
 import { styles } from './Style/story';
 
 export default function Story() {
