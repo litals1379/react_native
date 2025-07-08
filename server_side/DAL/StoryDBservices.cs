@@ -91,8 +91,9 @@ namespace Server_Side.DAL
                 .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic && !readStoryIds.Contains(s.Id))
                 .ToListAsync();
 
-            return stories;
+            return stories ?? new List<Story>();
         }
+
 
 
         // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי

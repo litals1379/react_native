@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator, Button } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { styles } from './Style/storyFromLibrary'; // סגנון קיים, כולל bookImage, bookTitle וכו'
 
 export default function StorySelection() {
   const { childID, topic } = useLocalSearchParams();
@@ -10,36 +11,77 @@ export default function StorySelection() {
 
   useEffect(() => {
     fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetAvailableStoriesForChild/${childID}/${encodeURIComponent(topic)}`)
-      .then(res => res.json())
-      .then(data => setStories(data))
-      .catch(err => console.error(err))
+      .then(async res => {
+        const text = await res.text();
+        try {
+          const parsed = text ? JSON.parse(text) : [];
+          if (Array.isArray(parsed)) {
+            const simplified = parsed.map(story => ({
+              id: story.id,
+              title: story.title,
+              coverImg: story.coverImg,
+            }));
+            console.log("📚 Stories to display:", simplified);
+            setStories(simplified);
+          } else {
+            console.warn("Response is not an array:", parsed);
+            setStories([]);
+          }
+        } catch (err) {
+          console.error("❌ Failed to parse JSON:", err, text);
+          setStories([]);
+        }
+      })
+      .catch(err => {
+        console.error("❌ Fetch error:", err);
+        setStories([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const handleReadStory = (storyId) => {
-    router.push({ pathname: "./story", params: { childID, topic, storyId } });
+    router.push({ pathname: './story', params: { childID, topic, storyId } });
   };
 
   const handleGenerateNewStory = () => {
-    router.push({ pathname: "./GenerateStory", params: { childID, topic } }); // עמוד שיקרא ל-Gemini
+    router.push({ pathname: './StoryGenerator', params: { childID, topic } });
   };
 
-  if (loading) return <ActivityIndicator size="large" />;
-
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>בחר סיפור:</Text>
-      <FlatList
-        data={stories}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleReadStory(item.id)} style={{ marginBottom: 15 }}>
-            <Image source={{ uri: item.coverImg }} style={{ height: 150, borderRadius: 8 }} />
-            <Text style={{ fontSize: 16 }}>{item.title}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      <Button title="✨ צור סיפור חדש בלייב" onPress={handleGenerateNewStory} />
+    <View style={styles.container}>
+      <Text style={styles.header}>בחר סיפור בנושא: {topic}</Text>
+
+      {loading ? (
+        <ActivityIndicator size="large" />
+      ) : (
+        <>
+          {stories && stories.length > 0 ? (
+            <ScrollView style={styles.booksList}>
+              {stories.map((story, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.bookItem}
+                  onPress={() => handleReadStory(story.id)}
+                >
+                  {story.coverImg && (
+                    <Image
+                      source={{ uri: story.coverImg }}
+                      style={styles.bookImage}
+                    />
+                  )}
+                  <Text style={styles.bookTitle}>{story.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={styles.text}>לא נמצאו סיפורים מתאימים</Text>
+          )}
+        </>
+      )}
+
+      <TouchableOpacity style={styles.button} onPress={handleGenerateNewStory}>
+        <Text style={styles.buttonText}>✨ צור סיפור חדש</Text>
+      </TouchableOpacity>
     </View>
   );
 }

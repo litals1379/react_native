@@ -36,8 +36,11 @@ namespace Server_Side.Controllers
         public async Task<IActionResult> GetAvailableStoriesForChild(string childID, string topic)
         {
             var stories = await _storyDBservices.GetAvailableStoriesForChildAsync(childID, topic);
-            return Ok(stories);
+
+            // תמיד מחזירים רשימה – גם אם ריקה
+            return Ok(stories ?? new List<Story>());
         }
+
 
 
         // API לקבלת רשימת ספרים שהילד קרא
