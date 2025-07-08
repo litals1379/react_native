@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
       backgroundColor: '#f8f8f8',
     },
     content: {
-      textAlign: 'right',
+      direction: 'rtl',
       fontSize: 16,
       marginTop: 20,
       color: '#333',
@@ -69,6 +69,15 @@ export const styles = StyleSheet.create({
       borderRadius: 10,
       width: '90%',
       alignSelf: 'center',
+    },
+    header:{
+      direction: 'rtl',
+      textAlign: 'center',
+      marginBottom: 10,
+    },
+    text:{
+      margin: 10,
+      direction: 'rtl',
     },
     button: {
       marginVertical: 5,
