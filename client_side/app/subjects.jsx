@@ -25,7 +25,7 @@ export default function Subjects() {
   }, [childID]);
 
   const handleSubjectSelect = (topic) => {
-    router.push({ pathname: "./story", params: { childID: childID, characterID: characterID, topic: topic } });
+    router.push({ pathname: "./StorySelection", params: { childID: childID, characterID: characterID, topic: topic } });
   };
 
   const renderSubject = ({ item }) => (

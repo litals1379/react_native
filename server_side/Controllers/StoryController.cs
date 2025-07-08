@@ -30,6 +30,15 @@ namespace Server_Side.Controllers
 
             return Ok(story);
         }
+        //החזרת רשימת ספרים מתאימים ונושא ורמה
+
+        [HttpGet("GetAvailableStoriesForChild/{childID}/{topic}")]
+        public async Task<IActionResult> GetAvailableStoriesForChild(string childID, string topic)
+        {
+            var stories = await _storyDBservices.GetAvailableStoriesForChildAsync(childID, topic);
+            return Ok(stories);
+        }
+
 
         // API לקבלת רשימת ספרים שהילד קרא
         [HttpGet("GetBooksReadByChild/{childID}")]

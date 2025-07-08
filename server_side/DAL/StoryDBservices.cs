@@ -72,6 +72,28 @@ namespace Server_Side.DAL
 
             return story;
         }
+        // החזרת רשימת סיפורים מתאימים לנושא ולרמה
+        public async Task<List<Story>> GetAvailableStoriesForChildAsync(string childID, string topic)
+        {
+            var user = await _usersCollection
+                .Find(u => u.Children.Any(c => c.Id == childID))
+                .FirstOrDefaultAsync();
+
+            if (user == null) return new List<Story>();
+
+            var childData = user.Children.FirstOrDefault(c => c.Id == childID);
+            if (childData == null) return new List<Story>();
+
+            int readingLevel = childData.ReadingLevel;
+            var readStoryIds = childData.ReadingHistory.Select(rh => rh.StoryId).ToHashSet();
+
+            var stories = await _storiesCollection
+                .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic && !readStoryIds.Contains(s.Id))
+                .ToListAsync();
+
+            return stories;
+        }
+
 
         // מחזיר את רשימת הספרים(כותרות) של ילד ספציפי
         public async Task<List<Story>> GetBooksReadByChildAsync(string childID)
