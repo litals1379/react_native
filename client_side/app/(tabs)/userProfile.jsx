@@ -152,39 +152,50 @@ export default function UserProfile() {
         {userData.children && userData.children.length > 0 && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>ילדים:</Text>
-            {userData.children.map((child, index) => (
+           {userData.children.map((child, index) => (
+            <View key={index} style={styles.childCard}>
               <TouchableOpacity
-                key={index}
-                style={styles.childCard}
+                style={styles.childCardContent}
                 onPress={() => handleChildSelection(child)}
               >
-                <View style={styles.childCardContent}>
-                  <View style={styles.childImagePlaceholder}>
-                    {child.profileImage ? (
-                      <Image source={{ uri: child.profileImage }} style={styles.childImage} />
-                    ) : (
-                      <FontAwesome name="user-circle" size={30} color="gray" />
-                    )}
+                <View style={styles.childImagePlaceholder}>
+                  {child.profileImage ? (
+                    <Image source={{ uri: child.profileImage }} style={styles.childImage} />
+                  ) : (
+                    <FontAwesome name="user-circle" size={30} color="gray" />
+                  )}
+                </View>
+                <View style={styles.childInfo}>
+                  <View style={styles.childInfoRow}>
+                    <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
+                    <Text>שם: {child.firstName} {child.lastName}</Text>
                   </View>
-                  <View style={styles.childInfo}>
-                    <View style={styles.childInfoRow}>
-                      <FontAwesome name="user" size={20} color="gray" style={styles.icon} />
-                      <Text>שם: {child.firstName} {child.lastName}</Text>
-                    </View>
-                    <View style={styles.childInfoRow}>
-                      <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
-                      <Text>תאריך לידה: {formatBirthdate(child.birthdate)}</Text>
-                    </View>
-                    {child.readingLevel && (
-                      <View style={styles.childInfoRow}>
-                        <FontAwesome name="book" size={20} color="gray" style={styles.icon} />
-                        <Text>רמת קריאה: {child.readingLevel}</Text>
-                      </View>
-                    )}
+                  <View style={styles.childInfoRow}>
+                    <FontAwesome name="birthday-cake" size={20} color="gray" style={styles.icon} />
+                    <Text>תאריך לידה: {formatBirthdate(child.birthdate)}</Text>
                   </View>
+                  {child.readingLevel && (
+                    <View style={styles.childInfoRow}>
+                      <FontAwesome name="book" size={20} color="gray" style={styles.icon} />
+                      <Text>רמת קריאה: {child.readingLevel}</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
-            ))}
+
+              <TouchableOpacity
+                style={styles.reportButton}
+                onPress={() =>
+                  router.push({
+                    pathname: '/readingReport',
+                    params: { childID: child.id, name: child.firstName },
+                  })
+                }
+              >
+                <Text style={styles.reportButtonText}>📄 צור דוח קריאה</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
           </View>
         )}
 

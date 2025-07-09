@@ -177,4 +177,15 @@ export const styles = StyleSheet.create({
       fontSize: 16,
       marginLeft: 8,
     },
+    reportButton: {
+    alignSelf: 'center',
+    marginTop: 8,
+    padding: 6,
+  },
+    reportButtonText: {
+    color: '#65558F',
+    fontSize: 15,
+    textDecorationLine: 'underline',
+  },
+
   });

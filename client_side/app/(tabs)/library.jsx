@@ -104,7 +104,7 @@ export default function Library() {
         onPress={() => router.push({ pathname: '../characters', params: { childID: child?.id } })}
         //onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
       >
-        <Text style={styles.buttonText}>צור סיפור חדש</Text>
+        <Text style={styles.buttonText}>בחר סיפור</Text>
       </TouchableOpacity>
     </View>
   );

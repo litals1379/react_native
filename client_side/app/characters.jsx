@@ -5,10 +5,11 @@ import { Video } from 'expo-av';
 import { styles } from './Style/characters';
 
 const charactersData = [
-  { id: 1, name: 'מיקו', image: require('../assets/images/cati.png'), video: require('../assets/sounds/cat.mp4') },
+  { id: 1, name: 'מיקו', image: require('../assets/images/mico.jpg'), video: require('../assets/sounds/cat.mp4') },
   { id: 2, name: 'נבי', image: require('../assets/images/navi.png'), video: require('../assets/sounds/navi.mp4') },
- // { id: 6, name: 'יוני', image: require('../assets/images/yoni.png'), video: require('../assets/sounds/yoni.mp4') },
-  //{ id: 9, name: 'ארנבת', image: require('../assets/images/rabbit.png'), video: require('../assets/sounds/rabbit.mp4') },
+  // { id: 3, name: 'יוני', image: require('../assets/images/yoni.png'), video: require('../assets/sounds/yoni.mp4') },
+// { id: 4, name: 'ארנבת', image: require('../assets/images/rabbit.png'), video: require('../assets/sounds/rabbit.mp4') },
+
 ];
 
 export default function Characters() {
@@ -17,19 +18,36 @@ export default function Characters() {
   const childID = params.childID;
 
   const [playingCharacterID, setPlayingCharacterID] = useState(null);
+  const videoRef = useRef(null);
 
-  const handleCharacterSelect = (item) => {
-    setPlayingCharacterID(item.id);
+  const handleCharacterSelect = async (item) => {
+    if (playingCharacterID === item.id) {
+      // לחיצה שנייה על אותה דמות – דלג על הסרטון
+      if (videoRef.current) {
+        await videoRef.current.stopAsync();
+      }
+      setPlayingCharacterID(null);
+      router.push({
+        pathname: './subjects',
+        params: { childID: childID, characterID: item.id },
+      });
+    } else {
+      // דמות אחרת נלחצה – עצור את הקודמת
+      if (videoRef.current) {
+        await videoRef.current.stopAsync();
+      }
+      setPlayingCharacterID(item.id);
+    }
   };
 
   const renderCharacter = ({ item }) => (
     <TouchableOpacity
       style={styles.characterButton}
       onPress={() => handleCharacterSelect(item)}
-      disabled={playingCharacterID !== null} // לא מאפשר בחירה נוספת בזמן ניגון
     >
       {playingCharacterID === item.id ? (
         <Video
+          ref={videoRef}
           source={item.video}
           shouldPlay
           resizeMode="contain"
