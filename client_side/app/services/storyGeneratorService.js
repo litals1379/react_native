@@ -2,18 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from './config';
 import { useLocalSearchParams } from 'expo-router';
 
-
-
-
-const STORY_TYPES = {
-    FAIRY_TALES: 'אגדות',
-    SUPERHEROES: 'גיבורי על',
-    FAMILY: 'משפחה',
-    ADVENTURES: 'הרפתקאות'
-};
-
-export const StoryGenerator = {
-    async generateStory(storyType, userInput = '') {
+export const storyGeneratorService = {
+    async generateStory(storyType) {
         try {
             const apiKey = await ConfigService.getApiKey();
             if (!apiKey) {
@@ -35,7 +25,7 @@ export const StoryGenerator = {
                 }
             });
 
-            const prompt = userInput || `צור סיפור ילדים מנוקד בעברית של 4 פסקאות בנושא ${storyType}.`;
+            const prompt = `צור סיפור ילדים מנוקד בעברית של 4 פסקאות בנושא ${storyType}.`;
 
             // First API call: generate the story
             const result = await model.generateContent({
@@ -155,7 +145,4 @@ Use 3D animation and a 16:9 aspect ratio to create [subject] [detailed descripti
         }
     },
 
-    getStoryTypes() {
-        return STORY_TYPES;
-    }
 }; 

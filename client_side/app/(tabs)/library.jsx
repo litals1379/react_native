@@ -101,7 +101,8 @@ export default function Library() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push({ pathname: '../characters', params: { childID: child?.id } })}
+        // onPress={() => router.push({ pathname: '../characters', params: { childID: child?.id } })}
+        onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
       >
         <Text style={styles.buttonText}>צור סיפור חדש</Text>
       </TouchableOpacity>

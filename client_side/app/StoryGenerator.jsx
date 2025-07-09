@@ -1,27 +1,23 @@
-import React, { useState } from 'react';
-import { ActivityIndicator, Button, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { generateStory, getStoryTypes } from './services/storyGenerator';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
+import { storyGeneratorService } from './services/storyGeneratorService';
 import { useLocalSearchParams } from 'expo-router';
 import { styles } from './Style/storyGenerator';
 
-export const StoryGeneratorDisplay = () => {
+const StoryGenerator = () => {
     const { childID, topic } = useLocalSearchParams();
 
-    const [selectedType, setSelectedType] = useState(null);
     const [story, setStory] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [imageLoading, setImageLoading] = useState({});
 
-    const storyTypes = StoryGenerator.getStoryTypes();
-
-    const handleGenerateStory = async (type) => {
-        setSelectedType(type);
+    const handleGenerateStory = async () => {
         setIsLoading(true);
         setError(null);
 
         try {
-            const result = await StoryGenerator.generateStory(type);
+            const result = await storyGeneratorService.generateStory(topic); // use passed topic directly
             if (result.error) {
                 setError(result.error);
             } else {
@@ -34,20 +30,16 @@ export const StoryGeneratorDisplay = () => {
         }
     };
 
+    // Auto-run once when topic is received
+    useEffect(() => {
+        if (topic) {
+            handleGenerateStory();
+        }
+    }, [topic]);
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>יצירת סיפורים</Text>
-
-            <View style={styles.buttonContainer}>
-                {Object.entries(storyTypes).map(([key, value]) => (
-                    <Button
-                        key={key}
-                        title={value}
-                        onPress={() => handleGenerateStory(value)}
-                        disabled={isLoading}
-                    />
-                ))}
-            </View>
+            <Text style={styles.title}>יצירת סיפור בנושא: {topic}</Text>
 
             {isLoading && (
                 <View style={styles.loadingContainer}>
@@ -83,9 +75,6 @@ export const StoryGeneratorDisplay = () => {
                                     )}
                                 </View>
                             )}
-                            {/* {paragraph.imagePrompt && (
-                                <Text style={styles.imageCaption}>{paragraph.imagePrompt}</Text>
-                            )} */}
                         </View>
                     ))}
                 </ScrollView>
@@ -93,3 +82,5 @@ export const StoryGeneratorDisplay = () => {
         </View>
     );
 };
+
+export default StoryGenerator;
