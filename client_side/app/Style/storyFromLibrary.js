@@ -12,6 +12,34 @@ export const styles = StyleSheet.create({
       marginTop: 20,
       color: '#333',
     },
+    bookImage: {
+      width: '100%',
+      height: 200,
+      borderRadius: 10,
+      marginBottom: 10,
+      resizeMode: 'cover',
+    },
+    bookTitle: {
+      textAlign: 'center',
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#65558F',
+      marginBottom: 20,
+    },
+    bookItem: {
+      backgroundColor: 'white',
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 16,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    booksList: {
+      marginBottom: 20,
+    },
     errorText: {
       color: 'red',
       fontSize: 16,
@@ -89,7 +117,6 @@ export const styles = StyleSheet.create({
       marginBottom: 5,
       fontSize: 16,
     },
-    
     transcriptText: {
       textAlign: 'right',
       fontSize: 16,
