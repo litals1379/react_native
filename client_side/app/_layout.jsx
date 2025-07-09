@@ -26,7 +26,8 @@ export default function RootLayout() {
       }}>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="story" options={{ headerShown: false }} />
-            <Stack.Screen name="storyFromLibrary" options={{ headerShown: false }} />  
+            <Stack.Screen name="storyFromLibrary" options={{ headerShown: false }} />
+            <Stack.Screen name="StoryGenerator" options={{ headerShown: false }} /> 
             <Stack.Screen name="register" />
             <Stack.Screen name="addChild" /> 
             <Stack.Screen name="login" /> 
