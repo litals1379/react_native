@@ -335,9 +335,9 @@ namespace Server_Side.Controllers
                 }
             }
         },
-                generationConfig = new // <--- Keep this object
+                generationConfig = new
                 {
-                    // REMOVE THIS LINE ENTIRELY: responseMimeTypes = new[] { "text/plain", "image/jpeg" },
+                    responseModalities = new[] { "TEXT", "IMAGE" },
                     candidateCount = 1 // Keep candidateCount as it's a standard parameter for number of candidates
                 }
             };
