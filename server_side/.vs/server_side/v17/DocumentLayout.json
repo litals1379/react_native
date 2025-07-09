@@ -1,18 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\",
+  "WorkspaceRootPath": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\dal\\storydbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:dal\\storydbservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\storytime\\server_side\\controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\user\\desktop\\storytime\\story_time\\server_side\\bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\storytime\\server_side\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\storytime\\server_side\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\storytime\\server_side\\models\\storymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:models\\storymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\storytime\\server_side\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,12 +30,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 9,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
@@ -45,42 +49,73 @@
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StoryController.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\StoryController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StoryController.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\Controllers\\StoryController.cs",
-              "RelativeToolTip": "Controllers\\StoryController.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T12:04:26.865Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "StoryDBservices.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\DAL\\StoryDBservices.cs",
-              "RelativeDocumentMoniker": "DAL\\StoryDBservices.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\DAL\\StoryDBservices.cs",
-              "RelativeToolTip": "DAL\\StoryDBservices.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAowF8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T12:01:22.215Z",
+              "DocumentIndex": 1,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-09T17:17:08.073Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Story.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\Story.cs",
-              "RelativeDocumentMoniker": "BL\\Story.cs",
-              "ToolTip": "C:\\Users\\user\\Desktop\\Storytime\\story_time\\server_side\\BL\\Story.cs",
-              "RelativeToolTip": "BL\\Story.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-08T12:01:07.988Z"
+              "WhenOpened": "2025-07-09T17:11:50.222Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "StoryModels.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Models\\StoryModels.cs",
+              "RelativeDocumentMoniker": "Models\\StoryModels.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Models\\StoryModels.cs",
+              "RelativeToolTip": "Models\\StoryModels.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAA1wA8AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T16:59:24.478Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-09T16:41:31.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "StoryController.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Controllers\\StoryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\StoryController.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\StoryTime\\server_side\\Controllers\\StoryController.cs",
+              "RelativeToolTip": "Controllers\\StoryController.cs",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAuwOoAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-09T16:35:04.961Z",
+              "EditorCaption": ""
             }
           ]
         }
