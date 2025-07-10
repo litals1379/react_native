@@ -38,7 +38,7 @@ namespace Server_Side
             builder.Services.AddScoped<StoryDBservices>();
 
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-
+            builder.Services.AddHttpClient();
             builder.Logging.AddConsole();
             var app = builder.Build();
 
