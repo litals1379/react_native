@@ -139,7 +139,7 @@ namespace Server_Side.Controllers
                 string paragraphBlock = string.Join("\n\n", storyResponse.StoryParagraph.Select(p => p.Text));
 
                 string imagePromptRequest = $@"{paragraphBlock}
-For this story, let’s generate descriptions for characters, subjects, and settings.
+For the story you just wrote please generate detailed descriptions of each character including age, hair color, length, and style, eye color, skin color, clothing, and any outstanding physical characteristics. If there are any recurring subjects or settings in the story, please describe these in detail as well.
 
 I'm going to use your script for a story, and I need images to go along with the text. Please write image prompts with the following rules:
 
