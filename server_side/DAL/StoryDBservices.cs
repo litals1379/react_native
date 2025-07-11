@@ -135,5 +135,24 @@ namespace Server_Side.DAL
             return story;
         }
 
+        public async Task<bool> AddRatingAsync(string storyId, int rating)
+        {
+            var filter = Builders<Story>.Filter.Eq(s => s.Id, storyId);
+            var story = await _storiesCollection.Find(filter).FirstOrDefaultAsync();
+
+            if (story == null) return false;
+
+            story.Ratings.Add(rating);
+            story.AverageRating = story.Ratings.Average();
+
+            var update = Builders<Story>.Update
+                .Set(s => s.Ratings, story.Ratings)
+                .Set(s => s.AverageRating, story.AverageRating);
+
+            var result = await _storiesCollection.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
+
+
     }
 }

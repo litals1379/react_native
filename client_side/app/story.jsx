@@ -19,6 +19,7 @@ export default function Story() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rating, setRating] = useState(0);
+  const [storyId, setStoryId] = useState(null);
   const [showEndModal, setShowEndModal] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -41,6 +42,7 @@ export default function Story() {
       }
 
       const data = JSON.parse(text);
+      setStoryId(data?.id);
       const loadedParagraphs = Object.values(data?.paragraphs || {});
       const loadedImages = Object.values(data?.imagesUrls || {});
 
@@ -112,6 +114,30 @@ export default function Story() {
   const stopListening = () => {
     ExpoSpeechRecognitionModule.stop();
     setIsListening(false);
+  };
+
+  const submitRating = async (ratingValue) => {
+    if (!storyId) {
+      console.error("Missing storyId");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://localhost:7209/api/Story/RateStory?storyId=${storyId}&rating=${ratingValue}`,
+        {
+          method: 'POST',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit rating");
+      }
+
+      console.log("Rating submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    }
   };
 
   const toggleListening = () => {
@@ -241,7 +267,10 @@ if (transcript !== "") {
             <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
             <View style={styles.starsRow}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                <TouchableOpacity key={star} onPress={() => {
+          setRating(star);
+          submitRating(star);
+        }}>
                   <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
                 </TouchableOpacity>
               ))}

@@ -28,6 +28,13 @@ namespace Server_Side.BL
         [BsonElement("readingLevel")]
         public int ReadingLevel { get; set; }
 
+        [BsonElement("ratings")]
+        public List<int> Ratings { get; set; } = new List<int>();
+
+        [BsonElement("averageRating")]
+        public double AverageRating { get; set; } = 0.0;
+
+
         public Story() { }
 
         public Story(string id, string title, string coverImg, string topic, Dictionary<string, string> imagesUrls, Dictionary<string, string> paragraphs, int readingLevel)
