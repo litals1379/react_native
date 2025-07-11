@@ -154,7 +154,7 @@ Scene consistency (setting/time/mood) is very important.
 Use varied angles when describing the camera.
 
 Here is the prompt template:
-Use 3D animation and a 16:9 aspect ratio to create [subject] [detailed description of subject] in [setting/background description]. [The subject] is [placement in frame] and is [describe subject's action]. The POV is [describe the camera angle, focal length, and aperture] at [time of day and/or description of lighting]. The mood is [describe mood] in this scene.
+Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old with [hair color and style], [eye color] eyes, and [skin tone] skin, wearing [brief but clear clothing description]. In [setting/background description], [subject] is [placement in frame] and is [describe subject's action]. The POV is [camera angle, focal length, aperture] at [time of day and/or lighting description]. The mood is [emotional tone or atmosphere] in this scene.
 
 👉 Return only the image prompts in this exact template. No summaries, no explanations.";
 
