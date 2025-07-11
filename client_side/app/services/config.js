@@ -3,6 +3,10 @@ import SecureStore from 'expo-secure-store';
 const API_KEY_STORAGE_KEY = 'gemini_api_key';
 const DEFAULT_API_KEY = 'AIzaSyCPIGEr-6tkr8vK2OZVyZt6BAiQY_ToFZw';
 
+
+// this file will be deleted
+
+
 export const ConfigService = {
     async getApiKey() {
         try {

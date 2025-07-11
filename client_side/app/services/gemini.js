@@ -1,6 +1,10 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ConfigService } from './config';
 
+
+// this file will be deleted
+
+
 export const getGeminiResponse = async (prompt) => {
     try {
         const apiKey = await ConfigService.getApiKey();
