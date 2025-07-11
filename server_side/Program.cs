@@ -7,6 +7,7 @@ using Server_Side.BL;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using Server_Side.Services;
 
 
 namespace Server_Side
@@ -36,7 +37,7 @@ namespace Server_Side
 
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
-
+            builder.Services.AddSingleton<ReadingPromptService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddHttpClient();
             builder.Logging.AddConsole();

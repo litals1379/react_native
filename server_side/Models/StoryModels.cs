@@ -3,6 +3,7 @@
     public class StoryRequest
     {
         public string Topic { get; set; }
+        public int Level { get; set; }
     }
 
     public class StoryParagraph
