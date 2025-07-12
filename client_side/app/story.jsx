@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image, Modal, Button } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image, Modal, Button, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
-import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
 import stringSimilarity from 'string-similarity';
 import { styles } from './Style/story';
+import { AudioModule, useAudioPlayer, useAudioRecorder } from 'expo-audio';
 
 export default function Story() {
   const router = useRouter();
@@ -22,49 +22,69 @@ export default function Story() {
   const [storyId, setStoryId] = useState(null);
   const [showEndModal, setShowEndModal] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingUri, setRecordingUri] = useState(null);
+  const [textIPA, setTextIPA] = useState('');
+  const [audioIPA, setAudioIPA] = useState('');
+  const [phonemeDiff, setPhonemeDiff] = useState(null);
+
+  const audioRecorder = useAudioRecorder({
+    android: {
+      extension: '.wav',
+      outputFormat: AudioModule.RECORDING_OUTPUT_FORMAT_MPEG_4,
+      audioEncoder: AudioModule.RECORDING_AUDIO_ENCODING_PCM_16BIT,
+      sampleRate: 44100,
+      numberOfChannels: 2,
+      bitRate: 128000,
+    },
+    ios: {
+      extension: '.wav',
+      outputFormat: AudioModule.RECORDING_OUTPUT_FORMAT_LINEARPCM,
+      audioQuality: AudioModule.RECORDING_AUDIO_QUALITY_HIGH,
+      audioEncoding: AudioModule.RECORDING_AUDIO_ENCODING_PCM_16BIT,
+      sampleRate: 44100,
+      numberOfChannels: 2,
+      bitRate: 128000,
+      linearPCMBitDepth: 16,
+      linearPCMIsBigEndian: false,
+      linearPCMIsFloat: false,
+    },
+  });
+
+  const audioPlayer = useAudioPlayer(recordingUri || '');
+  const [isPlayerPlaying, setIsPlayerPlaying] = useState(false);
 
   useEffect(() => {
-    if (childID && topic) {
-      fetchStory(childID, topic);
-    }
+    if (childID && topic) fetchStory(childID, topic);
   }, [childID, topic]);
 
   const fetchStory = async (childID, topic) => {
-    const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
     try {
+      const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
       const response = await fetch(apiUrl);
       const text = await response.text();
-
-      if (!response.ok) {
-        throw new Error('לא נמצא סיפור מתאים');
-      }
-
+      if (!response.ok) throw new Error('לא נמצא סיפור מתאים');
       const data = JSON.parse(text);
       setStoryId(data?.id);
-      const loadedParagraphs = Object.values(data?.paragraphs || {});
-      const loadedImages = Object.values(data?.imagesUrls || {});
-
-      setParagraphs(loadedParagraphs); 
-      setImages(loadedImages);  
+      setParagraphs(Object.values(data?.paragraphs || {}));
+      setImages(Object.values(data?.imagesUrls || {}));
     } catch (err) {
-      setError(err.message);  
+      setError(err.message);
     } finally {
-      setLoading(false);  
+      setLoading(false);
     }
   };
 
   const speakStory = () => {
-    if (paragraphs[currentIndex]) {
-      setIsSpeaking(true);
-      Speech.speak(paragraphs[currentIndex], {
-        language: 'he-IL',
-        onDone: () => setIsSpeaking(false),
-        onStopped: () => setIsSpeaking(false),
-        onError: () => setIsSpeaking(false),
-      });
-    }
+    const para = paragraphs[currentIndex];
+    if (!para) return;
+    setIsSpeaking(true);
+    Speech.speak(para, {
+      language: 'he-IL',
+      onDone: () => setIsSpeaking(false),
+      onStopped: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
   };
 
   const stopStory = () => {
@@ -72,91 +92,61 @@ export default function Story() {
     setIsSpeaking(false);
   };
 
-  function cleanText(text) {
-    return text
-      .normalize('NFKD')
-      .replace(/[\u0591-\u05C7]/g, '')
-      .replace(/[^\w\s\u0590-\u05FF]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .toLowerCase();
-  }
-
-  const isReadingCorrect = () => {
-    const cleanedOriginal = cleanText(paragraphs[currentIndex] || '');
-    const cleanedTranscript = cleanText(transcript || '');
-    const similarity = stringSimilarity.compareTwoStrings(cleanedOriginal, cleanedTranscript);
-    console.log("Similarity:", similarity);
-    return similarity > 0.75; // סף נמוך יותר, מקבל טעויות קטנות
-  };
-  
-
-  useEffect(() => {
-    ExpoSpeechRecognitionModule.requestPermissionsAsync();
-    const resultListener = ExpoSpeechRecognitionModule.addListener("result", (event) => {
-      const latestResult = event.results[0]?.transcript || "";
-      setTranscript(latestResult);
-    });
-
-    return () => resultListener.remove();
-  }, []);
-
-  const startListening = () => {
-    setTranscript("");
-    ExpoSpeechRecognitionModule.start({
-      lang: "he-IL",
-      interimResults: true,
-      continuous: true,
-    });
-    setIsListening(true);
-  };
-
-  const stopListening = () => {
-    ExpoSpeechRecognitionModule.stop();
-    setIsListening(false);
-  };
-
-  const submitRating = async (ratingValue) => {
-    if (!storyId) {
-      console.error("Missing storyId");
-      return;
-    }
-
+  const record = async () => {
     try {
-      const response = await fetch(
-        `http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${storyId}&rating=${ratingValue}`,
-        {
-          method: 'POST',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to submit rating");
-      }
-
-      console.log("Rating submitted successfully!");
+      await audioRecorder.prepareToRecordAsync();
+      audioRecorder.record();
+      setIsRecording(true);
+      setRecordingUri(null);
+      setTextIPA('');
+      setAudioIPA('');
+      setPhonemeDiff(null);
     } catch (error) {
-      console.error("Error submitting rating:", error);
+      Alert.alert('Recording error', error.message);
+      setIsRecording(false);
     }
   };
 
-  const toggleListening = () => {
-    isListening ? stopListening() : startListening();
-  };
+  const stopRecording = async () => {
+    try {
+      await audioRecorder.stop();
+      setIsRecording(false);
+      const uri = audioRecorder.uri;
+      setRecordingUri(uri);
 
-  const goToNextParagraph = () => {
-    if (currentIndex < paragraphs.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setTranscript("");
-    } else {
-      setShowEndModal(true);
-    }
-  };
+      const formData = new FormData();
+      formData.append('text', paragraphs[currentIndex]);
+      formData.append('audio', {
+        uri,
+        name: 'recording.wav',
+        type: 'audio/wav',
+      });
 
-  const goToPreviousParagraph = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setTranscript("");
+      const response = await fetch('http://192.168.1.75:3000/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        Alert.alert('Analysis error', result.error);
+      } else {
+        // Parse result like:
+        // Text IPA: /.../
+        // Audio IPA: /.../
+        // Phoneme differences: 2
+        const lines = result.result.split('\n');
+        const ipaText = lines.find(line => line.startsWith('Text IPA:')) || '';
+        const ipaAudio = lines.find(line => line.startsWith('Audio IPA:')) || '';
+        const ipaDiff = lines.find(line => line.startsWith('Phoneme differences:')) || '';
+
+        setTextIPA(ipaText.replace('Text IPA:', '').trim());
+        setAudioIPA(ipaAudio.replace('Audio IPA:', '').trim());
+        setPhonemeDiff(ipaDiff.replace('Phoneme differences:', '').trim());
+      }
+    } catch (error) {
+      Alert.alert('Stop recording error', error.message);
     }
   };
 
@@ -174,80 +164,68 @@ export default function Story() {
     return '🏆';
   };
 
-  // פידבק מותאם לרמת הקריאה
-  let feedbackComponent = null;
-if (transcript !== "") {
-  const isCorrect = isReadingCorrect();
-  if (isCorrect) {
-    feedbackComponent = <Text style={{ color: 'green', fontWeight: 'bold' }}>✔️ כל הכבוד! קראת נכון!</Text>;
-  } else {
-    feedbackComponent = <Text style={{ color: 'orange', fontWeight: 'bold' }}>✨ כמעט! אתה קרוב! נסה שוב.</Text>;
-  }
-}
-
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         {loading ? (
-          <ActivityIndicator size="large" color="#2980B9" style={{ marginTop: 20 }} />
+          <ActivityIndicator size="large" color="#2980B9" />
         ) : error ? (
           <Text style={styles.errorText}>{error}</Text>
         ) : (
           <View>
             {images[currentIndex] && (
-              <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
+              <Image source={{ uri: images[currentIndex] }} style={styles.image} />
             )}
             <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
 
-            {transcript !== "" && (
-              <View style={styles.transcriptContainer}>
-                <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
-                <Text style={styles.transcriptText}>{transcript}</Text>
+            {textIPA && audioIPA && (
+              <View style={{ padding: 12 }}>
+                <Text style={{ fontWeight: 'bold' }}>Text IPA:</Text>
+                <Text style={{ fontSize: 16, marginBottom: 8 }}>{textIPA}</Text>
+                <Text style={{ fontWeight: 'bold' }}>Audio IPA:</Text>
+                <Text style={{ fontSize: 16, marginBottom: 8 }}>{audioIPA}</Text>
+                <Text style={{ fontWeight: 'bold' }}>Phoneme Differences:</Text>
+                <Text style={{ fontSize: 16, color: phonemeDiff > 1 ? 'red' : 'green' }}>
+                  {phonemeDiff}
+                </Text>
               </View>
             )}
 
-            <View style={{ marginTop: 10, alignItems: 'center' }}>
-              {feedbackComponent}
-            </View>
-
             <View style={styles.navigation}>
-              <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
+              <TouchableOpacity onPress={() => setCurrentIndex(prev => Math.max(prev - 1, 0))}>
+                <Icon name="arrow-right" size={30} color="#65558F" />
               </TouchableOpacity>
 
-              {!loading && paragraphs.length > 0 && (
-                <View style={styles.progressContainer}>
-                  <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-                  <View style={styles.progressRow}>
-                    <Progress.Bar
-                      progress={(currentIndex + 1) / paragraphs.length}
-                      width={160}
-                      height={10}
-                      borderRadius={8}
-                      color={getProgressColor()}
-                      unfilledColor="#E0E0E0"
-                      borderWidth={0}
-                      animated={true}
-                      style={{ transform: [{ scaleX: -1 }] }}
-                    />
-                    <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-                  </View>
+              <View style={styles.progressContainer}>
+                <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+                <View style={styles.progressRow}>
+                  <Progress.Bar
+                    progress={(currentIndex + 1) / paragraphs.length}
+                    width={160}
+                    height={10}
+                    borderRadius={8}
+                    color={getProgressColor()}
+                    unfilledColor="#E0E0E0"
+                    borderWidth={0}
+                    animated={true}
+                    style={{ transform: [{ scaleX: -1 }] }}
+                  />
+                  <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
                 </View>
-              )}
+              </View>
 
-              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
+              <TouchableOpacity onPress={() => setCurrentIndex(prev => Math.min(prev + 1, paragraphs.length - 1))}>
+                <Icon name="arrow-left" size={30} color="#65558F" />
               </TouchableOpacity>
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
               <TouchableOpacity style={[styles.button, isSpeaking && styles.buttonListening]} onPress={isSpeaking ? stopStory : speakStory}>
                 <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.button, isListening && styles.buttonListening]} onPress={toggleListening}>
-                <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
+              <TouchableOpacity style={[styles.button, isRecording && styles.buttonListening]} onPress={isRecording ? stopRecording : record}>
+                <Icon name={isRecording ? "stop" : "microphone"} size={30} color={isRecording ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
             </View>
 
@@ -260,7 +238,7 @@ if (transcript !== "") {
         )}
       </ScrollView>
 
-      <Modal visible={showEndModal} transparent={true} animationType="slide">
+      <Modal visible={showEndModal} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
@@ -268,9 +246,9 @@ if (transcript !== "") {
             <View style={styles.starsRow}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity key={star} onPress={() => {
-          setRating(star);
-          submitRating(star);
-        }}>
+                  setRating(star);
+                  fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${storyId}&rating=${star}`, { method: 'POST' });
+                }}>
                   <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
                 </TouchableOpacity>
               ))}
