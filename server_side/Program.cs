@@ -8,6 +8,8 @@ using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Server_Side.Services;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 
 namespace Server_Side
@@ -18,7 +20,11 @@ namespace Server_Side
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddCors(p =>

@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles } from './Style/storyFromLibrary'; // סגנון קיים, כולל bookImage, bookTitle וכו'
 
 export default function StorySelection() {
-  const { childID, topic } = useLocalSearchParams();
+  const { childID, childReadingLevel, topic } = useLocalSearchParams();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -45,7 +45,8 @@ export default function StorySelection() {
   };
 
   const handleGenerateNewStory = () => {
-    router.push({ pathname: './StoryGenerator', params: { childID, topic } });
+    console.log("childID from story selection: ",childID)
+    router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic } });
   };
 
   return (

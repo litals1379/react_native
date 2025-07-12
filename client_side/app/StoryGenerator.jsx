@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { storyGeneratorService } from './services/storyGeneratorService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
 import { styles } from './Style/storyGenerator';
 
 const StoryGenerator = () => {
-    const { childID, topic } = useLocalSearchParams();
-
+    const { topic, childReadingLevel } = useLocalSearchParams();
     const [story, setStory] = useState(null);
     const [storyTitle, setStoryTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -16,16 +16,21 @@ const StoryGenerator = () => {
     const handleGenerateStory = async () => {
         setIsLoading(true);
         setError(null);
-
+        console.log("Child reading level: ", childReadingLevel);
+        console.log("Topic: ", topic);
         try {
-            const result = await storyGeneratorService.generateStory(topic, 1); // get reading level from child
-
+            const result = await storyGeneratorService.generateStory(topic, childReadingLevel);
             if (result.error) {
                 setError(result.error);
             } else {
-                setStory(result.storyParagraph); // ✅ updated key
+                const normalizedParagraphs = result.storyParagraph.map(p => ({
+                    ...p,
+                    text: p.text.normalize('NFC')
+                }));
+                setStory(normalizedParagraphs);
                 setStoryTitle(result.title);     // ✅ set title
             }
+
         } catch (err) {
             setError(err.message || 'שגיאה בעת יצירת הסיפור.');
         } finally {
@@ -64,7 +69,7 @@ const StoryGenerator = () => {
 
                     {story.map((paragraph, index) => (
                         <View key={index} style={styles.paragraphContainer}>
-                            <Text style={styles.paragraphText}>{paragraph.text}</Text>
+                            <Text style={styles.paragraphText}>{paragraph.text.normalize('NFC')}</Text>
 
                             {paragraph.image && (
                                 <View style={styles.imageWrapper}>
