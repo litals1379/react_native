@@ -26,6 +26,11 @@ export const styles = StyleSheet.create({
       color: '#65558F',
       marginBottom: 20,
     },
+    bookRating: {
+      textAlign: 'center',
+      fontSize: 16,
+      color: '#65558F',
+    },
     bookItem: {
       backgroundColor: 'white',
       borderRadius: 12,

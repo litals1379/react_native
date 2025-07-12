@@ -20,6 +20,7 @@ export default function StorySelection() {
               id: story.id,
               title: story.title,
               coverImg: story.coverImg,
+              averageRating: story.averageRating ?? 0,
             }));
             console.log("📚 Stories to display:", simplified);
             setStories(simplified);
@@ -70,6 +71,7 @@ export default function StorySelection() {
                     />
                   )}
                   <Text style={styles.bookTitle}>{story.title}</Text>
+                  <Text style={styles.bookRating}>⭐ {story.averageRating.toFixed(1)} / 5</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>

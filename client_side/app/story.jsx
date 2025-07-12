@@ -124,7 +124,7 @@ export default function Story() {
 
     try {
       const response = await fetch(
-        `https://localhost:7209/api/Story/RateStory?storyId=${storyId}&rating=${ratingValue}`,
+        `http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${storyId}&rating=${ratingValue}`,
         {
           method: 'POST',
         }
