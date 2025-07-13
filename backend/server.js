@@ -12,6 +12,7 @@ app.use(express.json());
 
 app.post('/analyze', upload.single('audio'), async (req, res) => {
     try {
+        console.log('in server');
         const hebrewText = req.body.text;
         const filePath = req.file.path;
         const base64Audio = fs.readFileSync(filePath, { encoding: 'base64' });
