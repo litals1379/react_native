@@ -1,20 +1,25 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Options;
 using Server_Side.BL;
-
 
 public class CloudinaryService
 {
-    private readonly CloudinarySettings _cloudinary;
+    private readonly Cloudinary _cloudinary;
 
-    public CloudinaryService(IConfiguration config)
+    public CloudinaryService(IOptions<CloudinarySettings> options)
     {
-        var account = new Account(
-            config["Cloudinary:CloudName"],
-            config["Cloudinary:ApiKey"],
-            config["Cloudinary:ApiSecret"]
-        );
-        _cloudinary = new CloudinarySettings(account);
+        var settings = options.Value;
+
+        if (string.IsNullOrWhiteSpace(settings.CloudName) ||
+            string.IsNullOrWhiteSpace(settings.ApiKey) ||
+            string.IsNullOrWhiteSpace(settings.ApiSecret))
+        {
+            throw new ArgumentException("Cloudinary credentials are missing in configuration.");
+        }
+
+        var account = new Account(settings.CloudName, settings.ApiKey, settings.ApiSecret);
+        _cloudinary = new Cloudinary(account);
     }
 
     public async Task<string> UploadBase64ImageAsync(string base64, string publicId, string folderPath)
