@@ -1,5 +1,4 @@
 ﻿
-
 namespace Server_Side.BL
 {
     public class CloudinarySettings
