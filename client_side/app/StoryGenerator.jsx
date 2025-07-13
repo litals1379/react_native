@@ -14,29 +14,50 @@ const StoryGenerator = () => {
     const [imageLoading, setImageLoading] = useState({});
 
     const handleGenerateStory = async () => {
-        setIsLoading(true);
-        setError(null);
-        console.log("Child reading level: ", childReadingLevel);
-        console.log("Topic: ", topic);
-        try {
-            const result = await storyGeneratorService.generateStory(topic, childReadingLevel);
-            if (result.error) {
-                setError(result.error);
+    setIsLoading(true);
+    setError(null);
+    console.log("📘 Topic:", topic);
+    console.log("📚 Child reading level:", childReadingLevel);
+
+    try {
+        const result = await storyGeneratorService.generateStory(topic, childReadingLevel);
+
+        console.log("✅ Raw story result from server:", result);
+
+        if (result.error) {
+            setError(result.error);
+        } else {
+            if (result.storyParagraph) {
+                result.storyParagraph.forEach((p, i) => {
+                    console.log(`🧩 Paragraph ${i + 1}:`);
+                    console.log("📄 Text:", p.text);
+                    console.log("🖼️ Image prompt:", p.imagePrompt || "(none)");
+                    if (p.image) {
+                        console.log("✅ Image returned for this paragraph.");
+                    } else {
+                        console.warn("⚠️ No image returned for this paragraph.");
+                    }
+                });
             } else {
-                const normalizedParagraphs = result.storyParagraph.map(p => ({
-                    ...p,
-                    text: p.text.normalize('NFC')
-                }));
-                setStory(normalizedParagraphs);
-                setStoryTitle(result.title);     // ✅ set title
+                console.warn("⚠️ storyParagraph is missing in the response.");
             }
 
-        } catch (err) {
-            setError(err.message || 'שגיאה בעת יצירת הסיפור.');
-        } finally {
-            setIsLoading(false);
+            const normalizedParagraphs = result.storyParagraph.map(p => ({
+                ...p,
+                text: p.text.normalize('NFC')
+            }));
+            setStory(normalizedParagraphs);
+            setStoryTitle(result.title || '');
         }
-    };
+
+    } catch (err) {
+        console.error("❌ Error during story generation:", err);
+        setError(err.message || 'שגיאה בעת יצירת הסיפור.');
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
     useEffect(() => {
         if (topic) {
