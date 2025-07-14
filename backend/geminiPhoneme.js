@@ -14,6 +14,7 @@ export const comparePhonemes = async (hebrewText, base64Audio) => {
         const model = genAI.getGenerativeModel({
             model: 'gemini-2.0-flash-001', // supports audio with inlineData
         });
+        console.log('Gemini Phoneme - Model initialized.'); // New log
 
         const prompt = `
 You are a Hebrew phonetics expert.
@@ -52,12 +53,17 @@ Text: ${hebrewText}
             },
         ];
 
+        console.log('Gemini Phoneme - Content prepared for API call.'); // New log
+
         const result = await model.generateContent({ contents });
+        console.log('Gemini Phoneme - API call successful, result received.'); // New log
+
         const response = await result.response.text();
+        console.log('Gemini Phoneme - API response text extracted.'); // New log
 
         return response;
     } catch (error) {
-        console.error('❌ Error in comparePhonemes:', error);
+        console.error('❌ Error in comparePhonemes:', error); // Enhanced log
         throw new Error(
             error?.message || 'Failed to generate Gemini audio analysis'
         );
