@@ -151,7 +151,7 @@ const StoryFromLibrary = () => {
       console.log('🛑 Recording stopped. URI:', uri);
 
       const formData = new FormData();
-      formData.append('text', 'הַדַּיָּיג נִצְמָד לְדֹופֶן הַסִּירָה בִּזְמַן הַסְּעָרָה.');
+      formData.append('text', paragraphs[currentIndex]);
       formData.append('audio', {
         uri,
         name: 'recording.wav',
