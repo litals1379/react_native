@@ -96,12 +96,12 @@ const StoryFromLibrary = () => {
         Alert.alert('Microphone permission not granted');
         return;
       }
-  
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-  
+
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync({
         android: {
@@ -125,7 +125,7 @@ const StoryFromLibrary = () => {
         },
         isMeteringEnabled: false,
       });
-  
+
       await recording.startAsync();
       setRecording(recording);
       setRecordingUri(null);
@@ -135,7 +135,7 @@ const StoryFromLibrary = () => {
       Alert.alert('Recording error', err.message || 'Unknown error');
     }
   };
-  
+
 
   const stopRecording = async () => {
     try {
@@ -238,10 +238,13 @@ const StoryFromLibrary = () => {
                 <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
 
-              <Button
-                title={recording ? 'Stop Recording' : 'Start Recording'}
+              {/* כפתור מיקרופון/עצירה */}
+              <TouchableOpacity
+                style={[styles.button, recording && styles.buttonListening]}
                 onPress={toggleRecording}
-              />
+              >
+                <Icon name={recording ? "stop" : "microphone"} size={30} color={recording ? "#C0392B" : "#65558F"} />
+              </TouchableOpacity>
             </View>
 
             {transcript !== "" && (
