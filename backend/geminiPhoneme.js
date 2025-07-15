@@ -12,7 +12,7 @@ const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 export const comparePhonemes = async (hebrewText, base64Audio) => {
     try {
         const model = genAI.getGenerativeModel({
-            model: 'gemini-2.0-flash-001', // supports audio with inlineData
+            model: 'gemini-2.0-flash', // supports audio with inlineData
         });
         console.log('Gemini Phoneme - Model initialized.'); // New log
 
@@ -34,7 +34,7 @@ export const comparePhonemes = async (hebrewText, base64Audio) => {
         
         Text: ${hebrewText}
         `.trim();
-        
+
 
 
         const contents = [
@@ -60,7 +60,25 @@ export const comparePhonemes = async (hebrewText, base64Audio) => {
         const response = await result.response.text();
         console.log('Gemini Phoneme - API response text extracted.'); // New log
 
-        return response;
+        // Split response into two lines, then split each line into array of characters (no spaces)
+        const [line1 = '', line2 = ''] = response.split('\n');
+        const line1Arr = line1.trim().split(/\s+/);
+        const line2Arr = line2.trim().split(/\s+/);
+        
+
+        // Compare arrays: 1 if wrong, 0 if correct, for each character in line1Arr
+        const minLen = Math.min(line1Arr.length, line2Arr.length);
+        const wrongArr = [];
+        for (let i = 0; i < minLen; i++) {
+            wrongArr.push(line1Arr[i] === line2Arr[i] ? 0 : 1);
+        }
+        // If line1Arr is longer, mark remaining as wrong
+        for (let i = minLen; i < line1Arr.length; i++) {
+            wrongArr.push(1);
+        }
+
+        return wrongArr;
+
     } catch (error) {
         console.error('❌ Error in comparePhonemes:', error); // Enhanced log
         throw new Error(

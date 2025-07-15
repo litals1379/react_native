@@ -1,10 +1,9 @@
-import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Button, Alert } from 'react-native';
+import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
-import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { styles } from './Style/storyFromLibrary';
 
@@ -19,10 +18,12 @@ const StoryFromLibrary = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [transcript, setTranscript] = useState("");
 
   const [recording, setRecording] = useState(null);
   const [recordingUri, setRecordingUri] = useState(null);
+  const [highlightedWords, setHighlightedWords] = useState([]);
+  const [hasFeedback, setHasFeedback] = useState(false);
+
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -47,14 +48,18 @@ const StoryFromLibrary = () => {
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setTranscript("");
+      setHighlightedWords([]);
+      setHasFeedback(false);
+
     }
   };
 
   const goToPreviousParagraph = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setTranscript("");
+      setHighlightedWords([]);
+      setHasFeedback(false);
+
     }
   };
 
@@ -136,7 +141,6 @@ const StoryFromLibrary = () => {
     }
   };
 
-
   const stopRecording = async () => {
     try {
       if (!recording) {
@@ -163,12 +167,24 @@ const StoryFromLibrary = () => {
         body: formData,
       });
 
-      const result = await response.json();
-      if (result.error) {
-        Alert.alert('Analysis error', result.error);
+      const json = await response.json();
+      const wrongArr = json.result;
+
+      const words = paragraphs[currentIndex].split(/\s+/);
+      const coloredWords = words.map((word, i) => ({
+        text: word,
+        isWrong: wrongArr[i] === 1
+      }));
+
+      setHighlightedWords(coloredWords);
+      setHasFeedback(true);
+
+      if (wrongArr.includes(1)) {
+        Alert.alert( "יש מילים שלא נאמרו נכון 🙈 לחץ על המיקרופון ותנסה שוב או המשך לפסקה הבאה");
       } else {
-        Alert.alert('Gemini Result', result.result);
+        Alert.alert("מעולה!", "ההגייה שלך הייתה מצוינת 🎉");
       }
+
     } catch (err) {
       console.error('Stop recording error:', err);
       Alert.alert('Stop recording error', err.message || 'Unknown error');
@@ -198,8 +214,26 @@ const StoryFromLibrary = () => {
           )}
 
           {paragraphs[currentIndex] && (
-            <Text style={styles.content}>{paragraphs[currentIndex]}</Text>
+            <Text style={styles.content}>
+              {(highlightedWords.length > 0
+                ? highlightedWords
+                : paragraphs[currentIndex].split(/\s+/).map((word) => ({ text: word, isWrong: false }))
+              ).map((wordObj, i) => (
+                <Text
+                  key={i}
+                  style={{
+                    color: hasFeedback
+                      ? (wordObj.isWrong ? '#E74C3C' : '#2ECC71')
+                      : '#000000', // default black before feedback
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {wordObj.text + ' '}
+                </Text>
+              ))}
+            </Text>
           )}
+
 
           <View style={styles.navigation}>
             <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
@@ -238,7 +272,6 @@ const StoryFromLibrary = () => {
                 <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
 
-              {/* כפתור מיקרופון/עצירה */}
               <TouchableOpacity
                 style={[styles.button, recording && styles.buttonListening]}
                 onPress={toggleRecording}
@@ -246,13 +279,6 @@ const StoryFromLibrary = () => {
                 <Icon name={recording ? "stop" : "microphone"} size={30} color={recording ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
             </View>
-
-            {transcript !== "" && (
-              <View style={styles.transcriptContainer}>
-                <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
-                <Text style={styles.transcriptText}>{transcript}</Text>
-              </View>
-            )}
 
             {currentIndex === paragraphs.length - 1 && (
               <TouchableOpacity
