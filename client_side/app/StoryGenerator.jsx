@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 import { storyGeneratorService } from './services/storyGeneratorService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
 import { styles } from './Style/storyGenerator';
 
 const StoryGenerator = () => {
-    const { childID, topic } = useLocalSearchParams();
-
+    const { topic, childReadingLevel } = useLocalSearchParams();
     const [story, setStory] = useState(null);
     const [storyTitle, setStoryTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -14,24 +14,50 @@ const StoryGenerator = () => {
     const [imageLoading, setImageLoading] = useState({});
 
     const handleGenerateStory = async () => {
-        setIsLoading(true);
-        setError(null);
+    setIsLoading(true);
+    setError(null);
+    console.log("📘 Topic:", topic);
+    console.log("📚 Child reading level:", childReadingLevel);
 
-        try {
-            const result = await storyGeneratorService.generateStory(topic, 1); // get reading level from child
+    try {
+        const result = await storyGeneratorService.generateStory(topic, childReadingLevel);
 
-            if (result.error) {
-                setError(result.error);
+        console.log("✅ Raw story result from server:", result);
+
+        if (result.error) {
+            setError(result.error);
+        } else {
+            if (result.storyParagraph) {
+                result.storyParagraph.forEach((p, i) => {
+                    console.log(`🧩 Paragraph ${i + 1}:`);
+                    console.log("📄 Text:", p.text);
+                    console.log("🖼️ Image prompt:", p.imagePrompt || "(none)");
+                    if (p.image) {
+                        console.log("✅ Image returned for this paragraph.");
+                    } else {
+                        console.warn("⚠️ No image returned for this paragraph.");
+                    }
+                });
             } else {
-                setStory(result.storyParagraph); // ✅ updated key
-                setStoryTitle(result.title);     // ✅ set title
+                console.warn("⚠️ storyParagraph is missing in the response.");
             }
-        } catch (err) {
-            setError(err.message || 'שגיאה בעת יצירת הסיפור.');
-        } finally {
-            setIsLoading(false);
+
+            const normalizedParagraphs = result.storyParagraph.map(p => ({
+                ...p,
+                text: p.text.normalize('NFC')
+            }));
+            setStory(normalizedParagraphs);
+            setStoryTitle(result.title || '');
         }
-    };
+
+    } catch (err) {
+        console.error("❌ Error during story generation:", err);
+        setError(err.message || 'שגיאה בעת יצירת הסיפור.');
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
     useEffect(() => {
         if (topic) {
@@ -64,7 +90,7 @@ const StoryGenerator = () => {
 
                     {story.map((paragraph, index) => (
                         <View key={index} style={styles.paragraphContainer}>
-                            <Text style={styles.paragraphText}>{paragraph.text}</Text>
+                            <Text style={styles.paragraphText}>{paragraph.text.normalize('NFC')}</Text>
 
                             {paragraph.image && (
                                 <View style={styles.imageWrapper}>

@@ -16,6 +16,7 @@ const subjectsData = [
 export default function Subjects() {
   const params = useLocalSearchParams();
   const childID = params.childID; // קבלת ה-childID מהעמוד הקודם
+  const childReadingLevel = params.childReadingLevel;
   const characterID = params.characterID;
   const router = useRouter();
 
@@ -25,7 +26,7 @@ export default function Subjects() {
   }, [childID]);
 
   const handleSubjectSelect = (topic) => {
-    router.push({ pathname: "./StorySelection", params: { childID: childID, characterID: characterID, topic: topic } });
+    router.push({ pathname: "./StorySelection", params: { childID: childID, childReadingLevel: childReadingLevel,characterID: characterID, topic: topic } });
   };
 
   const renderSubject = ({ item }) => (

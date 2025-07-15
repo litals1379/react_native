@@ -16,6 +16,10 @@ export default function Characters() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const childID = params.childID;
+  const childReadingLevel = params.childReadingLevel;
+  
+  console.log("Characters - childID:", childID);
+  console.log("Characters - childReadingLevel:", childReadingLevel);
 
   const [playingCharacterID, setPlayingCharacterID] = useState(null);
   const videoRef = useRef(null);
@@ -29,7 +33,7 @@ export default function Characters() {
       setPlayingCharacterID(null);
       router.push({
         pathname: './subjects',
-        params: { childID: childID, characterID: item.id },
+        params: { childID: childID, childReadingLevel: childReadingLevel, characterID: item.id },
       });
     } else {
       // דמות אחרת נלחצה – עצור את הקודמת
@@ -57,7 +61,7 @@ export default function Characters() {
               setPlayingCharacterID(null);
               router.push({
                 pathname: './subjects',
-                params: { childID: childID, characterID: item.id },
+                params: { childID: childID, childReadingLevel: childReadingLevel, characterID: item.id },
               });
             }
           }}

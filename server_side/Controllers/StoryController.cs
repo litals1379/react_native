@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet.Actions; // Keep if you're using Cloudinary elsewhere, otherwise can be removed.
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration; // Ensure this is present
+using MongoDB.Bson;
 using Server_Side.BL;
 using Server_Side.DAL;
 using Server_Side.Models;
@@ -24,13 +25,15 @@ namespace Server_Side.Controllers
         private readonly IConfiguration _config;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _geminiApiKey;
-        private readonly ReadingPromptService _promptService;   
+        private readonly ReadingPromptService _promptService;
+        private readonly CloudinaryService _cloudinaryService;
 
-        public StoryController(StoryDBservices storyDBservices, IConfiguration config, IHttpClientFactory httpClientFactory, ReadingPromptService promptService)
+        public StoryController(StoryDBservices storyDBservices, IConfiguration config, IHttpClientFactory httpClientFactory, ReadingPromptService promptService, CloudinaryService cloudinaryService)
         {
             _storyDBservices = storyDBservices;
             _config = config;
             _httpClientFactory = httpClientFactory;
+            _cloudinaryService = cloudinaryService;
             // Retrieve API key once in the constructor
             _geminiApiKey = _config["GeminiApiKey"];
             if (string.IsNullOrEmpty(_geminiApiKey))
@@ -184,7 +187,53 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
                     }
                 }
 
-                return Ok(storyResponse);
+                // Generate a unique ID for the story before saving
+                var storyId = ObjectId.GenerateNewId().ToString();
+                string cloudinaryFolder = $"Story Time/{storyId}";
+
+                var paragraphs = new Dictionary<string, string>();
+                var imagesUrls = new Dictionary<string, string>();
+                string coverImg = null;
+
+                for (int i = 0; i < storyResponse.StoryParagraph.Count; i++)
+                {
+                    var para = storyResponse.StoryParagraph[i];
+                    string paraKey = $"para{i}";
+                    string imgKey = $"img{i}";
+
+                    paragraphs[paraKey] = para.Text;
+
+                    if (!string.IsNullOrEmpty(para.Image))
+                    {
+                        string imageUrl = await _cloudinaryService.UploadBase64ImageAsync(para.Image, $"image_{i}", cloudinaryFolder);
+                        imagesUrls[imgKey] = imageUrl;
+
+                        if (i == 0) // use first image as cover
+                            coverImg = imageUrl;
+                    }
+                }
+
+                // Create Story object for DB
+                var finalStory = new Story
+                {
+                    Id = storyId,
+                    Title = storyResponse.Title,
+                    CoverImg = coverImg,
+                    Topic = request.Topic,
+                    Paragraphs = paragraphs,
+                    ImagesUrls = imagesUrls,
+                    ReadingLevel = request.Level,
+                    Ratings = new List<int>(),
+                    AverageRating = 0.0
+                };
+
+                // Save to DB
+                await _storyDBservices.InsertStoryAsync(finalStory);
+
+                return Ok(finalStory);
+
+
+                //return Ok(storyResponse);
             }
             catch (Exception ex)
             {

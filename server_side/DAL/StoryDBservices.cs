@@ -126,7 +126,14 @@ namespace Server_Side.DAL
             return stories;
         }
 
+        public async Task InsertStoryAsync(Story story)
+        {
+            var exists = await _storiesCollection.Find(s => s.Id == story.Id).AnyAsync();
+            if (exists)
+                throw new Exception($"Story with ID {story.Id} already exists.");
 
+            await _storiesCollection.InsertOneAsync(story);
+        }
 
         public async Task<Story> GetStoryByIdAsync(string id)
         {
