@@ -17,25 +17,24 @@ export const comparePhonemes = async (hebrewText, base64Audio) => {
         console.log('Gemini Phoneme - Model initialized.'); // New log
 
         const prompt = `
-You are a Hebrew phonetics expert.
-
-You will be given:
-- A vowelized Hebrew sentence
-- A WAV audio file (attached below)
-
-Your task is to:
-
-1. Transcribe the Hebrew **text** into IPA using Modern Hebrew pronunciation.
-2. Transcribe the **spoken audio** into IPA based only on what is actually said.
-
-Return your result in this exact format (no explanation):
-
-Text IPA: [IPA transcription of the written Hebrew text]
-Audio IPA: [IPA transcription of what is spoken in the audio]
-
-The inputs are attached below.
-Text: ${hebrewText}
-`.trim();
+        You are a Hebrew phonetics expert.
+        
+        Given:
+        - A vowelized Hebrew sentence
+        - A WAV audio file
+        
+        Your task:
+        1. Convert the written Hebrew sentence into a full IPA transcription (Modern Hebrew).
+        2. Listen to the audio and transcribe only what is actually spoken into IPA (do not infer or guess missing words).
+        3. If the audio is silent or unintelligible, write "Read again" instead of the IPA.
+        
+        ⚠️ Return only two lines with no extra text:
+        Line 1: IPA transcription of the Hebrew text  
+        Line 2: IPA transcription of the spoken audio or "Read again"
+        
+        Text: ${hebrewText}
+        `.trim();
+        
 
 
         const contents = [
