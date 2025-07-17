@@ -27,6 +27,7 @@ const StoryGenerator = () => {
         if (result.error) {
             setError(result.error);
         } else {
+            let normalizedParagraphs = [];
             if (result.storyParagraph) {
                 result.storyParagraph.forEach((p, i) => {
                     console.log(`🧩 Paragraph ${i + 1}:`);
@@ -38,14 +39,32 @@ const StoryGenerator = () => {
                         console.warn("⚠️ No image returned for this paragraph.");
                     }
                 });
+                normalizedParagraphs = result.storyParagraph.map(p => ({
+                    ...p,
+                    text: p.text.normalize('NFC')
+                }));
+            } else if (result.paragraphs && result.imagesUrls) {
+                // New format: paragraphs is an object, imagesUrls is an object
+                const paraKeys = Object.keys(result.paragraphs).sort();
+                normalizedParagraphs = paraKeys.map((key, idx) => ({
+                    text: (result.paragraphs[key] || '')
+                        .replace(/^([\\]+n|[\\\n\r\s])+/g, '') // Remove all leading \, \n, whitespace, newlines
+                        .replace(/\\+n/g, '\n') // Replace all \n with real newlines
+                        .replace(/^\s+|\s+$/g, '') // Trim again just in case
+                        .normalize('NFC'),
+                    image: result.imagesUrls[`img${idx}`] || null
+                }));
+                normalizedParagraphs.forEach((p, i) => {
+                    console.log(`🧩 Paragraph ${i + 1}:`);
+                    console.log("📄 Text:", p.text);
+                    console.log("🖼️ Image URL:", p.image || "(none)");
+                });
             } else {
-                console.warn("⚠️ storyParagraph is missing in the response.");
+                setError("פורמט סיפור לא נתמך מהשרת.");
+                setStory([]);
+                setStoryTitle('');
+                return;
             }
-
-            const normalizedParagraphs = result.storyParagraph.map(p => ({
-                ...p,
-                text: p.text.normalize('NFC')
-            }));
             setStory(normalizedParagraphs);
             setStoryTitle(result.title || '');
         }
@@ -95,7 +114,11 @@ const StoryGenerator = () => {
                             {paragraph.image && (
                                 <View style={styles.imageWrapper}>
                                     <Image
-                                        source={{ uri: `data:image/png;base64,${paragraph.image}` }}
+                                        source={{
+                                            uri: paragraph.image.startsWith('http')
+                                                ? paragraph.image.trim().replace(/\s+/g, '%20').replace(/\n/g, '')
+                                                : `data:image/png;base64,${paragraph.image}`
+                                        }}
                                         style={styles.paragraphImage}
                                         resizeMode="cover"
                                         onLoadStart={() =>
