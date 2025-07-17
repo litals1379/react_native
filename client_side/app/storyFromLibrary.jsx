@@ -162,7 +162,7 @@ const StoryFromLibrary = () => {
         type: 'audio/wav',
       });
 
-      const response = await fetch('http://192.168.1.75:3000/analyze', {
+      const response = await fetch('https://storytime-fp9z.onrender.com/analyze', {
         method: 'POST',
         body: formData,
       });
