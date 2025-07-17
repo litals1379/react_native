@@ -10,6 +10,11 @@ const upload = multer({ dest: 'uploads' });
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('🟢 Node.js server is running!');
+});
+
+
 app.post('/analyze', upload.single('audio'), async (req, res) => {
     try {
         console.log('in server - Request received at /analyze.'); // Enhanced log
@@ -47,14 +52,15 @@ app.post('/analyze', upload.single('audio'), async (req, res) => {
     }
 });
 
-// ... (app.listen)
+// // ... (app.listen)
+// const PORT = process.env.PORT || 3000;
+// const HOST = '0.0.0.0'; // This tells the server to listen on all available network interfaces
+// app.listen(PORT, HOST, () => { // Add HOST here
+//     console.log(`Server running on http://${HOST}:${PORT}`); // Updated log
+// });
+
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0'; // This tells the server to listen on all available network interfaces
-app.listen(PORT, HOST, () => { // Add HOST here
-    console.log(`Server running on http://${HOST}:${PORT}`); // Updated log
+app.listen(PORT, () => {
+    console.log(`✅ Server running on port ${PORT}`);
 });
 
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on http://localhost:${PORT}`);
-// });
