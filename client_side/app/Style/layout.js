@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
   storyText: {
     position: 'absolute',
     top: '70%',
-    left: '38%',
+    left: '41%',
     width: 100,
     textAlign: 'center',
     transform: [{ translateX: -50 }],
