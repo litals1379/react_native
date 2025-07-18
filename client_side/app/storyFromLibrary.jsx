@@ -6,11 +6,11 @@ import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
 import { Audio } from 'expo-av';
 import { styles } from './Style/storyFromLibrary';
+import AlertModal from './Components/AlertModal'; // ✅ IMPORT MODAL
 
 const StoryFromLibrary = () => {
   const router = useRouter();
   const { storyId } = useLocalSearchParams();
-
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
   const [images, setImages] = useState([]);
@@ -18,12 +18,19 @@ const StoryFromLibrary = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-
   const [recording, setRecording] = useState(null);
   const [recordingUri, setRecordingUri] = useState(null);
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [hasFeedback, setHasFeedback] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+
+  const [modalData, setModalData] = useState({ // ✅ MODAL STATE
+    visible: false,
+    message: '',
+    emoji: '',
+    type: 'success',
+  });
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -50,7 +57,6 @@ const StoryFromLibrary = () => {
       setCurrentIndex(currentIndex + 1);
       setHighlightedWords([]);
       setHasFeedback(false);
-
     }
   };
 
@@ -59,7 +65,6 @@ const StoryFromLibrary = () => {
       setCurrentIndex(currentIndex - 1);
       setHighlightedWords([]);
       setHasFeedback(false);
-
     }
   };
 
@@ -92,6 +97,15 @@ const StoryFromLibrary = () => {
   const stopStory = () => {
     Speech.stop();
     setIsSpeaking(false);
+  };
+
+  const speakWord = (word) => {
+    Speech.speak(word, {
+      language: 'he-IL',
+      onDone: () => { },
+      onStopped: () => { },
+      onError: (err) => console.error('Speech error:', err),
+    });
   };
 
   const record = async () => {
@@ -141,6 +155,7 @@ const StoryFromLibrary = () => {
     }
   };
 
+
   const stopRecording = async () => {
     try {
       if (!recording) {
@@ -162,6 +177,8 @@ const StoryFromLibrary = () => {
         type: 'audio/wav',
       });
 
+      setIsAnalyzing(true); // 👈 Start loading
+
       const response = await fetch('https://storytime-fp9z.onrender.com/analyze', {
         method: 'POST',
         body: formData,
@@ -180,16 +197,30 @@ const StoryFromLibrary = () => {
       setHasFeedback(true);
 
       if (wrongArr.includes(1)) {
-        Alert.alert( "יש מילים שלא נאמרו נכון 🙈 לחץ על המיקרופון ותנסה שוב או המשך לפסקה הבאה");
+        setModalData({
+          visible: true,
+          message: 'היו כמה פספוסים בהגייה 🤏 תנסה שוב, אתה כמעט שם!',
+          emoji: '🧐',
+          type: 'error',
+        });
       } else {
-        Alert.alert("מעולה!", "ההגייה שלך הייתה מצוינת 🎉");
+        setModalData({
+          visible: true,
+          message: 'בול פגיעה! הגית את הכל מושלם 💪✨',
+          emoji: '🌟',
+          type: 'success',
+        });
+        goToNextParagraph();
       }
 
     } catch (err) {
       console.error('Stop recording error:', err);
       Alert.alert('Stop recording error', err.message || 'Unknown error');
+    } finally {
+      setIsAnalyzing(false); // 👈 Always stop loading (even on error)
     }
   };
+
 
   const toggleRecording = () => {
     recording ? stopRecording() : record();
@@ -214,26 +245,26 @@ const StoryFromLibrary = () => {
           )}
 
           {paragraphs[currentIndex] && (
-            <Text style={styles.content}>
+            <View style={styles.wordWrapContainer}>
               {(highlightedWords.length > 0
                 ? highlightedWords
                 : paragraphs[currentIndex].split(/\s+/).map((word) => ({ text: word, isWrong: false }))
               ).map((wordObj, i) => (
-                <Text
-                  key={i}
-                  style={{
-                    color: hasFeedback
-                      ? (wordObj.isWrong ? '#E74C3C' : '#2ECC71')
-                      : '#000000', // default black before feedback
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {wordObj.text + ' '}
-                </Text>
+                <TouchableOpacity key={i} onPress={() => speakWord(wordObj.text)}>
+                  <Text
+                    style={[
+                      styles.wordText,
+                      hasFeedback && {
+                        color: wordObj.isWrong ? '#E74C3C' : '#2ECC71',
+                      },
+                    ]}
+                  >
+                    {wordObj.text + ' '}
+                  </Text>
+                </TouchableOpacity>
               ))}
-            </Text>
+            </View>
           )}
-
 
           <View style={styles.navigation}>
             <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
@@ -291,6 +322,22 @@ const StoryFromLibrary = () => {
           </View>
         </ScrollView>
       )}
+
+      {/* ✅ CUSTOM ALERT MODAL BELOW SCROLLVIEW */}
+      <AlertModal
+        visible={modalData.visible}
+        onClose={() => setModalData(prev => ({ ...prev, visible: false }))}
+        message={modalData.message}
+        emoji={modalData.emoji}
+        type={modalData.type}
+      />
+      {isAnalyzing && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#65558F" />
+          <Text style={styles.loadingText}>בודק את ההגייה שלך...</Text>
+        </View>
+      )}
+
     </View>
   );
 };
