@@ -5,7 +5,6 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,11 +15,12 @@ import { useRouter } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {styles} from './Style/login'; // Assuming you have a styles file for this component
+import { styles } from './Style/login'; // Assuming you have a styles file for this component
 import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as WebBrowser from 'expo-web-browser';
-  
+import AlertModal from './Components/AlertModal';
+
 
 export default function Login() {
   const router = useRouter();
@@ -29,6 +29,10 @@ export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalEmoji, setModalEmoji] = useState('');
+  const [modalType, setModalType] = useState('success');
 
   const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login';
 
@@ -143,7 +147,7 @@ export default function Login() {
         await GoogleSignin.hasPlayServices();
         await GoogleSignin.signOut();
         const result = await GoogleSignin.signIn();
-        
+
         if (result?.data?.user) {
           const userData = {
             username: result.data.user.email.split('@')[0],
@@ -157,14 +161,23 @@ export default function Login() {
             profileImage: result.data.user.photo,
           };
 
-          Alert.alert('התחברות הצליחה', `שלום, ${result.data.user.givenName}`);
+          setModalMessage(`שלום, ${result.data.user.givenName}`);
+          setModalEmoji('👋');
+          setModalType('success');
+          setModalVisible(true);
           await loginUser(userData);
         } else {
-          Alert.alert('שגיאה', 'ההתחברות נכשלה');
+          setModalMessage('ההתחברות נכשלה');
+          setModalEmoji('❌');
+          setModalType('error');
+          setModalVisible(true);
         }
       } catch (err) {
         console.error('❌ Native sign-in error:', err);
-        Alert.alert('שגיאה', 'שגיאה בהתחברות עם גוגל');
+        setModalMessage('שגיאה בהתחברות עם גוגל');
+        setModalEmoji('❌');
+        setModalType('error');
+        setModalVisible(true);
       }
     }
   };
@@ -210,16 +223,19 @@ export default function Login() {
         const userEmail = data.user.email;
         router.push({ pathname: '(tabs)/userProfile' });
         await AsyncStorage.setItem('userId', userId.toString());
-        await AsyncStorage.setItem('userEmail', userEmail );
-        await AsyncStorage.setItem('userName', username );
+        await AsyncStorage.setItem('userEmail', userEmail);
+        await AsyncStorage.setItem('userName', username);
       } else {
-        Alert.alert('שגיאה', 'שם משתמש או סיסמה לא נכונים.');
+        setModalMessage('שם משתמש או סיסמה לא נכונים.');
+        setModalEmoji('❌');
+        setModalType('error');
+        setModalVisible(true);
       }
     } catch (error) {
-      Alert.alert(
-        'שגיאה',
-        'הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.'
-      );
+      setModalMessage('הייתה שגיאה בהתחברות, אנא נסה שוב מאוחר יותר.');
+      setModalEmoji('❌');
+      setModalType('error');
+      setModalVisible(true);
     } finally {
       setLoading(false);
     }
@@ -291,16 +307,23 @@ export default function Login() {
             style={styles.loadingIndicator}
           />
         )}
-         <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-            <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
-            <Text style={styles.googleText}>המשך עם Google</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+          <Image source={require('../assets/images/google-icon.png')} style={styles.googleIcon} />
+          <Text style={styles.googleText}>המשך עם Google</Text>
+        </TouchableOpacity>
 
         {/* כפתור הרשמה */}
         <TouchableOpacity onPress={() => router.push('/register')}>
-            <Text style={styles.registerText}>לא נרשמת? הירשם עכשיו</Text>
+          <Text style={styles.registerText}>לא נרשמת? הירשם עכשיו</Text>
         </TouchableOpacity>
       </ScrollView>
+      <AlertModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        message={modalMessage}
+        emoji={modalEmoji}
+        type={modalType}
+      />
     </KeyboardAvoidingView>
   );
 }

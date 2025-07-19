@@ -10,12 +10,14 @@ import {
   Keyboard,
   Platform,
   ScrollView,
-  Alert,
+  ActivityIndicator,
+  Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './Style/register';
+import AlertModal from './Components/AlertModal';
 
 export default function Register() {
   const router = useRouter();
@@ -27,6 +29,10 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalEmoji, setModalEmoji] = useState('');
+  const [modalType, setModalType] = useState('success');
 
   const validate = () => {
     const newErrors = {};
@@ -107,17 +113,26 @@ export default function Register() {
       });
 
       if (response.ok) {
-        Alert.alert('הרשמה הצליחה', 'המשתמש נרשם בהצלחה!');
+        setModalMessage('המשתמש נרשם בהצלחה!');
+        setModalEmoji('🎉');
+        setModalType('success');
+        setModalVisible(true);
         await AsyncStorage.setItem('userEmail', email);
         await AsyncStorage.setItem('userName', username);
         router.push('./addChild');
       } else {
         console.error('Registration failed');
-        Alert.alert('שגיאה', 'הרשמה נכשלה. נסה שוב מאוחר יותר.');
+        setModalMessage('הרשמה נכשלה. נסה שוב מאוחר יותר.');
+        setModalEmoji('❌');
+        setModalType('error');
+        setModalVisible(true);
       }
     } catch (error) {
       console.error('Network request failed:', error);
-      Alert.alert('שגיאה', 'הייתה בעיה בחיבור לשרת.');
+      setModalMessage('הייתה בעיה בחיבור לשרת.');
+      setModalEmoji('❌');
+      setModalType('error');
+      setModalVisible(true);
     }
   };
 
@@ -201,6 +216,13 @@ export default function Register() {
               </TouchableOpacity>
             </View>
           </View>
+          <AlertModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            message={modalMessage}
+            emoji={modalEmoji}
+            type={modalType}
+          />
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

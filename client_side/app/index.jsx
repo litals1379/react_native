@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Text, View, Image, TouchableOpacity, Alert, Platform } from 'react-native';
+import { Animated, Text, View, Image, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Audio, Video } from 'expo-av';
 import * as WebBrowser from 'expo-web-browser';
@@ -7,6 +7,7 @@ import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './Style/index';
+import AlertModal from './Components/AlertModal';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -27,6 +28,10 @@ export default function HomeScreen() {
   const [showStoryTime, setShowStoryTime] = useState(false);
   const video = useRef(null);
   const [status, setStatus] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalEmoji, setModalEmoji] = useState('');
+  const [modalType, setModalType] = useState('success');
 
   const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
   const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
@@ -139,7 +144,7 @@ export default function HomeScreen() {
         await GoogleSignin.hasPlayServices();
         await GoogleSignin.signOut();
         const result = await GoogleSignin.signIn();
-        
+
         if (result?.data?.user) {
           const userData = {
             username: result.data.user.email.split('@')[0],
@@ -153,14 +158,23 @@ export default function HomeScreen() {
             profileImage: result.data.user.photo,
           };
 
-          Alert.alert('התחברות הצליחה', `שלום, ${result.data.user.givenName}`);
+          setModalMessage(`שלום, ${result.data.user.givenName}`);
+          setModalEmoji('👋');
+          setModalType('success');
+          setModalVisible(true);
           await loginUser(userData);
         } else {
-          Alert.alert('שגיאה', 'ההתחברות נכשלה');
+          setModalMessage('ההתחברות נכשלה');
+          setModalEmoji('❌');
+          setModalType('error');
+          setModalVisible(true);
         }
       } catch (err) {
         console.error('❌ Native sign-in error:', err);
-        Alert.alert('שגיאה', 'שגיאה בהתחברות עם גוגל');
+        setModalMessage('שגיאה בהתחברות עם גוגל');
+        setModalEmoji('❌');
+        setModalType('error');
+        setModalVisible(true);
       }
     }
   };
@@ -256,6 +270,13 @@ export default function HomeScreen() {
 
         </>
       )}
+      <AlertModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        message={modalMessage}
+        emoji={modalEmoji}
+        type={modalType}
+      />
     </View>
   );
 }

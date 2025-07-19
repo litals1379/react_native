@@ -1,10 +1,14 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+import AlertModal from '../Components/AlertModal';
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalEmoji, setModalEmoji] = useState('');
+    const [modalType, setModalType] = useState('success');
 
     // שליפה מהשרת
     const fetchUsers = async () => {
@@ -25,7 +29,10 @@ export const UserProvider = ({ children }) => {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error('שגיאה במחיקה');
-            Alert.alert('הצלחה', 'המשתמש נמחק בהצלחה!');
+            setModalMessage('המשתמש נמחק בהצלחה!');
+            setModalEmoji('🗑️');
+            setModalType('success');
+            setModalVisible(true);
             // הסרה מהסטייט
             setUsers((prev) => prev.filter((user) => user.id !== userId));
         } catch (error) {
@@ -46,7 +53,10 @@ export const UserProvider = ({ children }) => {
             });
 
             if (!response.ok) throw new Error('שגיאה בעדכון');
-            Alert.alert('הצלחה', 'המשתמש עודכן בהצלחה!');
+            setModalMessage('המשתמש עודכן בהצלחה!');
+            setModalEmoji('✅');
+            setModalType('success');
+            setModalVisible(true);
 
             // עדכון בסטייט
             setUsers((prev) =>
@@ -67,6 +77,13 @@ export const UserProvider = ({ children }) => {
     return (
         <UserContext.Provider value={{ users, DeleteUser, EditUser }}>
             {children}
+            <AlertModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                message={modalMessage}
+                emoji={modalEmoji}
+                type={modalType}
+            />
         </UserContext.Provider>
     );
 };

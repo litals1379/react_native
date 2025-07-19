@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import {styles} from './tabsStyle/library'; // סגנונות
+import { styles } from './tabsStyle/library'; // סגנונות
+import AlertModal from '../Components/AlertModal';
 
 export default function Library() {
   const [books, setBooks] = useState([]);
@@ -9,6 +10,10 @@ export default function Library() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const child = params.child ? JSON.parse(params.child) : null;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalEmoji, setModalEmoji] = useState('');
+  const [modalType, setModalType] = useState('error');
 
   const fetchBooksReadByChild = async (childID) => {
     const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetBooksReadByChild/${childID}`;
@@ -29,7 +34,7 @@ export default function Library() {
       const data = await response.json();
       console.log('Books fetched from API:', data);
 
-      if(data.length > 0) {
+      if (data.length > 0) {
         // שומרים רק title ו־coverImg מכל ספר
         const simplifiedBooks = data.map(book => ({
           id: book.id, // הוספתי את ה-id של הספר
@@ -48,29 +53,24 @@ export default function Library() {
 
   useEffect(() => {
     if (!params.child) {
-      Alert.alert("לא נבחר ילד", "", [
-        {
-          text: "אוקי",
-          onPress: () => {
-            // שולחים את המשתמש לדף profile אם לא נבחר ילד
-            router.push({ pathname: '/userProfile' });
-          },
-        },
-      ]);
+      setModalMessage('לא נבחר ילד');
+      setModalEmoji('⚠️');
+      setModalType('error');
+      setModalVisible(true);
       return;
     }
-  
+
     const parsedChild = JSON.parse(params.child);
     console.log('Child object:', parsedChild);
-  
+
     // נקה את הספרים הקיימים מיד, לפני הבאת החדשים
     setBooks([]);
-  
+
     fetchBooksReadByChild(parsedChild.id);
-  
+
   }, [params.child]);
-  
-  
+
+
 
   return (
     <View style={styles.container}>
@@ -102,10 +102,20 @@ export default function Library() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push({ pathname: '../characters', params: { childID: child?.id, childReadingLevel: child?.readingLevel } })}
-        //onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
+      //onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
       >
         <Text style={styles.buttonText}>בחר סיפור</Text>
       </TouchableOpacity>
+      <AlertModal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          router.push({ pathname: '/userProfile' });
+        }}
+        message={modalMessage}
+        emoji={modalEmoji}
+        type={modalType}
+      />
     </View>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';
-import {styles} from './Style/quiz'; 
+import { styles } from './Style/quiz';
+import AlertModal from './Components/AlertModal';
 
 export default function Quiz() {
   const TOTAL_ROUNDS = 5;
@@ -11,6 +12,10 @@ export default function Quiz() {
   const [score, setScore] = useState(0);
   const [error, setError] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalEmoji, setModalEmoji] = useState('');
+  const [modalType, setModalType] = useState('success');
 
   useEffect(() => {
     if (!gameOver) {
@@ -42,29 +47,35 @@ export default function Quiz() {
 
   const handleWordPress = (selectedWord) => {
     const isCorrect = selectedWord === spokenWord;
-  
+
     if (isCorrect) {
-      Alert.alert('כל הכבוד! 🎉', 'ניחשת נכון!');
+      setModalMessage('ניחשת נכון!');
+      setModalEmoji('🎉');
+      setModalType('success');
+      setModalVisible(true);
       setScore((prev) => prev + 1);
     } else {
-      Alert.alert('אופס!', 'נסה שוב');
+      setModalMessage('נסה שוב');
+      setModalEmoji('😅');
+      setModalType('error');
+      setModalVisible(true);
     }
-  
+
     if (round < TOTAL_ROUNDS) {
       setTimeout(() => {
         setRound((prev) => prev + 1);
-      }, 800); // זמן המתנה קטן כדי לתת לילד זמן לקרוא את ההודעה
+      }, 800);
     } else {
       setGameOver(true);
       setTimeout(() => {
-        Alert.alert(
-          'סיום המשחק 🎉',
-          `ענית נכון על ${isCorrect ? score + 1 : score} מתוך ${TOTAL_ROUNDS} סבבים`
-        );
+        setModalMessage(`ענית נכון על ${isCorrect ? score + 1 : score} מתוך ${TOTAL_ROUNDS} סבבים`);
+        setModalEmoji('🏆');
+        setModalType('success');
+        setModalVisible(true);
       }, 1000);
     }
   };
-  
+
   const repeatWord = () => {
     if (spokenWord) {
       console.log('Repeating word:', spokenWord);
@@ -116,6 +127,13 @@ export default function Quiz() {
           </TouchableOpacity>
         </>
       )}
+      <AlertModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        message={modalMessage}
+        emoji={modalEmoji}
+        type={modalType}
+      />
     </View>
   );
 }
