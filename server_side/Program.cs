@@ -43,6 +43,7 @@ namespace Server_Side
 
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
+            builder.Services.AddScoped<ReadingSessionReportDBservices>(); // ✅ Add this
             builder.Services.AddSingleton<ReadingPromptService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddSingleton<CloudinaryService>();
