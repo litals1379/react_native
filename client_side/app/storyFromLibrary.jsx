@@ -10,7 +10,7 @@ import AlertModal from './Components/AlertModal'; // ✅ IMPORT MODAL
 
 const StoryFromLibrary = () => {
   const router = useRouter();
-  const { storyId } = useLocalSearchParams();
+  const { storyId,childId } = useLocalSearchParams();
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
   const [images, setImages] = useState([]);
@@ -23,14 +23,25 @@ const StoryFromLibrary = () => {
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [hasFeedback, setHasFeedback] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-
   const [modalData, setModalData] = useState({ // ✅ MODAL STATE
     visible: false,
     message: '',
     emoji: '',
     type: 'success',
   });
+
+  const [reportData, setReportData] = useState({
+    storyId,
+    userId: 'parent123', // TODO: Replace with actual logged-in parent ID
+    childId: childId, // TODO: Replace with actual child ID
+    startTime: new Date().toISOString(),
+    totalParagraphs: 0,
+    completedParagraphs: 0,
+    totalErrors: 0,
+    paragraphs: [],
+    summary: {}
+  });
+
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -192,7 +203,27 @@ const StoryFromLibrary = () => {
         text: word,
         isWrong: wrongArr[i] === 1
       }));
+      // Count errors
+      const errorCount = wrongArr.filter(val => val === 1).length;
+      const problematicWords = words.filter((_, i) => wrongArr[i] === 1);
 
+      // Update report
+      setReportData(prev => ({
+        ...prev,
+        totalParagraphs: paragraphs.length,
+        completedParagraphs: prev.completedParagraphs + 1,
+        totalErrors: prev.totalErrors + errorCount,
+        paragraphs: [
+          ...prev.paragraphs,
+          {
+            paragraphIndex: currentIndex,
+            text: paragraphs[currentIndex],
+            problematicWords,
+            attempts: 1, // optional to make dynamic
+            wasSuccessful: !wrongArr.includes(1)
+          }
+        ]
+      }));
       setHighlightedWords(coloredWords);
       setHasFeedback(true);
 
@@ -220,11 +251,14 @@ const StoryFromLibrary = () => {
       setIsAnalyzing(false); // 👈 Always stop loading (even on error)
     }
   };
-
-
+ 
   const toggleRecording = () => {
     recording ? stopRecording() : record();
   };
+
+  const handleEndStory = () =>{
+    console.log('End Story')
+  }
 
   if (loading) {
     return (
@@ -313,7 +347,11 @@ const StoryFromLibrary = () => {
 
             {currentIndex === paragraphs.length - 1 && (
               <TouchableOpacity
-                onPress={() => router.push('/userProfile')}
+                onPress={() =>{
+                  handleEndStory();
+                  router.push('/userProfile')}
+
+                } 
                 style={[styles.endButton, { marginTop: 20 }]}
               >
                 <Text style={styles.endButtonText}>סיים את הסיפור</Text>

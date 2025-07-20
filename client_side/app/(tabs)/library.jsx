@@ -32,7 +32,7 @@ export default function Library() {
       }
 
       const data = await response.json();
-      console.log('Books fetched from API:', data);
+      // console.log('Books fetched from API:', data);
 
       if (data.length > 0) {
         // שומרים רק title ו־coverImg מכל ספר
@@ -83,7 +83,7 @@ export default function Library() {
             <TouchableOpacity
               key={index}
               style={styles.bookItem}
-              onPress={() => router.push({ pathname: 'storyFromLibrary', params: { storyId: book.id } })} // שולחים את ה-`storyId` כפרמטר
+              onPress={() => router.push({ pathname: 'storyFromLibrary', params: { storyId: book.id,childId:child.id } })} // שולחים את ה-`storyId` כפרמטר
             >
               {book.coverImg ? (
                 <Image
@@ -102,7 +102,7 @@ export default function Library() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push({ pathname: '../characters', params: { childID: child?.id, childReadingLevel: child?.readingLevel } })}
-      //onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
+      // onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id } })}
       >
         <Text style={styles.buttonText}>בחר סיפור</Text>
       </TouchableOpacity>
