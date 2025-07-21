@@ -49,7 +49,7 @@ const allReports = () => {
       onPress={() =>
         router.push({
           pathname: '/reportDetails',
-          params: { report: JSON.stringify(item) }
+          params: { report: JSON.stringify(item),storyTitle: item.storyTitle },
         })
       }
     >

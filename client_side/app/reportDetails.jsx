@@ -7,7 +7,7 @@ import { use } from 'react';
 
 
 const ReportDetails = () => {
-  const { report } = useLocalSearchParams();
+  const { report,storyTitle } = useLocalSearchParams();
   const data = JSON.parse(report);
 
 
@@ -16,8 +16,8 @@ const ReportDetails = () => {
       <Text style={styles.title}>דוח קריאה</Text>
 
       <View style={styles.section}>
-        <Text style={styles.label}>ילד: {data.childId}</Text>
-        <Text style={styles.label}>סיפור: {data.storyId}</Text>
+        {/* <Text style={styles.label}>ילד: {data.childId}</Text> */}
+        <Text style={styles.label}>סיפור: {storyTitle}</Text>
         <Text style={styles.label}>שגיאות: {data.totalErrors}</Text>
         <Text style={styles.label}>התחלה: {new Date(data.startTime).toLocaleString()}</Text>
         <Text style={styles.label}>סיום: {new Date(data.endTime).toLocaleString()}</Text>
