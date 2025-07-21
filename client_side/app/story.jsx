@@ -40,7 +40,6 @@ export default function Story() {
       const response = await fetch(apiUrl);
       const text = await response.text();
       if (!response.ok) throw new Error('לא נמצא סיפור מתאים');
-
       const data = JSON.parse(text);
       setStoryId(data?.id);
       setParagraphs(Object.values(data?.paragraphs || {}));
@@ -128,11 +127,13 @@ export default function Story() {
   };
 
   const goToNextParagraph = () => {
-    if (currentIndex === 0) {
-      setShowVideo(true);
-    } else if (currentIndex < paragraphs.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setTranscript("");
+    if (currentIndex < paragraphs.length - 1) {
+      if (currentIndex === 0) {
+        setShowVideo(true); // נציג את הווידאו אבל לא נעבור עדיין
+      } else {
+        setCurrentIndex(currentIndex + 1);
+        setTranscript("");
+      }
     } else {
       setShowEndModal(true);
     }
@@ -178,85 +179,82 @@ export default function Story() {
           <Text style={styles.errorText}>{error}</Text>
         ) : (
           <View>
-            {showVideo ? (
+            {images[currentIndex] && (
+              <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
+            )}
+
+            <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
+
+            {transcript !== "" && (
+              <View style={styles.transcriptContainer}>
+                <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
+                <Text style={styles.transcriptText}>{transcript}</Text>
+              </View>
+            )}
+
+            <View style={{ marginTop: 10, alignItems: 'center' }}>{feedbackComponent}</View>
+
+            <View style={styles.navigation}>
+              <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
+                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
+              </TouchableOpacity>
+
+              <View style={styles.progressContainer}>
+                <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+                <View style={styles.progressRow}>
+                  <Progress.Bar
+                    progress={(currentIndex + 1) / paragraphs.length}
+                    width={160}
+                    height={10}
+                    borderRadius={8}
+                    color={getProgressColor()}
+                    unfilledColor="#E0E0E0"
+                    borderWidth={0}
+                    animated={true}
+                    style={{ transform: [{ scaleX: -1 }] }}
+                  />
+                  <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
+                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
+              </TouchableOpacity>
+            </View>
+
+            {/* 🎥 הווידאו מתחת ל־ProgressBar */}
+            {currentIndex === 0 && showVideo && (
               <Video
                 ref={videoRef}
                 source={require('../assets/sounds/naniEncouraging.mp4')}
-                style={{ width: '100%', height: 200 }}
+                style={{ width: '100%', height: 200, marginTop: 16 }}
                 resizeMode="contain"
                 shouldPlay
                 isLooping={false}
                 onPlaybackStatusUpdate={(status) => {
                   if (status.didJustFinish) {
                     setShowVideo(false);
-                    setCurrentIndex(1);
+                    setCurrentIndex(1); // רק עכשיו נתקדם לפסקה 2
                     setTranscript("");
                   }
                 }}
               />
-            ) : (
-              images[currentIndex] && (
-                <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
-              )
             )}
 
-            {!showVideo && (
-              <>
-                <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
+              <TouchableOpacity style={[styles.button, isSpeaking && styles.buttonListening]} onPress={isSpeaking ? stopStory : speakStory}>
+                <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
+              </TouchableOpacity>
 
-                {transcript !== "" && (
-                  <View style={styles.transcriptContainer}>
-                    <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
-                    <Text style={styles.transcriptText}>{transcript}</Text>
-                  </View>
-                )}
+              <TouchableOpacity style={[styles.button, isListening && styles.buttonListening]} onPress={toggleListening}>
+                <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
+              </TouchableOpacity>
+            </View>
 
-                <View style={{ marginTop: 10, alignItems: 'center' }}>{feedbackComponent}</View>
-
-                <View style={styles.navigation}>
-                  <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                    <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
-                  </TouchableOpacity>
-
-                  <View style={styles.progressContainer}>
-                    <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-                    <View style={styles.progressRow}>
-                      <Progress.Bar
-                        progress={(currentIndex + 1) / paragraphs.length}
-                        width={160}
-                        height={10}
-                        borderRadius={8}
-                        color={getProgressColor()}
-                        unfilledColor="#E0E0E0"
-                        borderWidth={0}
-                        animated={true}
-                        style={{ transform: [{ scaleX: -1 }] }}
-                      />
-                      <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                    <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
-                  </TouchableOpacity>
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
-                  <TouchableOpacity style={[styles.button, isSpeaking && styles.buttonListening]} onPress={isSpeaking ? stopStory : speakStory}>
-                    <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity style={[styles.button, isListening && styles.buttonListening]} onPress={toggleListening}>
-                    <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
-                  </TouchableOpacity>
-                </View>
-
-                {currentIndex === paragraphs.length - 1 && (
-                  <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton}>
-                    <Text style={styles.endButtonText}>סיים את הסיפור</Text>
-                  </TouchableOpacity>
-                )}
-              </>
+            {currentIndex === paragraphs.length - 1 && (
+              <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton}>
+                <Text style={styles.endButtonText}>סיים את הסיפור</Text>
+              </TouchableOpacity>
             )}
           </View>
         )}
