@@ -269,7 +269,7 @@ const StoryFromLibrary = () => {
         }
       };
 
-      const response = await fetch("http://192.168.1.75:5022/api/ReadingSessionReport", {
+      const response = await fetch("http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

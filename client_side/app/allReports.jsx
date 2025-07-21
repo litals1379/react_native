@@ -13,7 +13,7 @@ const allReports = () => {
     const fetchReports = async () => {
       try {
         const response = await fetch(
-          `http://192.168.1.75:5022/api/ReadingSessionReport/filter?userId=${userId}&childId=${childId}`
+          `http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport/filter?userId=${userId}&childId=${childId}`
         );
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'שגיאה בטעינת הדוחות');
