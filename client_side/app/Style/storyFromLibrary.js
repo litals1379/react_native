@@ -5,30 +5,34 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f8f8f8',
+    direction: 'rtl',
   },
   content: {
     direction: 'rtl',
     fontSize: 35,
     marginTop: 10,
     color: '#333',
+    textAlign: 'right',
   },
 
   wordWrapContainer: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row', // שונה מ-row-reverse כדי שהמילים יופיעו בסדר נכון בעברית
     flexWrap: 'wrap',
     alignSelf: 'stretch',
     paddingHorizontal: 16,
     marginTop: 16,
+    direction: 'rtl',
   },
-  
+
   wordText: {
     fontSize: 35,
     fontWeight: 'bold',
     color: '#333',
     marginHorizontal: 2,
     writingDirection: 'rtl',
+    textAlign: 'right',
   },
-  
+
   bookImage: {
     width: '100%',
     height: 200,
@@ -119,6 +123,7 @@ export const styles = StyleSheet.create({
   text: {
     margin: 10,
     direction: 'rtl',
+    textAlign: 'right',
   },
   button: {
     marginVertical: 5,
@@ -132,14 +137,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
-  
+
   loadingText: {
     marginTop: 16,
     fontSize: 18,
     color: '#65558F',
     fontWeight: 'bold',
   },
-  
-
-
 });
