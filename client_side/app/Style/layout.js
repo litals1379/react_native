@@ -25,16 +25,16 @@ export const styles = StyleSheet.create({
   },
   storyText: {
     position: 'absolute',
-    top: '70%',
-    left: '41%',
+    marginTop: 55,
+    // top: '70%',
+    // left: '41%',
     width: 100,
     textAlign: 'center',
-    transform: [{ translateX: -50 }],
-    fontSize: 14,
+    // transform: [{ translateX: '-50' }],
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#65558F',
   },
-
   colorButton: {
     padding: 10,
     borderRadius: 20,
@@ -46,13 +46,14 @@ export const styles = StyleSheet.create({
   },
   colorsList: {
     flexDirection: "row",
-    paddingVertical: 0,
+    paddingVertical: 5,
   },
   colorOption: {
     width: 20,
     height: 20,
     borderRadius: 10,
     marginHorizontal: 4,
+    marginVertical: -5,
     borderWidth: 1,
     borderColor: "#000",
   },
