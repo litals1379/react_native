@@ -18,13 +18,13 @@ public class ReadingSessionReportDBservices
         return await _reportCollection.Find(_ => true).ToListAsync();
     }
 
-    public async Task<List<ReadingSessionReport>> GetFilteredReportsAsync(string storyId, string userId, string childId)
+    public async Task<List<ReadingSessionReport>> GetFilteredReportsAsync(/*string storyId,*/ string userId, string childId)
     {
         var filterBuilder = Builders<ReadingSessionReport>.Filter;
         var filters = new List<FilterDefinition<ReadingSessionReport>>();
 
-        if (!string.IsNullOrEmpty(storyId))
-            filters.Add(filterBuilder.Eq(r => r.StoryId, storyId));
+        //if (!string.IsNullOrEmpty(storyId))
+        //    filters.Add(filterBuilder.Eq(r => r.StoryId, storyId));
         if (!string.IsNullOrEmpty(userId))
             filters.Add(filterBuilder.Eq(r => r.UserId, userId));
         if (!string.IsNullOrEmpty(childId))

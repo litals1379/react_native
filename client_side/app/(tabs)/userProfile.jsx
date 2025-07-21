@@ -70,7 +70,7 @@ export default function UserProfile() {
         quality: 0.7,
       });
 
-      console.log('ImagePicker result:', result);
+      // console.log('ImagePicker result:', result);
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setImageUri(result.assets[0].uri);
@@ -86,7 +86,7 @@ export default function UserProfile() {
   };
 
   const uploadImage = async (imageAsset) => {
-    console.log('uploadImage called with:', imageAsset);
+    // console.log('uploadImage called with:', imageAsset);
     if (!imageAsset) {
       setModalMessage('בחר תמונה להעלאה.');
       setModalEmoji('⚠️');
@@ -151,6 +151,8 @@ export default function UserProfile() {
 
     return `${day}/${month}/${year}`;
   };
+  console.log('userData:', userData);
+  console.log('children:', userData.children);
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -210,12 +212,12 @@ export default function UserProfile() {
                   style={styles.reportButton}
                   onPress={() =>
                     router.push({
-                      pathname: '/readingReport',
-                      params: { childID: child.id, name: child.firstName },
+                      pathname: '/allReports',
+                      params: { childId: child.id, userId: userData.id },
                     })
                   }
                 >
-                  <Text style={styles.reportButtonText}>📄 צור דוח קריאה</Text>
+                  <Text style={styles.reportButtonText}>📄 צפה בהתקדמות</Text>
                 </TouchableOpacity>
               </View>
             ))}

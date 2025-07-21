@@ -34,6 +34,7 @@ export default function RootLayout() {
             <Stack.Screen name="subjects" />
             <Stack.Screen name="characters" />
             <Stack.Screen name="editUserDetails" />
+            
        </Stack>
      </View>
     </UserProvider>

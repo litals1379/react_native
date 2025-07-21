@@ -280,7 +280,9 @@ const StoryFromLibrary = () => {
       if (!response.ok) throw new Error(await response.text());
 
       console.log("✅ Report sent successfully");
-      router.push('/userProfile');
+      // router.push('/userProfile');
+      router.push({ pathname:'/allReports', params:{childId,userId: finalReport.userId} });
+
     } catch (err) {
       console.error("❌ Failed to send report:", err);
       Alert.alert("שגיאה", "שליחת הדוח נכשלה");

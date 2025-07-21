@@ -36,9 +36,9 @@ public class ReadingSessionReportController : ControllerBase
 
     // GET: api/ReadingSessionReport/filter?storyId=...&userId=...&childId=...
     [HttpGet("filter")]
-    public async Task<ActionResult<List<ReadingSessionReport>>> GetFiltered([FromQuery] string storyId, [FromQuery] string userId, [FromQuery] string childId)
+    public async Task<ActionResult<List<ReadingSessionReport>>> GetFiltered(/*[FromQuery] string storyId,*/ [FromQuery] string userId, [FromQuery] string childId)
     {
-        var results = await _db.GetFilteredReportsAsync(storyId, userId, childId);
+        var results = await _db.GetFilteredReportsAsync(/*storyId,*/ userId, childId);
         return Ok(results);
     }
 }
