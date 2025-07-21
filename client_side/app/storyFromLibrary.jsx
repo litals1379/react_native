@@ -7,10 +7,11 @@ import * as Speech from 'expo-speech';
 import { Audio } from 'expo-av';
 import { styles } from './Style/storyFromLibrary';
 import AlertModal from './Components/AlertModal'; // ✅ IMPORT MODAL
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StoryFromLibrary = () => {
   const router = useRouter();
-  const { storyId,childId } = useLocalSearchParams();
+  const { storyId, childId } = useLocalSearchParams();
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
   const [images, setImages] = useState([]);
@@ -19,6 +20,7 @@ const StoryFromLibrary = () => {
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(null);
+  const [isRecording,setIsRecording] = useState(false);
   const [recordingUri, setRecordingUri] = useState(null);
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [hasFeedback, setHasFeedback] = useState(false);
@@ -32,7 +34,7 @@ const StoryFromLibrary = () => {
 
   const [reportData, setReportData] = useState({
     storyId,
-    userId: 'parent123', // TODO: Replace with actual logged-in parent ID
+    userId: '', // TODO: Replace with actual logged-in parent ID
     childId: childId, // TODO: Replace with actual child ID
     startTime: new Date().toISOString(),
     totalParagraphs: 0,
@@ -50,9 +52,25 @@ const StoryFromLibrary = () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Unknown error');
 
+        const fetchedParagraphs = Object.values(data.paragraphs || {});
+        const fetchedImages = Object.values(data.imagesUrls || {});
+        const userId = await AsyncStorage.getItem('userId');
+
         setStory(data);
-        setParagraphs(Object.values(data.paragraphs || {}));
-        setImages(Object.values(data.imagesUrls || {}));
+        setParagraphs(fetchedParagraphs);
+        setImages(fetchedImages);
+        setReportData(prev => ({
+          ...prev,
+          userId,
+          totalParagraphs: fetchedParagraphs.length,
+          paragraphs: fetchedParagraphs.map((text, index) => ({
+            paragraphIndex: index,
+            text,
+            problematicWords: [],
+            attempts: 0,
+            wasSuccessful: false
+          }))
+        }));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -159,6 +177,7 @@ const StoryFromLibrary = () => {
       await recording.startAsync();
       setRecording(recording);
       setRecordingUri(null);
+      setIsRecording(true);
       console.log('🎤 Recording started as .wav');
     } catch (err) {
       console.error('Recording error:', err);
@@ -169,17 +188,12 @@ const StoryFromLibrary = () => {
 
   const stopRecording = async () => {
     try {
-      if (!recording) {
-        console.warn('Stop called but no active recording');
-        return;
-      }
-
+      if (!recording) return;
       await recording.stopAndUnloadAsync();
       const uri = recording.getURI();
       setRecording(null);
       setRecordingUri(uri);
-      console.log('🛑 Recording stopped. URI:', uri);
-
+      setIsRecording(false);
       const formData = new FormData();
       formData.append('text', paragraphs[currentIndex]);
       formData.append('audio', {
@@ -188,8 +202,7 @@ const StoryFromLibrary = () => {
         type: 'audio/wav',
       });
 
-      setIsAnalyzing(true); // 👈 Start loading
-
+      setIsAnalyzing(true);
       const response = await fetch('https://storytime-fp9z.onrender.com/analyze', {
         method: 'POST',
         body: formData,
@@ -197,68 +210,83 @@ const StoryFromLibrary = () => {
 
       const json = await response.json();
       const wrongArr = json.result;
-
       const words = paragraphs[currentIndex].split(/\s+/);
-      const coloredWords = words.map((word, i) => ({
-        text: word,
-        isWrong: wrongArr[i] === 1
-      }));
-      // Count errors
-      const errorCount = wrongArr.filter(val => val === 1).length;
       const problematicWords = words.filter((_, i) => wrongArr[i] === 1);
 
-      // Update report
       setReportData(prev => ({
         ...prev,
-        totalParagraphs: paragraphs.length,
         completedParagraphs: prev.completedParagraphs + 1,
-        totalErrors: prev.totalErrors + errorCount,
-        paragraphs: [
-          ...prev.paragraphs,
-          {
-            paragraphIndex: currentIndex,
-            text: paragraphs[currentIndex],
-            problematicWords,
-            attempts: 1, // optional to make dynamic
-            wasSuccessful: !wrongArr.includes(1)
-          }
-        ]
+        totalErrors: prev.totalErrors + problematicWords.length,
+        paragraphs: prev.paragraphs.map(p =>
+          p.paragraphIndex === currentIndex
+            ? {
+              ...p,
+              problematicWords,
+              attempts: 1,
+              wasSuccessful: !wrongArr.includes(1)
+            }
+            : p
+        )
       }));
-      setHighlightedWords(coloredWords);
+
+      setHighlightedWords(words.map((word, i) => ({ text: word, isWrong: wrongArr[i] === 1 })));
       setHasFeedback(true);
 
-      if (wrongArr.includes(1)) {
-        setModalData({
-          visible: true,
-          message: 'היו כמה פספוסים בהגייה 🤏 תנסה שוב, אתה כמעט שם!',
-          emoji: '🧐',
-          type: 'error',
-        });
-      } else {
-        setModalData({
-          visible: true,
-          message: 'בול פגיעה! הגית את הכל מושלם 💪✨',
-          emoji: '🌟',
-          type: 'success',
-        });
-        goToNextParagraph();
-      }
+      setModalData({
+        visible: true,
+        message: wrongArr.includes(1)
+          ? 'היו כמה פספוסים בהגייה 🤏 תנסה שוב, אתה כמעט שם!'
+          : 'בול פגיעה! הגית את הכל מושלם 💪✨',
+        emoji: wrongArr.includes(1) ? '🧐' : '🌟',
+        type: wrongArr.includes(1) ? 'error' : 'success',
+      });
 
+      if (!wrongArr.includes(1)) goToNextParagraph();
     } catch (err) {
       console.error('Stop recording error:', err);
-      Alert.alert('Stop recording error', err.message || 'Unknown error');
+      Alert.alert('שגיאה', 'הייתה שגיאה בעיבוד ההקלטה');
     } finally {
-      setIsAnalyzing(false); // 👈 Always stop loading (even on error)
+      setIsAnalyzing(false);
     }
   };
- 
+
   const toggleRecording = () => {
     recording ? stopRecording() : record();
   };
 
-  const handleEndStory = () =>{
-    console.log('End Story')
-  }
+  const handleEndStory = async () => {
+    try {
+      const finalReport = {
+        ...reportData,
+        endTime: new Date().toISOString(),
+        summary: {
+          feedbackType: reportData.totalErrors === 0 ? 'Excellent' : 'Needs Improvement',
+          comment:
+            reportData.totalErrors === 0
+              ? 'בול פגיעה! הגית את הכל מושלם 💪✨'
+              : 'היו כמה מילים קשות. המשך לתרגל ונשפר יחד!',
+          emoji: reportData.totalErrors === 0 ? '🌟' : '🧐'
+        }
+      };
+
+      const response = await fetch("http://192.168.1.75:5022/api/ReadingSessionReport", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(finalReport)
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+
+      console.log("✅ Report sent successfully");
+      router.push('/userProfile');
+    } catch (err) {
+      console.error("❌ Failed to send report:", err);
+      Alert.alert("שגיאה", "שליחת הדוח נכשלה");
+    }
+  };
+
 
   if (loading) {
     return (
@@ -301,8 +329,8 @@ const StoryFromLibrary = () => {
           )}
 
           <View style={styles.navigation}>
-            <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
+              <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
 
             <View style={styles.progressContainer}>
@@ -323,8 +351,8 @@ const StoryFromLibrary = () => {
               </View>
             </View>
 
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-              <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording ||currentIndex === 0}>
+              <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
           </View>
 
@@ -332,14 +360,14 @@ const StoryFromLibrary = () => {
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
               <TouchableOpacity
                 style={[styles.button, isSpeaking && styles.buttonListening]}
-                onPress={isSpeaking ? stopStory : speakStory}
+                onPress={isSpeaking ? stopStory : speakStory} disabled={isRecording}
               >
                 <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.button, recording && styles.buttonListening]}
-                onPress={toggleRecording}
+                onPress={toggleRecording} disabled={isSpeaking}
               >
                 <Icon name={recording ? "stop" : "microphone"} size={30} color={recording ? "#C0392B" : "#65558F"} />
               </TouchableOpacity>
@@ -347,11 +375,12 @@ const StoryFromLibrary = () => {
 
             {currentIndex === paragraphs.length - 1 && (
               <TouchableOpacity
-                onPress={() =>{
+                onPress={() => {
                   handleEndStory();
-                  router.push('/userProfile')}
-
-                } 
+                  router.push('/userProfile')
+                }
+              }
+              disabled={isRecording}
                 style={[styles.endButton, { marginTop: 20 }]}
               >
                 <Text style={styles.endButtonText}>סיים את הסיפור</Text>
