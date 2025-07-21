@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         backgroundColor: '#fff',
+        direction: 'rtl',
     },
     title: {
         fontSize: 24,
@@ -43,6 +44,7 @@ export const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
         borderRadius: 8,
         padding: 16,
+        direction: 'rtl',
     },
     paragraphContainer: {
         marginBottom: 24,
