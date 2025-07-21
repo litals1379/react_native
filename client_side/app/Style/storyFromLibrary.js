@@ -12,6 +12,23 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     color: '#333',
   },
+
+  wordWrapContainer: {
+    flexDirection: 'row-reverse',
+    flexWrap: 'wrap',
+    alignSelf: 'stretch',
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  
+  wordText: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: '#333',
+    marginHorizontal: 2,
+    writingDirection: 'rtl',
+  },
+  
   bookImage: {
     width: '100%',
     height: 200,
@@ -94,15 +111,6 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     writingDirection: 'rtl',
   },
-  transcriptContainer: {
-    direction: 'rtl',
-    marginTop: 20,
-    backgroundColor: '#F0F0F0',
-    padding: 10,
-    borderRadius: 10,
-    width: '90%',
-    alignSelf: 'center',
-  },
   header: {
     direction: 'rtl',
     textAlign: 'center',
@@ -116,16 +124,22 @@ export const styles = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 35,
   },
-  transcriptLabel: {
-    direction: 'rtl',
-    fontWeight: 'bold',
-    marginBottom: 5,
-    fontSize: 16,
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
   },
-  transcriptText: {
-    direction: 'rtl',
-    fontSize: 16,
+  
+  loadingText: {
+    marginTop: 16,
+    fontSize: 18,
     color: '#65558F',
+    fontWeight: 'bold',
   },
+  
+
 
 });
