@@ -16,6 +16,7 @@ export default function Quiz() {
   const [modalMessage, setModalMessage] = useState('');
   const [modalEmoji, setModalEmoji] = useState('');
   const [modalType, setModalType] = useState('success');
+  const [pendingNextRound, setPendingNextRound] = useState(false);
 
   useEffect(() => {
     if (!gameOver) {
@@ -62,9 +63,7 @@ export default function Quiz() {
     }
 
     if (round < TOTAL_ROUNDS) {
-      setTimeout(() => {
-        setRound((prev) => prev + 1);
-      }, 800);
+      setPendingNextRound(true);
     } else {
       setGameOver(true);
       setTimeout(() => {
@@ -129,7 +128,13 @@ export default function Quiz() {
       )}
       <AlertModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          if (pendingNextRound && !gameOver) {
+            setPendingNextRound(false);
+            setRound((prev) => prev + 1);
+          }
+        }}
         message={modalMessage}
         emoji={modalEmoji}
         type={modalType}
