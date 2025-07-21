@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { styles } from './Style/reportDetails'; // Import styles
+import { use } from 'react';
+
+
 
 const ReportDetails = () => {
   const { report } = useLocalSearchParams();
   const data = JSON.parse(report);
+
 
   return (
     <ScrollView style={styles.container}>

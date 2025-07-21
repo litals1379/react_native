@@ -213,7 +213,7 @@ export default function UserProfile() {
                   onPress={() =>
                     router.push({
                       pathname: '/allReports',
-                      params: { childId: child.id, userId: userData.id },
+                      params: { childId: child.id,childName:child.firstName, userId: userData.id },
                     })
                   }
                 >

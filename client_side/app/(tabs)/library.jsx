@@ -42,7 +42,7 @@ export default function Library() {
           coverImg: book.coverImg,
         }));
 
-        console.log('Simplified books:', simplifiedBooks);
+        // console.log('Simplified books:', simplifiedBooks);
         setBooks(simplifiedBooks);
       }
     } catch (err) {
