@@ -32,6 +32,9 @@ const allReports = () => {
           })
         );
 
+        // Sort by startTime descending (newest first)
+        reportsWithStories.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
         setReports(reportsWithStories);
       } catch (err) {
         Alert.alert('שגיאה', err.message);
