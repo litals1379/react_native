@@ -86,4 +86,8 @@ build/
 # Ignore Resharper files
 _ReSharper.Caches/
 
+#ignore .env files
+.env
+
+
 
