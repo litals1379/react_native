@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Image, Modal, Button } from 'react-native';
+import { Text, View, ActivityIndicator, ScrollView, Image, Alert, TouchableOpacity, Modal, Button } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TouchableOpacity } from 'react-native';
-import * as Speech from 'expo-speech';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
-import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
-import stringSimilarity from 'string-similarity';
-import { Video } from 'expo-av';
+import * as Speech from 'expo-speech';
+import { Audio, Video } from 'expo-av';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AlertModal from './Components/AlertModal';
 import { styles } from './Style/story';
 
 export default function Story() {
@@ -19,46 +18,60 @@ export default function Story() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [storyId, setStoryId] = useState(null);
-  const [showEndModal, setShowEndModal] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [showVideo, setShowVideo] = useState(false);
+  const [recording, setRecording] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingUri, setRecordingUri] = useState(null);
+  const [highlightedWords, setHighlightedWords] = useState([]);
+  const [hasFeedback, setHasFeedback] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [showEndModal, setShowEndModal] = useState(false);
+  const [rating, setRating] = useState(0);
   const videoRef = useRef(null);
+  const [showVideo, setShowVideo] = useState(false);
+  const [modalData, setModalData] = useState({ visible: false, message: '', emoji: '', type: 'success' });
+
+  const [reportData, setReportData] = useState({
+    storyId: null, userId: '', childId: childID, startTime: new Date().toISOString(), totalParagraphs: 0,
+    completedParagraphs: 0, totalErrors: 0, paragraphs: [], summary: {}
+  });
 
   useEffect(() => {
-    if (childID && topic) {
-      fetchStory(childID, topic);
-    }
-  }, [childID, topic]);
+    const fetchStory = async () => {
+      try {
+        const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`);
+        const text = await response.text();
+        if (!response.ok) throw new Error('לא נמצא סיפור מתאים');
+        const data = JSON.parse(text);
+        const fetchedParagraphs = Object.values(data?.paragraphs || {});
+        const fetchedImages = Object.values(data?.imagesUrls || {});
+        const uid = await AsyncStorage.getItem('userId');
 
-  const fetchStory = async (childID, topic) => {
-    const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`;
-    try {
-      const response = await fetch(apiUrl);
-      const text = await response.text();
-      if (!response.ok) throw new Error('לא נמצא סיפור מתאים');
-      const data = JSON.parse(text);
-      setStoryId(data?.id);
-      setParagraphs(Object.values(data?.paragraphs || {}));
-      setImages(Object.values(data?.imagesUrls || {}));
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setParagraphs(fetchedParagraphs);
+        setImages(fetchedImages);
+        setReportData(prev => ({
+          ...prev, userId: uid, storyId: data?.id, totalParagraphs: fetchedParagraphs.length,
+          paragraphs: fetchedParagraphs.map((text, index) => ({
+            paragraphIndex: index, text, problematicWords: [], attempts: 0, wasSuccessful: false
+          }))
+        }));
+        setUserId(uid);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (childID && topic) fetchStory();
+  }, [childID, topic]);
 
   const speakStory = () => {
     if (paragraphs[currentIndex]) {
       setIsSpeaking(true);
       Speech.speak(paragraphs[currentIndex], {
-        language: 'he-IL',
-        onDone: () => setIsSpeaking(false),
-        onStopped: () => setIsSpeaking(false),
-        onError: () => setIsSpeaking(false),
+        language: 'he-IL', onDone: () => setIsSpeaking(false), onStopped: () => setIsSpeaking(false), onError: () => setIsSpeaking(false),
       });
     }
   };
@@ -68,71 +81,82 @@ export default function Story() {
     setIsSpeaking(false);
   };
 
-  function cleanText(text) {
-    return text
-      .normalize('NFKD')
-      .replace(/[\u0591-\u05C7]/g, '')
-      .replace(/[^\w\s\u0590-\u05FF]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .toLowerCase();
-  }
-
-  const isReadingCorrect = () => {
-    const cleanedOriginal = cleanText(paragraphs[currentIndex] || '');
-    const cleanedTranscript = cleanText(transcript || '');
-    const similarity = stringSimilarity.compareTwoStrings(cleanedOriginal, cleanedTranscript);
-    return similarity > 0.75;
+  const speakWord = (word) => {
+    Speech.speak(word, { language: 'he-IL' });
   };
 
-  useEffect(() => {
-    ExpoSpeechRecognitionModule.requestPermissionsAsync();
-    const resultListener = ExpoSpeechRecognitionModule.addListener("result", (event) => {
-      const latestResult = event.results[0]?.transcript || "";
-      setTranscript(latestResult);
-    });
-    return () => resultListener.remove();
-  }, []);
-
-  const startListening = () => {
-    setTranscript("");
-    ExpoSpeechRecognitionModule.start({
-      lang: "he-IL",
-      interimResults: true,
-      continuous: true,
-    });
-    setIsListening(true);
-  };
-
-  const stopListening = () => {
-    ExpoSpeechRecognitionModule.stop();
-    setIsListening(false);
-  };
-
-  const submitRating = async (ratingValue) => {
-    if (!storyId) return;
+  const record = async () => {
     try {
-      const response = await fetch(
-        `http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${storyId}&rating=${ratingValue}`,
-        { method: 'POST' }
-      );
-      if (!response.ok) throw new Error("Failed to submit rating");
-    } catch (error) {
-      console.error("Error submitting rating:", error);
+      const permission = await Audio.requestPermissionsAsync();
+      if (!permission.granted) return Alert.alert('לא אושרה גישה למיקרופון');
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true });
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      await recording.startAsync();
+      setRecording(recording);
+      setRecordingUri(null);
+      setIsRecording(true);
+    } catch (err) {
+      console.error('Recording error:', err);
     }
   };
 
-  const toggleListening = () => {
-    isListening ? stopListening() : startListening();
+  const stopRecording = async () => {
+    try {
+      if (!recording) return;
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setRecording(null);
+      setRecordingUri(uri);
+      setIsRecording(false);
+
+      const formData = new FormData();
+      formData.append('text', paragraphs[currentIndex]);
+      formData.append('audio', { uri, name: 'recording.wav', type: 'audio/wav' });
+
+      setIsAnalyzing(true);
+      const response = await fetch('https://storytime-fp9z.onrender.com/analyze', { method: 'POST', body: formData });
+      const json = await response.json();
+      const wrongArr = json.result;
+      const words = paragraphs[currentIndex].split(/\s+/);
+      const problematicWords = words.filter((_, i) => wrongArr[i] === 1);
+
+      setReportData(prev => ({
+        ...prev,
+        completedParagraphs: prev.completedParagraphs + 1,
+        totalErrors: prev.totalErrors + problematicWords.length,
+        paragraphs: prev.paragraphs.map(p =>
+          p.paragraphIndex === currentIndex ? {
+            ...p, problematicWords, attempts: 1, wasSuccessful: !wrongArr.includes(1)
+          } : p
+        )
+      }));
+
+      setHighlightedWords(words.map((word, i) => ({ text: word, isWrong: wrongArr[i] === 1 })));
+      setHasFeedback(true);
+      setModalData({
+        visible: true,
+        message: wrongArr.includes(1) ? 'היו כמה פספוסים בהגייה 🤏 תנסה שוב, אתה כמעט שם!' : 'בול פגיעה! הגית את הכל מושלם 💪✨',
+        emoji: wrongArr.includes(1) ? '🧐' : '🌟',
+        type: wrongArr.includes(1) ? 'error' : 'success'
+      });
+    } catch (err) {
+      console.error('Stop recording error:', err);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
+
+  const toggleRecording = () => recording ? stopRecording() : record();
 
   const goToNextParagraph = () => {
     if (currentIndex < paragraphs.length - 1) {
       if (currentIndex === 0) {
-        setShowVideo(true); // נציג את הווידאו אבל לא נעבור עדיין
+        setShowVideo(true);
       } else {
         setCurrentIndex(currentIndex + 1);
-        setTranscript("");
+        setHighlightedWords([]);
+        setHasFeedback(false);
       }
     } else {
       setShowEndModal(true);
@@ -142,7 +166,8 @@ export default function Story() {
   const goToPreviousParagraph = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setTranscript("");
+      setHighlightedWords([]);
+      setHasFeedback(false);
     }
   };
 
@@ -160,128 +185,142 @@ export default function Story() {
     return '🏆';
   };
 
-  let feedbackComponent = null;
-  if (transcript !== "") {
-    const isCorrect = isReadingCorrect();
-    feedbackComponent = (
-      <Text style={{ color: isCorrect ? 'green' : 'orange', fontWeight: 'bold' }}>
-        {isCorrect ? '✔️ כל הכבוד! קראת נכון!' : '✨ כמעט! אתה קרוב! נסה שוב.'}
-      </Text>
-    );
-  }
+  const handleEndStory = async () => {
+    try {
+      const finalReport = {
+        ...reportData,
+        endTime: new Date().toISOString(),
+        summary: {
+          feedbackType: reportData.totalErrors === 0 ? 'Excellent' : 'Needs Improvement',
+          comment: reportData.totalErrors === 0 ? 'בול פגיעה! הגית את הכל מושלם 💪✨' : 'היו כמה מילים קשות. המשך לתרגל ונשפר יחד!',
+          emoji: reportData.totalErrors === 0 ? '🌟' : '🧐',
+        }
+      };
+
+      const response = await fetch("http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(finalReport)
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+      console.log("✅ Report sent successfully");
+    } catch (err) {
+      console.error("❌ Failed to send report:", err);
+      Alert.alert("שגיאה", "שליחת הדוח נכשלה");
+    }
+  };
+
+  const submitRating = async (ratingValue) => {
+    if (!reportData.storyId) return;
+    try {
+      const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
+      if (!response.ok) throw new Error(await response.text());
+    } catch (error) {
+      Alert.alert("שגיאה", "שליחת הדירוג נכשלה");
+    }
+  };
+
+  if (loading) return <ActivityIndicator size="large" color="#2980B9" style={{ marginTop: 20 }} />;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {loading ? (
-          <ActivityIndicator size="large" color="#2980B9" style={{ marginTop: 20 }} />
-        ) : error ? (
-          <Text style={styles.errorText}>{error}</Text>
-        ) : (
-          <View>
-            {images[currentIndex] && (
-              <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
-            )}
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {images[currentIndex] && <Image source={{ uri: images[currentIndex] }} style={styles.image} />}
 
-            <Text style={styles.paragraph}>{paragraphs[currentIndex]}</Text>
-
-            {transcript !== "" && (
-              <View style={styles.transcriptContainer}>
-                <Text style={styles.transcriptLabel}>מה שאמרת:</Text>
-                <Text style={styles.transcriptText}>{transcript}</Text>
-              </View>
-            )}
-
-            <View style={{ marginTop: 10, alignItems: 'center' }}>{feedbackComponent}</View>
-
-            <View style={styles.navigation}>
-              <TouchableOpacity onPress={goToNextParagraph} disabled={currentIndex === paragraphs.length - 1}>
-                <Icon name="arrow-left" size={30} color={currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
+        {paragraphs[currentIndex] && (
+          <View style={styles.paragraphContainer}>
+            {(highlightedWords.length > 0 ? highlightedWords : paragraphs[currentIndex].split(/\s+/).map(word => ({ text: word, isWrong: false }))
+            ).map((wordObj, i) => (
+              <TouchableOpacity key={i} onPress={() => speakWord(wordObj.text)}>
+                <Text style={[styles.word, hasFeedback && (wordObj.isWrong ? styles.wordIncorrect : styles.wordCorrect)]}>{wordObj.text}</Text>
               </TouchableOpacity>
-
-              <View style={styles.progressContainer}>
-                <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-                <View style={styles.progressRow}>
-                  <Progress.Bar
-                    progress={(currentIndex + 1) / paragraphs.length}
-                    width={160}
-                    height={10}
-                    borderRadius={8}
-                    color={getProgressColor()}
-                    unfilledColor="#E0E0E0"
-                    borderWidth={0}
-                    animated={true}
-                    style={{ transform: [{ scaleX: -1 }] }}
-                  />
-                  <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-                </View>
-              </View>
-
-              <TouchableOpacity onPress={goToPreviousParagraph} disabled={currentIndex === 0}>
-                <Icon name="arrow-right" size={30} color={currentIndex === 0 ? '#ccc' : '#65558F'} />
-              </TouchableOpacity>
-            </View>
-
-            {/* 🎥 הווידאו מתחת ל־ProgressBar */}
-            {currentIndex === 0 && showVideo && (
-              <Video
-                ref={videoRef}
-                source={require('../assets/sounds/naniEncouraging.mp4')}
-                style={{ width: '100%', height: 200, marginTop: 16 }}
-                resizeMode="contain"
-                shouldPlay
-                isLooping={false}
-                onPlaybackStatusUpdate={(status) => {
-                  if (status.didJustFinish) {
-                    setShowVideo(false);
-                    setCurrentIndex(1); // רק עכשיו נתקדם לפסקה 2
-                    setTranscript("");
-                  }
-                }}
-              />
-            )}
-
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
-              <TouchableOpacity style={[styles.button, isSpeaking && styles.buttonListening]} onPress={isSpeaking ? stopStory : speakStory}>
-                <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.button, isListening && styles.buttonListening]} onPress={toggleListening}>
-                <Icon name={isListening ? "stop" : "microphone"} size={30} color={isListening ? "#C0392B" : "#65558F"} />
-              </TouchableOpacity>
-            </View>
-
-            {currentIndex === paragraphs.length - 1 && (
-              <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton}>
-                <Text style={styles.endButtonText}>סיים את הסיפור</Text>
-              </TouchableOpacity>
-            )}
+            ))}
           </View>
+        )}
+
+        <View style={styles.navButtons}>
+          <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || currentIndex === 0}>
+            <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : styles.arrow.color} />
+          </TouchableOpacity>
+
+          <View style={styles.progressContainer}>
+            <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+            <Progress.Bar progress={(currentIndex + 1) / paragraphs.length} width={160} height={10} color={getProgressColor()} style={{ marginVertical: 8 }} />
+            <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
+          </View>
+
+          <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
+            <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : styles.arrow.color} />
+          </TouchableOpacity>
+        </View>
+
+        {currentIndex === 0 && showVideo && (
+          <Video
+            ref={videoRef}
+            source={require('../assets/sounds/naniEncouraging.mp4')}
+            style={styles.image}
+            resizeMode="contain"
+            shouldPlay
+            isLooping={false}
+            onPlaybackStatusUpdate={(status) => {
+              if (status.didJustFinish) {
+                setShowVideo(false);
+                setCurrentIndex(1);
+                setHighlightedWords([]);
+                setHasFeedback(false);
+              }
+            }}
+          />
+        )}
+
+        <View style={styles.micButtons}>
+          <TouchableOpacity onPress={isSpeaking ? stopStory : speakStory}>
+            <Icon name={isSpeaking ? 'stop' : 'volume-up'} style={isSpeaking ? styles.stopIcon : styles.micIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleRecording}>
+            <Icon name={recording ? 'stop' : 'microphone'} style={recording ? styles.stopIcon : styles.micIcon} />
+          </TouchableOpacity>
+        </View>
+
+        {currentIndex === paragraphs.length - 1 && (
+          <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton}>
+            <Text style={styles.endButtonText}>סיים את הסיפור</Text>
+          </TouchableOpacity>
         )}
       </ScrollView>
 
-      <Modal visible={showEndModal} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+      <Modal visible={showEndModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
             <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
-            <View style={styles.starsRow}>
+            <View style={styles.starsContainer}>
               {[1, 2, 3, 4, 5].map((star) => (
-                <TouchableOpacity key={star} onPress={() => {
-                  setRating(star);
-                  submitRating(star);
-                }}>
+                <TouchableOpacity key={star} onPress={() => { setRating(star); submitRating(star); }}>
                   <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
                 </TouchableOpacity>
               ))}
             </View>
-            <Button title="סיים" onPress={() => {
-              setShowEndModal(false);
-              router.push('/userProfile');
-            }} />
+            <Button title="סיים" onPress={() => { setShowEndModal(false); handleEndStory();router.push('/userProfile') }} />
           </View>
         </View>
       </Modal>
+
+      <AlertModal
+        visible={modalData.visible}
+        onClose={() => setModalData(prev => ({ ...prev, visible: false }))}
+        message={modalData.message}
+        emoji={modalData.emoji}
+        type={modalData.type}
+      />
+
+      {isAnalyzing && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#65558F" />
+          <Text style={styles.loadingText}>בודק את ההגייה שלך...</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

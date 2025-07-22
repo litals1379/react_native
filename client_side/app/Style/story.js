@@ -1,126 +1,145 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        direction: 'rtl',
-        padding: 16,
-        backgroundColor: '#F8F8F8',
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    paragraph: {
-        textAlign: 'right',
-        fontSize: 16,
-        lineHeight: 24,
-        marginBottom: 16,
-        flexWrap: 'wrap',
-    },
-    errorText: {
-        color: 'red',
-        fontSize: 16,
-        textAlign: 'center',
-    },
-    image: {
-        width: '100%',
-        height: 400,
-        borderRadius: 12,
-        marginBottom: 16,
-    },
-    navigation: {
-        marginTop: 24,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    progressContainer: {
-        alignItems: 'center',
-    },
-    progressText: {
-        marginBottom: 4,
-        fontSize: 14,
-    },
-    progressRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    emoji: {
-        fontSize: 20,
-        marginLeft: 8,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    modalContent: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 12,
-        alignItems: 'center',
-    },
-    modalTitle: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    modalSubtitle: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    starsRow: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginBottom: 20,
-    },
-    confetti: {
-        width: '100%',
-        height: '100%',
-    },
-    endButton: {
-        width: '80%',
-        alignSelf: 'center',
-        backgroundColor: '#B3E7F2',
-        borderWidth: 1,
-        borderColor: '#65558F',
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        marginVertical: 20,
-    },
-    endButtonText: {
-        fontSize: 18,
-        color: '#65558F',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        writingDirection: 'rtl',
-    },
-    button: {
-        marginVertical: 5,
-        marginHorizontal: 35,
-      },
-    transcriptContainer: {
-        textAlign: 'right',
-        marginTop: 10,
-        backgroundColor: '#f0f0f0',
-        padding: 10,
-        borderRadius: 10,
-      },
-      transcriptLabel: {
-        textAlign: 'right',
-        fontWeight: 'bold',
-        marginBottom: 4,
-        color: '#333',
-      },
-      transcriptText: {
-        textAlign: 'right',
-        fontSize: 16,
-        color: '#65558F',
-      },
-      
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f8f8f8',
+    direction: 'rtl',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  paragraphContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    direction: 'rtl',
+    alignSelf: 'stretch',
+    paddingHorizontal: 16,
+  },
+  word: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginHorizontal: 4,
+    marginVertical: 4,
+    writingDirection: 'rtl',
+    textAlign: 'right',
+    color: '#333',
+  },
+  wordCorrect: {
+    color: 'green',
+  },
+  wordIncorrect: {
+    color: 'red',
+  },
+  navButtons: {
+    marginTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  arrow: {
+    fontSize: 24,
+    color: '#65558F',
+  },
+  progressContainer: {
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  progressText: {
+    fontSize: 14,
+    color: '#333',
+  },
+  emoji: {
+    fontSize: 24,
+    marginTop: 8,
+  },
+  micButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    marginTop: 24,
+  },
+  micIcon: {
+    fontSize: 30,
+    color: '#65558F',
+  },
+  stopIcon: {
+    fontSize: 30,
+    color: '#C0392B',
+  },
+  endButton: {
+    marginTop: 32,
+    backgroundColor: '#65558F',
+    padding: 12,
+    borderRadius: 10,
+  },
+  endButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '85%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    marginVertical: 10,
+    fontSize: 16,
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: 'white',
+    marginTop: 12,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  endButton: {
+    backgroundColor: '#B3E7F2',
+    borderWidth: 1,
+    borderColor: '#65558F',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    marginVertical: 10,
+  },
+  endButtonText: {
+    fontSize: 18,
+    color: '#65558F',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    writingDirection: 'rtl',
+  },
 });
