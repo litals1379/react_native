@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Text, SafeAreaView, Image, FlatList, TouchableOpacity, Animated } from 'react-native';
-import { styles } from '../Style/layout'; 
+import { styles } from '../Style/layout';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';  
+import { useRouter, useSegments } from 'expo-router';
 
 const colorsList = [
   '#FFB6C1', '#ADD8E6', '#90EE90', '#FFFFE0',
@@ -10,8 +10,10 @@ const colorsList = [
 ];
 
 export default function CustomHeader({ showPicker, setShowPicker, selectedColor, setSelectedColor }) {
-  const router = useRouter();  
+  const router = useRouter();
   const slideAnim = useRef(new Animated.Value(0)).current; // 0 = hidden, 1 = visible
+  const segments = useSegments();
+  const currentRoute = '/' + segments.join('/');
 
   // Custom handler to animate out before hiding
   const handleColorPickerToggle = () => {
@@ -47,9 +49,13 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
     <SafeAreaView style={[styles.safeArea, { backgroundColor: selectedColor }]}>
       <View style={[styles.header, { backgroundColor: selectedColor }]}>
         {/* כפתור חזור */}
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
+        {currentRoute !== '/(tabs)/userProfile' && (
+          <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+        )}
+
+
 
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
