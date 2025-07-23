@@ -12,7 +12,7 @@ import { Audio } from 'expo-av';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const StoryGenerator = () => {
-  const { topic, childReadingLevel } = useLocalSearchParams();
+  const { topic, childReadingLevel, childID } = useLocalSearchParams();
   const router = useRouter();
   const [story, setStory] = useState([]);
   const [storyTitle, setStoryTitle] = useState('');
@@ -33,8 +33,12 @@ const StoryGenerator = () => {
     type: 'success',
   });
   const [imageLoading, setImageLoading] = useState({});
+  const [sessionStartTime] = useState(new Date().toISOString());
+  const [userId, setUserId] = useState('');
+  const [storyId, setStoryId] = useState(null);
 
   useEffect(() => {
+    AsyncStorage.getItem('userId').then(setUserId);
     const handleGenerateStory = async () => {
       setIsLoading(true);
       setError(null);
@@ -64,10 +68,12 @@ const StoryGenerator = () => {
             setError('פורמט סיפור לא נתמך מהשרת.');
             setStory([]);
             setStoryTitle('');
+            setStoryId(null);
             return;
           }
           setStory(normalizedParagraphs);
           setStoryTitle(result.title || '');
+          setStoryId(result.id || null);
         }
       } catch (err) {
         setError(err.message || 'שגיאה בעת יצירת הסיפור.');
@@ -227,6 +233,57 @@ const StoryGenerator = () => {
     recording ? stopRecording() : record();
   };
 
+  // Add handleEndStory logic
+  const handleEndStory = async () => {
+    try {
+      const totalErrors = story.reduce((acc, _, idx) => {
+        if (!story[idx]?.text) return acc;
+        const words = story[idx].text.split(/\s+/);
+        const wrongs = highlightedWords.length && idx === currentIndex
+          ? highlightedWords.filter(w => w.isWrong).length
+          : 0;
+        return acc + wrongs;
+      }, 0);
+      const report = {
+        storyId: storyId,
+        userId,
+        childId: childID,
+        startTime: sessionStartTime,
+        endTime: new Date().toISOString(),
+        totalParagraphs: story.length,
+        completedParagraphs: currentIndex + 1,
+        totalErrors,
+        paragraphs: story.map((p, idx) => ({
+          paragraphIndex: idx,
+          text: p.text,
+          problematicWords: idx === currentIndex && highlightedWords.length ? highlightedWords.filter(w => w.isWrong).map(w => w.text) : [],
+          attempts: 1,
+          wasSuccessful: idx !== currentIndex || !highlightedWords.some(w => w.isWrong)
+        })),
+        summary: {
+          feedbackType: totalErrors === 0 ? 'Excellent' : 'Needs Improvement',
+          comment: totalErrors === 0 ? 'בול פגיעה! הגית את הכל מושלם 💪✨' : 'היו כמה מילים קשות. המשך לתרגל ונשפר יחד!',
+          emoji: totalErrors === 0 ? '🌟' : '🧐'
+        }
+      };
+      console.log('Sending report:', report);
+      const response = await fetch('http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(report)
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Backend error:', errorText);
+        Alert.alert('שגיאה', 'שליחת הדוח נכשלה: ' + errorText);
+        return;
+      }
+      router.push('/userProfile');
+    } catch (err) {
+      Alert.alert('שגיאה', 'שליחת הדוח נכשלה: ' + (err.message || err));
+    }
+  };
+
   if (isLoading) {
     return (
       <View style={[libraryStyles.container, { justifyContent: 'center', alignItems: 'center', flex: 1 }]}>
@@ -311,7 +368,7 @@ const StoryGenerator = () => {
             </View>
             {currentIndex === story.length - 1 && (
               <TouchableOpacity
-                onPress={() => router.push('/userProfile')}
+                onPress={handleEndStory}
                 disabled={isRecording}
                 style={[libraryStyles.endButton, { marginTop: 20 }]}
               >

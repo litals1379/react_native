@@ -125,7 +125,9 @@ namespace Server_Side.Controllers
                 if (blocks.Count < 2)
                     return StatusCode(500, "Failed to parse story output.");
 
-                storyResponse.Title = blocks[0].TrimStart('#', ' ').Trim();
+                var rawTitle = blocks[0];
+                storyResponse.Title = Regex.Replace(rawTitle, @"^[^\p{L}\p{N}]*", "").Trim();
+                //storyResponse.Title = blocks[0].TrimStart('#', ' ').Trim();
                 blocks.RemoveAt(0); // Remove title
 
                 foreach (var paragraph in blocks)
