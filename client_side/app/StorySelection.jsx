@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles } from './Style/storyFromLibrary'; // סגנון קיים, כולל bookImage, bookTitle וכו'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function StorySelection() {
   const { childID, childReadingLevel, topic } = useLocalSearchParams();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const AddStoryToReadingHistoryUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/';
 
   useEffect(() => {
     fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetAvailableStoriesForChild/${childID}/${encodeURIComponent(topic)}`)
@@ -40,13 +42,32 @@ export default function StorySelection() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleReadStory = (storyId) => {
+  const handleReadStory = async (storyId) => {
     // router.push({ pathname: './story', params: { childID, topic, storyId } });
-    router.push({ pathname: './storyFromLibrary', params: { childId:childID, storyId } });
+    const userId = await AsyncStorage.getItem('userId');
+
+    try {
+      const response = await fetch(
+        `${AddStoryToReadingHistoryUrl}${userId}/child/${childID}/reading-history?storyId=${storyId}`,
+        {
+          method: 'POST',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.text(); // if your backend returns a simple message
+      console.log('✅ Story added to reading history:', data);
+    } catch (error) {
+      console.error('❌ Error adding story to reading history:', error);
+    }
+    router.push({ pathname: './storyFromLibrary', params: { childId: childID, storyId } });
   };
 
   const handleGenerateNewStory = () => {
-    console.log("childID from story selection: ",childID)
+    console.log("childID from story selection: ", childID)
     router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic } });
   };
 
