@@ -56,10 +56,11 @@ const allReports = () => {
         })
       }
     >
-      <Text style={styles.title}>
+      <Text style={styles.storyTitle}>
         📖 סיפור: {item.storyTitle || item.storyId}
       </Text>
       <Text>🗓️ {new Date(item.startTime).toLocaleDateString()} | שגיאות: {item.totalErrors}</Text>
+      <Text>⏱️ זמן קריאה: {Math.round((new Date(item.endTime) - new Date(item.startTime)) / 60000)} דקות</Text>
       <Text>{item.summary?.emoji || ''} {item.summary?.feedbackType}</Text>
       {item.storyCover && (
         <Image source={{ uri: item.storyCover }} style={styles.storyCover} />
