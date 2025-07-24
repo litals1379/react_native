@@ -240,8 +240,8 @@ export default function Story() {
         )}
 
         <View style={styles.navButtons}>
-          <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || currentIndex === 0}>
-            <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : styles.arrow.color} />
+          <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || isSpeaking || currentIndex === 0}>
+            <Icon name="arrow-right" size={30} color={isRecording || isSpeaking || currentIndex === 0 ? '#ccc' : styles.arrow.color} />
           </TouchableOpacity>
 
           <View style={styles.progressContainer}>
@@ -262,8 +262,8 @@ export default function Story() {
               </View>
             </View>
 
-          <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
-            <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : styles.arrow.color} />
+          <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || isSpeaking || currentIndex === paragraphs.length - 1}>
+            <Icon name="arrow-left" size={30} color={isRecording || isSpeaking || currentIndex === paragraphs.length - 1 ? '#ccc' : styles.arrow.color} />
           </TouchableOpacity>
         </View>
 
@@ -296,7 +296,7 @@ export default function Story() {
         </View>
 
         {currentIndex === paragraphs.length - 1 && (
-          <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton}>
+          <TouchableOpacity onPress={() => setShowEndModal(true)} style={styles.endButton} disabled={isRecording || isSpeaking}>
             <Text style={styles.endButtonText}>סיים את הסיפור</Text>
           </TouchableOpacity>
         )}

@@ -319,7 +319,12 @@ export default function Login() {
       </ScrollView>
       <AlertModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+         onClose={() => {
+          setModalVisible(false)
+          setModalMessage('');
+          setModalEmoji('');
+          setModalType('success');
+        }}
         message={modalMessage}
         emoji={modalEmoji}
         type={modalType}

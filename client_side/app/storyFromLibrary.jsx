@@ -1,5 +1,5 @@
-import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Alert, Modal,Button } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
@@ -20,7 +20,7 @@ const StoryFromLibrary = () => {
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(null);
-  const [isRecording,setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [recordingUri, setRecordingUri] = useState(null);
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [hasFeedback, setHasFeedback] = useState(false);
@@ -43,9 +43,16 @@ const StoryFromLibrary = () => {
     paragraphs: [],
     summary: {}
   });
+  //from story.jsx
+  const [showEndModal, setShowEndModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const videoRef = useRef(null);
+  const [showVideo, setShowVideo] = useState(false);
+
 
 
   useEffect(() => {
+    console.log("In storyFromLibrary useEffect");
     const fetchStory = async () => {
       try {
         const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${storyId}`);
@@ -141,7 +148,7 @@ const StoryFromLibrary = () => {
     try {
       const permission = await Audio.requestPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert('Microphone permission not granted');
+        Alert.alert('אנא אפשר הרשאות גישה למיקרופון');
         return;
       }
 
@@ -178,7 +185,7 @@ const StoryFromLibrary = () => {
       setRecording(recording);
       setRecordingUri(null);
       setIsRecording(true);
-      console.log('🎤 Recording started as .wav');
+      // console.log('🎤 Recording started as .wav');
     } catch (err) {
       console.error('Recording error:', err);
       Alert.alert('Recording error', err.message || 'Unknown error');
@@ -251,6 +258,7 @@ const StoryFromLibrary = () => {
   };
 
   const toggleRecording = () => {
+    console.log('visible status:', modalData.visible);
     recording ? stopRecording() : record();
   };
 
@@ -260,7 +268,7 @@ const StoryFromLibrary = () => {
         ...reportData,
         endTime: new Date().toISOString(),
         summary: {
-          feedbackType: reportData.totalErrors === 0 ? 'Excellent' : 'Needs Improvement',
+          feedbackType: reportData.totalErrors === 0 ? 'מצויין' : 'יש עוד מה לשפר',
           comment:
             reportData.totalErrors === 0
               ? 'בול פגיעה! הגית את הכל מושלם 💪✨'
@@ -280,7 +288,6 @@ const StoryFromLibrary = () => {
       if (!response.ok) throw new Error(await response.text());
 
       console.log("✅ Report sent successfully");
-      router.push('/userProfile');
       // router.push({ pathname:'/allReports', params:{childId,userId: finalReport.userId} });
 
     } catch (err) {
@@ -289,6 +296,16 @@ const StoryFromLibrary = () => {
     }
   };
 
+  const submitRating = async (ratingValue) => {
+    if (!reportData.storyId) return;
+    try {
+      const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
+      if (!response.ok) throw new Error(await response.text());
+      console.log("✅ Rating submitted successfully");
+    } catch (error) {
+      Alert.alert("שגיאה", "שליחת הדירוג נכשלה");
+    }
+  };
 
   if (loading) {
     return (
@@ -331,8 +348,8 @@ const StoryFromLibrary = () => {
           )}
 
           <View style={styles.navigation}>
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording ||currentIndex === 0}>
-              <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || isSpeaking || currentIndex === 0}>
+              <Icon name="arrow-right" size={30} color={isRecording || isSpeaking || currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
 
             <View style={styles.progressContainer}>
@@ -353,8 +370,8 @@ const StoryFromLibrary = () => {
               </View>
             </View>
 
-            <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || isSpeaking || currentIndex === paragraphs.length - 1}>
+              <Icon name="arrow-left" size={30} color={isRecording || isSpeaking || currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
           </View>
 
@@ -379,10 +396,10 @@ const StoryFromLibrary = () => {
               <TouchableOpacity
                 onPress={() => {
                   handleEndStory();
-                  router.push('/userProfile')
+                  setShowEndModal(true);  
                 }
-              }
-              disabled={isRecording}
+                }
+                disabled={isRecording || isSpeaking}
                 style={[styles.endButton, { marginTop: 20 }]}
               >
                 <Text style={styles.endButtonText}>סיים את הסיפור</Text>
@@ -391,15 +408,33 @@ const StoryFromLibrary = () => {
           </View>
         </ScrollView>
       )}
+      <Modal visible={showEndModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
+            <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
+            <View style={styles.starsContainer}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => { setRating(star); submitRating(star); }}>
+                  <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Button title="סיים" onPress={() => { setShowEndModal(false); router.push('/userProfile') }} />
+          </View>
+        </View>
+      </Modal>
 
-      {/* ✅ CUSTOM ALERT MODAL BELOW SCROLLVIEW */}
-      <AlertModal
-        visible={modalData.visible}
-        onClose={() => setModalData(prev => ({ ...prev, visible: false }))}
-        message={modalData.message}
-        emoji={modalData.emoji}
-        type={modalData.type}
-      />
+      {modalData.visible ? (
+        <AlertModal
+          visible={modalData.visible}
+          onClose={() => setModalData({ visible: false, message: '', emoji: '', type: 'success' })}
+          message={modalData.message}
+          emoji={modalData.emoji}
+          type={modalData.type}
+        />
+      ) : null}
+
       {isAnalyzing && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#65558F" />

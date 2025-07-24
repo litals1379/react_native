@@ -41,7 +41,8 @@ export default function StorySelection() {
   }, []);
 
   const handleReadStory = (storyId) => {
-    router.push({ pathname: './story', params: { childID, topic, storyId } });
+    // router.push({ pathname: './story', params: { childID, topic, storyId } });
+    router.push({ pathname: './storyFromLibrary', params: { childId:childID, storyId } });
   };
 
   const handleGenerateNewStory = () => {

@@ -91,6 +91,10 @@ export default function HomeScreen() {
       if (data) {
         await AsyncStorage.setItem('userId', data.id.toString());
         await AsyncStorage.setItem('userEmail', userData.email);
+         setModalVisible(false)
+          setModalMessage('');
+          setModalEmoji('');
+          setModalType('success');
         router.push('/userProfile');
       } else {
         await registerUser(userData);
@@ -272,7 +276,12 @@ export default function HomeScreen() {
       )}
       <AlertModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false)
+          setModalMessage('');
+          setModalEmoji('');
+          setModalType('success');
+        }}
         message={modalMessage}
         emoji={modalEmoji}
         type={modalType}

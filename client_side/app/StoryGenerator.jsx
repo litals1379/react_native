@@ -327,8 +327,8 @@ const StoryGenerator = () => {
             </View>
           )}
           <View style={libraryStyles.navigation}>
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || currentIndex === 0}>
-              <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || isSpeaking || currentIndex === 0}>
+              <Icon name="arrow-right" size={30} color={isRecording || isSpeaking || currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
             <View style={libraryStyles.progressContainer}>
               <Text style={libraryStyles.progressText}>פסקה {currentIndex + 1} מתוך {story.length}</Text>
@@ -347,8 +347,8 @@ const StoryGenerator = () => {
                 <Text style={libraryStyles.emoji}>{getEncouragementEmoji()}</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === story.length - 1}>
-              <Icon name="arrow-left" size={30} color={isRecording || currentIndex === story.length - 1 ? '#ccc' : '#65558F'} />
+            <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || isSpeaking || currentIndex === story.length - 1}>
+              <Icon name="arrow-left" size={30} color={isRecording || isSpeaking || currentIndex === story.length - 1 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
           </View>
           <View style={{ alignItems: 'center', marginTop: 20 }}>
@@ -369,7 +369,7 @@ const StoryGenerator = () => {
             {currentIndex === story.length - 1 && (
               <TouchableOpacity
                 onPress={handleEndStory}
-                disabled={isRecording}
+                disabled={isRecording || isSpeaking }
                 style={[libraryStyles.endButton, { marginTop: 20 }]}
               >
                 <Text style={libraryStyles.endButtonText}>סיים את הסיפור</Text>

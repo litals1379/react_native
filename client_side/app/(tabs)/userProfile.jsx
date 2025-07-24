@@ -56,7 +56,7 @@ export default function UserProfile() {
       // Request camera roll permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        setModalMessage('Please grant permission to access your photo library.');
+        setModalMessage('אנא אפשר גישה למצלמה ולגלריה.');
         setModalEmoji('⚠️');
         setModalType('error');
         setModalVisible(true);
@@ -78,7 +78,7 @@ export default function UserProfile() {
       }
     } catch (error) {
       console.error('Error in pickImage:', error);
-      setModalMessage('Something went wrong while picking the image.');
+      setModalMessage('אירעה שגיאה בעת בחירת התמונה.');
       setModalEmoji('❌');
       setModalType('error');
       setModalVisible(true);
@@ -213,7 +213,7 @@ export default function UserProfile() {
                   onPress={() =>
                     router.push({
                       pathname: '/allReports',
-                      params: { childId: child.id,childName:child.firstName, userId: userData.id },
+                      params: { childId: child.id, childName: child.firstName, userId: userData.id },
                     })
                   }
                 >
@@ -234,11 +234,15 @@ export default function UserProfile() {
             <FontAwesome name="sign-out" size={16} color="white" />
             <Text style={styles.buttonText}> התנתקות</Text>
           </TouchableOpacity>
-        </View>
+        </View> 
         <AlertModal
           visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          message={modalMessage}
+          onClose={() => {
+            setModalVisible(false)
+            setModalMessage('');
+            setModalEmoji('');
+            setModalType('success');
+          }} message={modalMessage}
           emoji={modalEmoji}
           type={modalType}
         />
