@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   },
 
   wordText: {
-    fontSize: 35,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#333',
     marginHorizontal: 2,
@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   },
   bookTitle: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
     color: '#65558F',
     marginBottom: 20,

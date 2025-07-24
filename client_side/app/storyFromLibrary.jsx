@@ -285,6 +285,9 @@ const StoryFromLibrary = () => {
 
   return (
     <View style={styles.container}>
+      <View>
+      <Text style={styles.bookTitle}>{story.title}</Text>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {images[currentIndex] && (
           <Image source={{ uri: images[currentIndex] }} style={styles.image} resizeMode="cover" />
