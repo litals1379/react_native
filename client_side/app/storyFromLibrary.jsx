@@ -20,7 +20,7 @@ const StoryFromLibrary = () => {
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recording, setRecording] = useState(null);
-  const [isRecording,setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [recordingUri, setRecordingUri] = useState(null);
   const [highlightedWords, setHighlightedWords] = useState([]);
   const [hasFeedback, setHasFeedback] = useState(false);
@@ -251,6 +251,7 @@ const StoryFromLibrary = () => {
   };
 
   const toggleRecording = () => {
+    console.log('visible status:', modalData.visible);
     recording ? stopRecording() : record();
   };
 
@@ -260,7 +261,7 @@ const StoryFromLibrary = () => {
         ...reportData,
         endTime: new Date().toISOString(),
         summary: {
-          feedbackType: reportData.totalErrors === 0 ? 'Excellent' : 'Needs Improvement',
+          feedbackType: reportData.totalErrors === 0 ? 'מצויין' : 'יש עוד מה לשפר',
           comment:
             reportData.totalErrors === 0
               ? 'בול פגיעה! הגית את הכל מושלם 💪✨'
@@ -331,7 +332,7 @@ const StoryFromLibrary = () => {
           )}
 
           <View style={styles.navigation}>
-            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording ||currentIndex === 0}>
+            <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording || currentIndex === 0}>
               <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
 
@@ -381,8 +382,8 @@ const StoryFromLibrary = () => {
                   handleEndStory();
                   router.push('/userProfile')
                 }
-              }
-              disabled={isRecording}
+                }
+                disabled={isRecording}
                 style={[styles.endButton, { marginTop: 20 }]}
               >
                 <Text style={styles.endButtonText}>סיים את הסיפור</Text>
@@ -392,14 +393,16 @@ const StoryFromLibrary = () => {
         </ScrollView>
       )}
 
-      {/* ✅ CUSTOM ALERT MODAL BELOW SCROLLVIEW */}
-      <AlertModal
-        visible={modalData.visible}
-        onClose={() => setModalData(prev => ({ ...prev, visible: false }))}
-        message={modalData.message}
-        emoji={modalData.emoji}
-        type={modalData.type}
-      />
+      {modalData.visible ? (
+        <AlertModal
+          visible={modalData.visible}
+          onClose={() => setModalData({ visible: false, message: '', emoji: '', type: 'success' })}
+          message={modalData.message}
+          emoji={modalData.emoji}
+          type={modalData.type}
+        />
+      ) : null}
+
       {isAnalyzing && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#65558F" />

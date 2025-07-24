@@ -213,7 +213,7 @@ export default function UserProfile() {
                   onPress={() =>
                     router.push({
                       pathname: '/allReports',
-                      params: { childId: child.id,childName:child.firstName, userId: userData.id },
+                      params: { childId: child.id, childName: child.firstName, userId: userData.id },
                     })
                   }
                 >
@@ -234,11 +234,15 @@ export default function UserProfile() {
             <FontAwesome name="sign-out" size={16} color="white" />
             <Text style={styles.buttonText}> התנתקות</Text>
           </TouchableOpacity>
-        </View>
+        </View> 
         <AlertModal
           visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          message={modalMessage}
+          onClose={() => {
+            setModalVisible(false)
+            setModalMessage('');
+            setModalEmoji('');
+            setModalType('success');
+          }} message={modalMessage}
           emoji={modalEmoji}
           type={modalType}
         />
