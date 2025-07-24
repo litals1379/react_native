@@ -248,5 +248,19 @@ namespace Server_Side.Controllers
                 return NotFound(new { message = $"User with ID '{userId}' not found." });
             }
         }
+
+        [HttpPost("{userId}/child/{childId}/reading-history")]
+        public async Task<IActionResult> AddStoryToReadingHistory(string userId, string childId, [FromQuery] string storyId)
+        {
+            if (string.IsNullOrWhiteSpace(storyId))
+                return BadRequest("StoryId is required.");
+
+            var success = await _userDBservices.AddStoryToChildHistoryAsync(userId, childId, storyId);
+
+            if (!success)
+                return StatusCode(500, "Failed to update reading history.");
+
+            return Ok("Story added to reading history.");
+        }
     }
 }

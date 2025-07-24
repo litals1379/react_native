@@ -167,5 +167,33 @@ namespace Server_Side.DAL
                 return null;
             }
         }
+        public async Task<bool> AddStoryToChildHistoryAsync(string userId, string childId, string storyId)
+        {
+            try
+            {
+                var filter = Builders<User>.Filter.And(
+                    Builders<User>.Filter.Eq(u => u.Id, userId),
+                    Builders<User>.Filter.ElemMatch(u => u.Children, c => c.Id == childId)
+                );
+
+                var historyEntry = new ReadingHistoryEntry(
+                    storyID: storyId,
+                    feedbackID: "", // Empty or can be removed entirely if you want
+                    readDate: DateTime.UtcNow
+                );
+
+                var update = Builders<User>.Update.Push("children.$.readingHistory", historyEntry);
+
+                var result = await _usersCollection.UpdateOneAsync(filter, update);
+
+                return result.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding story to reading history for child {childId} in user {userId}: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }
