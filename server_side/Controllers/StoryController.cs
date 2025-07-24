@@ -126,8 +126,9 @@ namespace Server_Side.Controllers
                     return StatusCode(500, "Failed to parse story output.");
 
                 var rawTitle = blocks[0];
-                storyResponse.Title = Regex.Replace(rawTitle, @"^[^\p{L}\p{N}]*", "").Trim();
-                //storyResponse.Title = blocks[0].TrimStart('#', ' ').Trim();
+                //storyResponse.Title = Regex.Replace(rawTitle, @"^[^\p{L}\p{N}]*", "").Trim();
+                storyResponse.Title = Regex.Replace(rawTitle, @"^#+\s*|\s*#+$", "").Trim();
+
                 blocks.RemoveAt(0); // Remove title
 
                 foreach (var paragraph in blocks)
