@@ -44,8 +44,8 @@ export default function UserProfile() {
 
   const handleChildSelection = (child) => {
     router.push({
-      pathname: "/library",
-      params: { child: JSON.stringify(child) },
+      pathname: "/characters",
+      params: { childID: child.id, childReadingLevel: child.readingLevel, child: JSON.stringify(child) },
     });
   };
 
