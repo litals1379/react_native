@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles as libraryStyles } from './Style/storyFromLibrary';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StoryGenerator = () => {
   const { childID, childReadingLevel, topic } = useLocalSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const AddStoryToReadingHistoryUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/';
 
   useEffect(() => {
     const handleGenerateStory = async () => {
@@ -36,6 +38,8 @@ const StoryGenerator = () => {
           return;
         }
 
+        handleAddStory(result.id);
+
         // ✅ Redirect to storyFromLibrary with the new storyId and childID
         router.replace({
           pathname: '/storyFromLibrary',
@@ -55,6 +59,29 @@ const StoryGenerator = () => {
       handleGenerateStory();
     }
   }, [topic, childReadingLevel]);
+
+  const handleAddStory = async (storyId) => {
+    // router.push({ pathname: './story', params: { childID, topic, storyId } });
+    const userId = await AsyncStorage.getItem('userId');
+
+    try {
+      const response = await fetch(
+        `${AddStoryToReadingHistoryUrl}${userId}/child/${childID}/reading-history?storyId=${storyId}`,
+        {
+          method: 'POST',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.text(); // if your backend returns a simple message
+      console.log('✅ Story added to reading history:', data);
+    } catch (error) {
+      console.error('❌ Error adding story to reading history:', error);
+    }
+  };
 
   if (isLoading) {
     return (
