@@ -331,11 +331,8 @@ const StoryFromLibrary = () => {
           )}
 
           <View style={styles.navigation}>
-            {/* <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
-              <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : '#65558F'} />
-            </TouchableOpacity> */}
             <TouchableOpacity onPress={goToPreviousParagraph} disabled={isRecording ||currentIndex === 0}>
-            <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
+              <Icon name="arrow-right" size={30} color={isRecording || currentIndex === 0 ? '#ccc' : '#65558F'} />
             </TouchableOpacity>
 
             <View style={styles.progressContainer}>

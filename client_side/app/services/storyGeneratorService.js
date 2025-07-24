@@ -2,7 +2,7 @@
 // import { ConfigService } from './config';
 import { useLocalSearchParams } from 'expo-router';
 
-const BASE_URL = 'http://www.storytimetestsitetwo.somee.com/api/Story'; // Replace with your real API base
+const BASE_URL = 'http://www.storytimetestsitetwo.somee.com/api/Story'; 
 
 export const storyGeneratorService = {
     generateStory: async (topic, level = 1) => {

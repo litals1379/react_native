@@ -245,10 +245,22 @@ export default function Story() {
           </TouchableOpacity>
 
           <View style={styles.progressContainer}>
-            <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-            <Progress.Bar progress={(currentIndex + 1) / paragraphs.length} width={160} height={10} color={getProgressColor()} style={{ marginVertical: 8 }} />
-            <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-          </View>
+              <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+              <View style={styles.progressRow}>
+                <Progress.Bar
+                  progress={(currentIndex + 1) / paragraphs.length}
+                  width={160}
+                  height={10}
+                  borderRadius={8}
+                  color={getProgressColor()}
+                  unfilledColor="#E0E0E0"
+                  borderWidth={0}
+                  animated
+                  style={{ transform: [{ scaleX: -1 }] }}
+                />
+                <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
+              </View>
+            </View>
 
           <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || currentIndex === paragraphs.length - 1}>
             <Icon name="arrow-left" size={30} color={isRecording || currentIndex === paragraphs.length - 1 ? '#ccc' : styles.arrow.color} />
