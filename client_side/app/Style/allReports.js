@@ -20,6 +20,12 @@ export const styles = StyleSheet.create({
         padding: 10,
 
     },
+    storyTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 5,
+    },
     noReports: {
         textAlign: 'center',
         fontSize: 18,
@@ -27,8 +33,10 @@ export const styles = StyleSheet.create({
         marginTop: 20,
     },
     storyCover: {
-        width: 100,
-        height: 150,
+        //center the image in the item
+        alignSelf: 'center',
+        width: 200,
+        height: 100,
         borderRadius: 8,
         marginTop: 10,
     },

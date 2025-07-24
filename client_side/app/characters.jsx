@@ -7,9 +7,6 @@ import { styles } from './Style/characters';
 const charactersData = [
   { id: 1, name: 'מיקו', image: require('../assets/images/mico.jpg'), video: require('../assets/sounds/cat.mp4') },
   { id: 2, name: 'נבי', image: require('../assets/images/navi.png'), video: require('../assets/sounds/navi.mp4') },
-  // { id: 3, name: 'יוני', image: require('../assets/images/yoni.png'), video: require('../assets/sounds/yoni.mp4') },
-// { id: 4, name: 'ארנבת', image: require('../assets/images/rabbit.png'), video: require('../assets/sounds/rabbit.mp4') },
-
 ];
 
 export default function Characters() {
@@ -17,26 +14,31 @@ export default function Characters() {
   const params = useLocalSearchParams();
   const childID = params.childID;
   const childReadingLevel = params.childReadingLevel;
-  
+  const child = params.child ? JSON.parse(params.child) : null;
+
   console.log("Characters - childID:", childID);
   console.log("Characters - childReadingLevel:", childReadingLevel);
+  console.log("Characters - full child:", child);
 
   const [playingCharacterID, setPlayingCharacterID] = useState(null);
   const videoRef = useRef(null);
 
   const handleCharacterSelect = async (item) => {
     if (playingCharacterID === item.id) {
-      // לחיצה שנייה על אותה דמות – דלג על הסרטון
       if (videoRef.current) {
         await videoRef.current.stopAsync();
       }
       setPlayingCharacterID(null);
       router.push({
-        pathname: './subjects',
-        params: { childID: childID, childReadingLevel: childReadingLevel, characterID: item.id },
+        pathname: './library',
+        params: {
+          childID,
+          childReadingLevel,
+          characterID: item.id,
+          child: JSON.stringify(child),
+        },
       });
     } else {
-      // דמות אחרת נלחצה – עצור את הקודמת
       if (videoRef.current) {
         await videoRef.current.stopAsync();
       }
@@ -60,8 +62,13 @@ export default function Characters() {
             if (status.didJustFinish) {
               setPlayingCharacterID(null);
               router.push({
-                pathname: './subjects',
-                params: { childID: childID, childReadingLevel: childReadingLevel, characterID: item.id },
+                pathname: './library',
+                params: {
+                  childID,
+                  childReadingLevel,
+                  characterID: item.id,
+                  child: JSON.stringify(child),
+                },
               });
             }
           }}
@@ -78,7 +85,6 @@ export default function Characters() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>בחר דמות</Text>
-
       <FlatList
         data={charactersData}
         renderItem={renderCharacter}
