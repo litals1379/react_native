@@ -56,7 +56,7 @@ export default function UserProfile() {
       // Request camera roll permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        setModalMessage('Please grant permission to access your photo library.');
+        setModalMessage('אנא אפשר גישה למצלמה ולגלריה.');
         setModalEmoji('⚠️');
         setModalType('error');
         setModalVisible(true);
@@ -78,7 +78,7 @@ export default function UserProfile() {
       }
     } catch (error) {
       console.error('Error in pickImage:', error);
-      setModalMessage('Something went wrong while picking the image.');
+      setModalMessage('אירעה שגיאה בעת בחירת התמונה.');
       setModalEmoji('❌');
       setModalType('error');
       setModalVisible(true);

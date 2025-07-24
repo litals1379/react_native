@@ -1,5 +1,5 @@
-import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { Text, View, Image, ActivityIndicator, TouchableOpacity, ScrollView, Alert, Modal,Button } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
@@ -43,9 +43,16 @@ const StoryFromLibrary = () => {
     paragraphs: [],
     summary: {}
   });
+  //from story.jsx
+  const [showEndModal, setShowEndModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const videoRef = useRef(null);
+  const [showVideo, setShowVideo] = useState(false);
+
 
 
   useEffect(() => {
+    console.log("In storyFromLibrary useEffect");
     const fetchStory = async () => {
       try {
         const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${storyId}`);
@@ -141,7 +148,7 @@ const StoryFromLibrary = () => {
     try {
       const permission = await Audio.requestPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert('Microphone permission not granted');
+        Alert.alert('אנא אפשר הרשאות גישה למיקרופון');
         return;
       }
 
@@ -178,7 +185,7 @@ const StoryFromLibrary = () => {
       setRecording(recording);
       setRecordingUri(null);
       setIsRecording(true);
-      console.log('🎤 Recording started as .wav');
+      // console.log('🎤 Recording started as .wav');
     } catch (err) {
       console.error('Recording error:', err);
       Alert.alert('Recording error', err.message || 'Unknown error');
@@ -281,7 +288,6 @@ const StoryFromLibrary = () => {
       if (!response.ok) throw new Error(await response.text());
 
       console.log("✅ Report sent successfully");
-      router.push('/userProfile');
       // router.push({ pathname:'/allReports', params:{childId,userId: finalReport.userId} });
 
     } catch (err) {
@@ -290,6 +296,16 @@ const StoryFromLibrary = () => {
     }
   };
 
+  const submitRating = async (ratingValue) => {
+    if (!reportData.storyId) return;
+    try {
+      const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
+      if (!response.ok) throw new Error(await response.text());
+      console.log("✅ Rating submitted successfully");
+    } catch (error) {
+      Alert.alert("שגיאה", "שליחת הדירוג נכשלה");
+    }
+  };
 
   if (loading) {
     return (
@@ -380,7 +396,7 @@ const StoryFromLibrary = () => {
               <TouchableOpacity
                 onPress={() => {
                   handleEndStory();
-                  router.push('/userProfile')
+                  setShowEndModal(true);  
                 }
                 }
                 disabled={isRecording || isSpeaking}
@@ -392,6 +408,22 @@ const StoryFromLibrary = () => {
           </View>
         </ScrollView>
       )}
+      <Modal visible={showEndModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>🎉 כל הכבוד שסיימת את הסיפור!</Text>
+            <Text style={styles.modalSubtitle}>איך נהנית מהסיפור?</Text>
+            <View style={styles.starsContainer}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <TouchableOpacity key={star} onPress={() => { setRating(star); submitRating(star); }}>
+                  <Icon name="star" size={32} color={star <= rating ? "#FFD700" : "#ccc"} />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Button title="סיים" onPress={() => { setShowEndModal(false); router.push('/userProfile') }} />
+          </View>
+        </View>
+      </Modal>
 
       {modalData.visible ? (
         <AlertModal
