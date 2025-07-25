@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#F8F8F8',
-    padding: 20,
+    padding: 12,
   },
   title: {
     fontSize: 28,
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
   characterButton: {
   width: 170, 
   height: 170, 
-  margin: 12,
+  margin: 8,
   alignItems: 'center',
   justifyContent: 'center',
   backgroundColor: '#FFFFFF',
@@ -34,14 +34,14 @@ export const styles = StyleSheet.create({
 },
 
 characterImage: {
-  width: 140, 
-  height: 140, 
+  width: 130, 
+  height: 130, 
   marginBottom: 10,
   resizeMode: 'contain',
 },
 
 characterName: {
-  fontSize: 18, 
+  fontSize: 16, 
   color: '#333',
   textAlign: 'center',
 },

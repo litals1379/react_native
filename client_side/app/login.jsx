@@ -33,6 +33,8 @@ export default function Login() {
   const [modalMessage, setModalMessage] = useState('');
   const [modalEmoji, setModalEmoji] = useState('');
   const [modalType, setModalType] = useState('success');
+  const [shouldNavigate, setShouldNavigate] = useState(false);
+
 
   const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login';
 
@@ -91,10 +93,17 @@ export default function Login() {
         return;
       }
       const data = await res.json();
+      console.log('🔑 Login response:', data);
       if (data) {
         await AsyncStorage.setItem('userId', data.id.toString());
         await AsyncStorage.setItem('userEmail', userData.email);
-        router.push('/userProfile');
+
+        const firstName = data.parentDetails?.[0]?.firstName || userData.username || 'משתמש';
+        
+        console.log('🔑 First name:', firstName);
+        await handleLoginSuccess(data.id, userData.email, userData.email.split('@')[0], firstName);
+
+        // router.push('/userProfile');
       } else {
         await registerUser(userData);
       }
@@ -161,10 +170,6 @@ export default function Login() {
             profileImage: result.data.user.photo,
           };
 
-          setModalMessage(`שלום, ${result.data.user.givenName}`);
-          setModalEmoji('👋');
-          setModalType('success');
-          setModalVisible(true);
           await loginUser(userData);
         } else {
           setModalMessage('ההתחברות נכשלה');
@@ -221,10 +226,9 @@ export default function Login() {
       if (data.user) {
         const userId = data.user.id;
         const userEmail = data.user.email;
-        router.push({ pathname: '(tabs)/userProfile' });
-        await AsyncStorage.setItem('userId', userId.toString());
-        await AsyncStorage.setItem('userEmail', userEmail);
-        await AsyncStorage.setItem('userName', username);
+        const userFirstName = data.user.parentDetails?.[0]?.firstName || 'משתמש';
+
+        handleLoginSuccess(userId, userEmail, data.user.username, userFirstName);
       } else {
         setModalMessage('שם משתמש או סיסמה לא נכונים.');
         setModalEmoji('❌');
@@ -239,6 +243,18 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLoginSuccess = async (userId, userEmail, userName, userFirstName) => {
+    await AsyncStorage.setItem('userId', userId.toString());
+    await AsyncStorage.setItem('userEmail', userEmail);
+    await AsyncStorage.setItem('userName', userName);
+
+    setModalMessage(`שלום, ${userFirstName || userName}`);
+    setModalEmoji('👋');
+    setModalType('success');
+    setModalVisible(true);
+    setShouldNavigate(true);
   };
 
   return (
@@ -324,6 +340,11 @@ export default function Login() {
           setModalMessage('');
           setModalEmoji('');
           setModalType('success');
+
+          if (shouldNavigate) {
+            setShouldNavigate(false);
+            router.push('/userProfile');
+          }
         }}
         message={modalMessage}
         emoji={modalEmoji}

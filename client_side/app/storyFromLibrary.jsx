@@ -251,6 +251,7 @@ const StoryFromLibrary = () => {
 
       const characterId = parseInt(characterID); // ודא שמומר למספר
       const feedbackSet = feedbackVideos[characterId] || {};
+      console.log('Feedback set:', feedbackSet);
       setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
 
     } catch (err) {
@@ -374,10 +375,16 @@ const StoryFromLibrary = () => {
                   ref={videoFeedbackRef}
                   source={feedbackVideo}
                   shouldPlay
+                  isLooping={false}
+                  useNativeControls={false}
                   resizeMode="cover"
                   style={styles.feedbackVideo}
+                  onError={(error) => {
+                    console.error('Video error:', error);
+                    setFeedbackVideo(null); // fail-safe
+                  }}
                   onPlaybackStatusUpdate={(status) => {
-                    if (status.didJustFinish) {
+                    if (status.didJustFinish && !status.isLooping) {
                       setFeedbackVideo(null);
                       if (!highlightedWords.some(w => w.isWrong)) {
                         goToNextParagraph();
