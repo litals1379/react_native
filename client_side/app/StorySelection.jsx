@@ -5,7 +5,7 @@ import { styles } from './Style/storyFromLibrary'; // סגנון קיים, כו�
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function StorySelection() {
-  const { childID, childReadingLevel, topic } = useLocalSearchParams();
+  const { childID, childReadingLevel, topic, characterID } = useLocalSearchParams();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -68,7 +68,7 @@ export default function StorySelection() {
 
   const handleGenerateNewStory = () => {
     console.log("childID from story selection: ", childID)
-    router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic, characterID: item.id } });
+    router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic, characterID } });
   };
 
   return (
