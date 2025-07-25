@@ -83,7 +83,7 @@ export default function Library() {
             <TouchableOpacity
               key={index}
               style={styles.bookItem}
-              onPress={() => router.push({ pathname: 'storyFromLibrary', params: { storyId: book.id,childId:child.id } })} // שולחים את ה-`storyId` כפרמטר
+              onPress={() => router.push({ pathname: 'storyFromLibrary', params: { storyId: book.id,childId:child.id, characterID: params.characterID, } })} // שולחים את ה-`storyId` כפרמטר
             >
               {book.coverImg ? (
                 <Image
@@ -101,7 +101,7 @@ export default function Library() {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id, childReadingLevel: child?.readingLevel } })}
+        onPress={() => router.push({ pathname: '../subjects', params: { childID: child?.id, childReadingLevel: child?.readingLevel,characterID: item.id } })}
       >
         <Text style={styles.buttonText}>בחר סיפור</Text>
       </TouchableOpacity>

@@ -68,7 +68,7 @@ export default function StorySelection() {
 
   const handleGenerateNewStory = () => {
     console.log("childID from story selection: ", childID)
-    router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic } });
+    router.push({ pathname: './StoryGenerator', params: { childID, childReadingLevel, topic, characterID: item.id } });
   };
 
   return (

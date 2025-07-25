@@ -270,7 +270,7 @@ export default function Story() {
         {currentIndex === 0 && showVideo && (
           <Video
             ref={videoRef}
-            source={require('../assets/sounds/naniEncouraging.mp4')}
+            source={require('../assets/sounds/naviEncouraging.mp4')}
             style={styles.image}
             resizeMode="contain"
             shouldPlay

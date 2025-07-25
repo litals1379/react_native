@@ -5,8 +5,10 @@ import { Video } from 'expo-av';
 import { styles } from './Style/characters';
 
 const charactersData = [
-  { id: 1, name: 'מיקו', image: require('../assets/images/mico.jpg'), video: require('../assets/sounds/cat.mp4') },
+  { id: 1, name: 'מיקו', image: require('../assets/images/mico.jpg'), video: require('../assets/sounds/miko-hello.mp4') },
   { id: 2, name: 'נבי', image: require('../assets/images/navi.png'), video: require('../assets/sounds/navi.mp4') },
+  { id: 3, name: 'קרני', image: require('../assets/images/karni.jpg'), video: require('../assets/sounds/karni.mp4') },
+  { id: 4, name: 'טדי', image: require('../assets/images/teddy.png'), video: require('../assets/sounds/teddy.mp4') },
 ];
 
 export default function Characters() {

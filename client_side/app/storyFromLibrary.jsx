@@ -9,12 +9,29 @@ import { styles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // ✅ ייבוא סרטונים
-import naviEncouraging from '../assets/sounds/naniEncouraging.mp4';
-import naviWhenKidWrong from '../assets/sounds/naviWhenKidWrong.mp4';
+const feedbackVideos = {
+  1: {
+    correct: require('../assets/sounds/mikoEncouraging.mp4'),
+    wrong: require('../assets/sounds/mikoWrong.mp4'),
+  },
+  2: {
+    correct: require('../assets/sounds/naviEncouraging.mp4'),
+    wrong: require('../assets/sounds/naviWrong.mp4'),
+  },
+  3: {
+    correct: require('../assets/sounds/karniEncouraging.mp4'),
+    wrong: require('../assets/sounds/karniWrong.mp4'),
+  },
+  4: {
+    correct: require('../assets/sounds/teddyEncouraging.mp4'),
+    wrong: require('../assets/sounds/teddyWrong.mp4'),
+  },
+};
+
 
 const StoryFromLibrary = () => {
   const router = useRouter();
-  const { storyId, childId } = useLocalSearchParams();
+  const { storyId, childId,characterID } = useLocalSearchParams();
 
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
@@ -232,7 +249,10 @@ const StoryFromLibrary = () => {
       setHighlightedWords(words.map((word, i) => ({ text: word, isWrong: wrongArr[i] === 1 })));
       setHasFeedback(true);
 
-      setFeedbackVideo(wrongArr.includes(1) ? naviWhenKidWrong : naviEncouraging);
+      const characterId = parseInt(characterID); // ודא שמומר למספר
+      const feedbackSet = feedbackVideos[characterId] || {};
+      setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
+
     } catch (err) {
       console.error('Stop recording error:', err);
       Alert.alert('שגיאה', 'הייתה שגיאה בעיבוד ההקלטה');
