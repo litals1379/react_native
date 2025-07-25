@@ -8,9 +8,12 @@ using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Server_Side.Services;
+using Server_Side.Models;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-
+using System;
+using System.Net.Http; // Required for HttpClient
+using Microsoft.Extensions.Logging; // Required for ILogger in GoogleAIService
 
 namespace Server_Side
 {
@@ -19,6 +22,18 @@ namespace Server_Side
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            
+            builder.Services.AddSingleton(sp =>
+            {
+                var googleCloudConfig = builder.Configuration.GetSection("GoogleCloud");
+                return new GoogleCloudSettings
+                {
+                    ProjectId = googleCloudConfig["ProjectId"] ?? throw new ArgumentNullException("GoogleCloud:ProjectId not configured."),
+                    Region = googleCloudConfig["Region"] ?? throw new ArgumentNullException("GoogleCloud:Region" +
+                    " not configured."),
+                    ServiceAccountKeyJson = googleCloudConfig["ServiceAccountKeyJson"] ?? throw new ArgumentNullException("GoogleCloud:ServiceAccountKeyJson not configured.")
+                };
+            });
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
@@ -43,11 +58,17 @@ namespace Server_Side
 
             builder.Services.AddScoped<UserDBservices>();
             builder.Services.AddScoped<StoryDBservices>();
-            builder.Services.AddScoped<ReadingSessionReportDBservices>(); // ✅ Add this
+            builder.Services.AddScoped<ReadingSessionReportDBservices>();
             builder.Services.AddSingleton<ReadingPromptService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddSingleton<CloudinaryService>();
-            builder.Services.AddHttpClient();
+            //builder.Services.AddHttpClient();
+
+            // --- Register GoogleAIService with HttpClient ---
+            // This registers GoogleAIService and automatically configures HttpClient for it.
+            // The GoogleAIService will receive GoogleCloudSettings via its constructor.
+            builder.Services.AddHttpClient<GoogleAIService>();
+            builder.Logging.AddConsole();
             builder.Logging.AddConsole();
             var app = builder.Build();
 
