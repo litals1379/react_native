@@ -109,7 +109,7 @@ namespace Server_Side.Controllers
                 string storyOutput = await _googleAIService.GenerateTextWithGeminiAsync(
                     storyPrompt,
                     modelName: "gemini-2.5-flash", //
-                    maxOutputTokens: 8192 // Adjust token limit as needed for stories
+                    maxOutputTokens: 16384 // Adjust token limit as needed for stories
                 );
                 _logger.LogInformation($"Generated Story Output (partial):\n{storyOutput.Substring(0, Math.Min(storyOutput.Length, 500))}");
 

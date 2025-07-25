@@ -53,9 +53,8 @@ namespace Server_Side.Services
     public async Task<string[]> GenerateImageWithImagen3Async(string prompt, int sampleCount = 1, string aspectRatio = "16:9")
         {
             //var modelId = "imagen-3.0-generate-002"; // Standard Imagen 3.0 generation model ID
-            var modelId = "imagen-4.0-fast-generate-preview-06-06"; // Standard Imagen 3.0 generation model ID
+            var modelId = "imagen-4.0-fast-generate-preview-06-06";
 
-            // Request body for Imagen 3.0
             var requestBody = new
             {
                 instances = new[]
@@ -112,7 +111,7 @@ namespace Server_Side.Services
         }
 
         // --- Gemini 1.5 Pro / Flash Text Generation ---
-        public async Task<string> GenerateTextWithGeminiAsync(string prompt, string modelName = "gemini-2.5-flash", int maxOutputTokens = 8192)
+        public async Task<string> GenerateTextWithGeminiAsync(string prompt, string modelName = "gemini-2.5-flash", int maxOutputTokens = 16384)
         {
             var fullModelName = modelName;
 
