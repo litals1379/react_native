@@ -5,7 +5,7 @@ import { styles as libraryStyles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StoryGenerator = () => {
-  const { childID, childReadingLevel, topic } = useLocalSearchParams();
+  const { childID, childReadingLevel, topic, characterID } = useLocalSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -46,6 +46,7 @@ const StoryGenerator = () => {
           params: {
             storyId: result.id,
             childId: childID,
+            characterID: characterID,
           },
         });
       } catch (err) {
