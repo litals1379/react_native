@@ -367,24 +367,28 @@ const StoryFromLibrary = () => {
             <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
           </View>
 
-          {/* ✅ וידאו פידבק */}
-          {feedbackVideo && (
-            <Video
-              ref={videoFeedbackRef}
-              source={feedbackVideo}
-              shouldPlay
-              resizeMode="contain"
-              style={{ width: 220, height: 130, marginTop: 16 }}
-              onPlaybackStatusUpdate={(status) => {
-                if (status.didJustFinish) {
-                  setFeedbackVideo(null);
-                  if (!highlightedWords.some(w => w.isWrong)) {
-                    goToNextParagraph();
-                  }
-                }
-              }}
-            />
-          )}
+          <Modal visible={!!feedbackVideo} transparent animationType="fade">
+            <View style={styles.feedbackModalOverlay}>
+              <View style={styles.feedbackBubble}>
+                <Video
+                  ref={videoFeedbackRef}
+                  source={feedbackVideo}
+                  shouldPlay
+                  resizeMode="cover"
+                  style={styles.feedbackVideo}
+                  onPlaybackStatusUpdate={(status) => {
+                    if (status.didJustFinish) {
+                      setFeedbackVideo(null);
+                      if (!highlightedWords.some(w => w.isWrong)) {
+                        goToNextParagraph();
+                      }
+                    }
+                  }}
+                />
+              </View>
+            </View>
+          </Modal>
+
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>

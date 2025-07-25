@@ -171,4 +171,32 @@ export const styles = StyleSheet.create({
     color: '#65558F',
     fontWeight: 'bold',
   },
+  feedbackModalOverlay: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.4)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+feedbackBubble: {
+  width: 200,
+  height: 200,
+  borderRadius: 100,
+  overflow: 'hidden',
+  backgroundColor: '#fff',
+  justifyContent: 'center',
+  alignItems: 'center',
+  elevation: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.3,
+  shadowRadius: 6,
+},
+
+feedbackVideo: {
+  width: '100%',
+  height: '100%',
+  borderRadius: 100,
+}
+
 });
