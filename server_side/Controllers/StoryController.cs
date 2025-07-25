@@ -1,19 +1,17 @@
 ﻿using CloudinaryDotNet.Actions; // Keep if you're using Cloudinary elsewhere, otherwise can be removed.
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration; // Ensure this is present
+using Microsoft.Extensions.Configuration; // Keep if used for other config, but GeminiApiKey will be removed
 using MongoDB.Bson;
 using Server_Side.BL;
 using Server_Side.DAL;
 using Server_Side.Models;
-using Server_Side.Services;
+using Server_Side.Services; // Essential for GoogleAIService
 using System; // Required for Math.Min, ApplicationException
 using System.Collections.Generic; // Required for List
 using System.Linq; // Required for .First(), .Skip(), .Where(), .Any(), .ElementAtOrDefault()
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging; // Add this for logging
 
 namespace Server_Side.Controllers
 {
@@ -22,27 +20,24 @@ namespace Server_Side.Controllers
     public class StoryController : ControllerBase
     {
         private readonly StoryDBservices _storyDBservices;
-        private readonly IConfiguration _config;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string _geminiApiKey;
         private readonly ReadingPromptService _promptService;
         private readonly CloudinaryService _cloudinaryService;
+        private readonly GoogleAIService _googleAIService; // Inject GoogleAIService
+        private readonly ILogger<StoryController> _logger; // Inject Logger
 
-        public StoryController(StoryDBservices storyDBservices, IConfiguration config, IHttpClientFactory httpClientFactory, ReadingPromptService promptService, CloudinaryService cloudinaryService)
+        // Constructor - UPDATED to use GoogleAIService and ILogger
+        public StoryController(
+            StoryDBservices storyDBservices,
+            ReadingPromptService promptService,
+            CloudinaryService cloudinaryService,
+            GoogleAIService googleAIService, // Add GoogleAIService
+            ILogger<StoryController> logger) // Add ILogger
         {
             _storyDBservices = storyDBservices;
-            _config = config;
-            _httpClientFactory = httpClientFactory;
-            _cloudinaryService = cloudinaryService;
-            // Retrieve API key once in the constructor
-            _geminiApiKey = _config["GeminiApiKey"];
-            if (string.IsNullOrEmpty(_geminiApiKey))
-            {
-                // This will stop the application startup if the key is missing
-                throw new ApplicationException("Gemini API Key is not configured. Please add 'GeminiApiKey' to your appsettings.json or environment variables.");
-            }
-
             _promptService = promptService;
+            _cloudinaryService = cloudinaryService;
+            _googleAIService = googleAIService; // Assign injected service
+            _logger = logger; // Assign logger
         }
 
         // Existing API endpoints (keep them as they are)
@@ -52,6 +47,7 @@ namespace Server_Side.Controllers
             var story = await _storyDBservices.GetStoryForChildAsync(childID, topic);
             if (story == null)
             {
+                _logger.LogWarning($"No story found for child {childID} with topic '{topic}'.");
                 return NotFound($"No story found for child {childID} with topic '{topic}'.");
             }
             return Ok(story);
@@ -61,14 +57,14 @@ namespace Server_Side.Controllers
         public async Task<IActionResult> GetAvailableStoriesForChild(string childID, string topic)
         {
             var stories = await _storyDBservices.GetAvailableStoriesForChildAsync(childID, topic);
-            return Ok(stories ?? new List<Story>()); // Always return a list, even if empty
+            return Ok(stories ?? new List<Story>());
         }
 
         [HttpGet("GetBooksReadByChild/{childID}")]
         public async Task<ActionResult<List<Story>>> GetBooksReadByChild(string childID)
         {
             var booksRead = await _storyDBservices.GetBooksReadByChildAsync(childID);
-            return Ok(booksRead ?? new List<Story>()); // Always return a list, even if empty
+            return Ok(booksRead ?? new List<Story>());
         }
 
         [HttpGet("GetStoryById/{storyId}")]
@@ -77,19 +73,19 @@ namespace Server_Side.Controllers
             var story = await _storyDBservices.GetStoryByIdAsync(storyId);
             if (story == null)
             {
+                _logger.LogWarning($"No story found with ID: {storyId}.");
                 return NotFound($"No story found with ID: {storyId}.");
             }
             return Ok(story);
         }
 
-        // --- New/Updated Story Generation Endpoint ---
+        // --- Story Generation Endpoint - UPDATED to use GoogleAIService ---
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateStory([FromBody] StoryRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Topic))
                 return BadRequest("Missing topic.");
 
-            var client = _httpClientFactory.CreateClient();
             var storyResponse = new StoryResponse
             {
                 StoryParagraph = new List<StoryParagraph>()
@@ -97,51 +93,56 @@ namespace Server_Side.Controllers
 
             try
             {
-                // STEP 1: Generate the story with title and 4 paragraphs
-                //                string storyPrompt = $@"צור סיפור ילדים מנוקד בעברית בנושא ""{request.Topic}"".
-                //הסיפור צריך להיות בן 4 פסקאות, כל אחת בת שני משפטים לפחות.
-                //התחל עם כותרת מנוקדת בשורה נפרדת.
-                //הפרד בין כל פסקה באמצעות שורה ריקה.";
+                // STEP 1: Generate story with title and paragraphs
                 string storyPrompt;
                 try
                 {
                     storyPrompt = _promptService.GetPromptByLevel(request.Level, request.Topic);
-                    Console.WriteLine($"{storyPrompt}");
+                    _logger.LogInformation($"Story generation prompt: {storyPrompt}");
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, $"Invalid level for prompt generation: {request.Level}");
                     return BadRequest($"Invalid level: {ex.Message}");
                 }
 
-                string storyOutput = await CallGeminiTextAPI(client, _geminiApiKey, storyPrompt);
-                Console.WriteLine($"Generated Story:\n{storyOutput}");
+                string storyOutput = await _googleAIService.GenerateTextWithGeminiAsync(
+                    storyPrompt,
+                    modelName: "gemini-2.5-flash", //
+                    maxOutputTokens: 16384 // Adjust token limit as needed for stories
+                );
+                _logger.LogInformation($"Generated Story Output (partial):\n{storyOutput.Substring(0, Math.Min(storyOutput.Length, 500))}");
 
-                // Split output into title and paragraphs
+
                 var blocks = storyOutput.Split(new[] { "\n\n", "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries)
                                         .Select(p => p.Trim())
                                         .Where(p => !string.IsNullOrWhiteSpace(p))
                                         .ToList();
 
                 if (blocks.Count < 2)
-                    return StatusCode(500, "Failed to parse story output.");
+                {
+                    _logger.LogError($"Failed to parse story output. Expected at least 2 blocks (title + paragraph). Raw output: {storyOutput}");
+                    return StatusCode(500, "Failed to parse story output. The AI might not have generated a title and paragraphs correctly.");
+                }
 
                 var rawTitle = blocks[0];
-                //storyResponse.Title = Regex.Replace(rawTitle, @"^[^\p{L}\p{N}]*", "").Trim();
-                storyResponse.Title = Regex.Replace(rawTitle, @"^#+\s*|\s*#+$", "").Trim();
+                storyResponse.Title = Regex.Replace(rawTitle, @"^[\s#*]+|[\s#*]+$", "").Trim();
 
                 blocks.RemoveAt(0); // Remove title
 
                 foreach (var paragraph in blocks)
                 {
+                    var cleanedText = Regex.Replace(paragraph, @"[\\/*]", "").Trim();
+
                     storyResponse.StoryParagraph.Add(new StoryParagraph
                     {
-                        Text = paragraph,
-                        ImagePrompt = null,
-                        Image = null
+                        Text = cleanedText,
+                        ImagePrompt = null, // Will be set later
+                        Image = null        // Will be set later
                     });
                 }
 
-                // STEP 2: Generate image prompts using template-based prompt
+                // STEP 2: Generate image prompts
                 string paragraphBlock = string.Join("\n\n", storyResponse.StoryParagraph.Select(p => p.Text));
 
                 string imagePromptRequest = $@"{paragraphBlock}
@@ -164,8 +165,9 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
 
 👉 Return only the image prompts in this exact template. No summaries, no explanations.";
 
-                string imagePromptOutput = await CallGeminiTextAPI(client, _geminiApiKey, imagePromptRequest);
-                Console.WriteLine($"Generated Image Prompts:\n{imagePromptOutput}");
+                // Use GoogleAIService for image prompt generation (text model)
+                string imagePromptOutput = await _googleAIService.GenerateTextWithGeminiAsync(imagePromptRequest, modelName: "gemini-2.5-flash");
+                _logger.LogInformation($"Generated Image Prompts Output (partial):\n{imagePromptOutput.Substring(0, Math.Min(imagePromptOutput.Length, 500))}");
 
                 var imagePrompts = Regex.Split(imagePromptOutput, @"(?=Use 3D animation)")
                                         .Where(p => !string.IsNullOrWhiteSpace(p))
@@ -173,24 +175,60 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
                                         .ToList();
 
                 // STEP 3: Attach prompts and generate images
-                for (int i = 0; i < storyResponse.StoryParagraph.Count && i < imagePrompts.Count; i++)
+                for (int i = 0; i < storyResponse.StoryParagraph.Count; i++)
                 {
                     var para = storyResponse.StoryParagraph[i];
-                    para.ImagePrompt = imagePrompts[i];
+                    para.ImagePrompt = imagePrompts.ElementAtOrDefault(i); // Use ElementAtOrDefault to prevent index out of bounds
 
-                    try
+                    if (string.IsNullOrEmpty(para.ImagePrompt))
                     {
-                        para.Image = await CallGeminiImageAPI(client, _geminiApiKey, para.ImagePrompt);
-                        Console.WriteLine($"Image generated for prompt: {para.ImagePrompt.Substring(0, Math.Min(50, para.ImagePrompt.Length))}...");
+                        _logger.LogWarning($"No image prompt generated for paragraph {i + 1}. Skipping image generation for this paragraph.");
+                        para.Image = null; // Ensure image is null if prompt is missing
+                        continue;
                     }
-                    catch (Exception ex)
+
+                    int maxRetries = 3;
+
+                    for (int attempt = 0; attempt < maxRetries; attempt++)
                     {
-                        Console.Error.WriteLine($"Error generating image for prompt '{para.ImagePrompt}': {ex.Message}");
-                        para.Image = null;
+                        try
+                        {
+                            // Use GoogleAIService for image generation (Imagen 3.0)
+                            var generatedImages = await _googleAIService.GenerateImageWithImagen3Async(
+                                para.ImagePrompt,
+                                sampleCount: 1,
+                                aspectRatio: "16:9"
+                            );
+
+                            if (generatedImages != null && generatedImages.Length > 0)
+                            {
+                                para.Image = generatedImages[0];
+                                _logger.LogInformation($"Image generated for paragraph {i + 1}. Prompt: {para.ImagePrompt.Substring(0, Math.Min(50, para.ImagePrompt.Length))}...");
+                                break; // success
+                            }
+                            else
+                            {
+                                _logger.LogWarning($"Imagen 3.0 did not return an image for prompt: {para.ImagePrompt.Substring(0, Math.Min(50, para.ImagePrompt.Length))}...");
+                                para.Image = null;
+                                break; // exit if no image but no error
+                            }
+                        }
+                        catch (HttpRequestException ex) when ((int?)ex.StatusCode == 429)
+                        {
+                            int delayMs = (int)Math.Pow(2, attempt + 1) * 1000;
+                            _logger.LogWarning($"429 Too Many Requests on image prompt {i + 1}. Retrying in {delayMs}ms. Attempt {attempt + 1}/{maxRetries}.");
+                            await Task.Delay(delayMs);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error generating image for prompt '{para.ImagePrompt.Substring(0, Math.Min(50, para.ImagePrompt.Length))}...': {ex.Message}");
+                            para.Image = null;
+                            break;
+                        }
                     }
                 }
 
-                // Generate a unique ID for the story before saving
+                // STEP 4: Upload images and save story
                 var storyId = ObjectId.GenerateNewId().ToString();
                 string cloudinaryFolder = $"Story Time/{storyId}";
 
@@ -206,17 +244,16 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
 
                     paragraphs[paraKey] = para.Text;
 
-                    if (!string.IsNullOrEmpty(para.Image))
+                    if (!string.IsNullOrEmpty(para.Image)) // This 'para.Image' is the base64 string
                     {
                         string imageUrl = await _cloudinaryService.UploadBase64ImageAsync(para.Image, $"image_{i}", cloudinaryFolder);
                         imagesUrls[imgKey] = imageUrl;
 
-                        if (i == 0) // use first image as cover
+                        if (coverImg == null) // Use first available image as cover
                             coverImg = imageUrl;
                     }
                 }
 
-                // Create Story object for DB
                 var finalStory = new Story
                 {
                     Id = storyId,
@@ -230,240 +267,20 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
                     AverageRating = 0.0
                 };
 
-                // Save to DB
                 await _storyDBservices.InsertStoryAsync(finalStory);
-
+                _logger.LogInformation($"Story '{finalStory.Title}' (ID: {storyId}) generated and saved successfully.");
                 return Ok(finalStory);
-
-
-                //return Ok(storyResponse);
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Unexpected error during story generation: {ex.Message}");
+                _logger.LogError(ex, $"Unexpected error during story generation: {ex.Message}");
                 return StatusCode(500, $"An error occurred during story generation: {ex.Message}");
             }
         }
 
-        // --- Helper Methods for Gemini API Calls ---
 
-        // Modified CallGeminiTextAPI: Consolidated and added optional modelId
-        private async Task<string> CallGeminiTextAPI(HttpClient client, string apiKey, string prompt, string modelId = "gemini-2.0-flash")
-        {
-            var body = new
-            {
-                contents = new[]
-                {
-                    new {
-                        role = "user",
-                        parts = new[] {
-                            new { text = prompt }
-                        }
-                    }
-                },
-                generationConfig = new
-                {
-                    temperature = 0.7,            // Controls creativity (0.0–1.0)
-                    topK = 40,                    // Limits token sampling to top K options (optional)
-                    topP = 0.95,                   // Nucleus sampling (optional)
-                    maxOutputTokens = 2048         // Max output token limit (adjust as needed)
-                }
-            };
-
-
-            var json = JsonSerializer.Serialize(body);
-            var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-            Console.WriteLine($"--- Sending Request to Gemini Text API ({modelId}) ---");
-            Console.WriteLine($"URL: https://generativelanguage.googleapis.com/v1beta/models/{modelId}:generateContent?key={apiKey}");
-            Console.WriteLine($"Request Body: {json}");
-            Console.WriteLine("--------------------------------------------------");
-
-            var response = await client.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{modelId}:generateContent?key={apiKey}",
-                requestContent
-            );
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine($"--- Gemini Text API Response Status Code ({modelId}) ---");
-            Console.WriteLine($"Status: {(int)response.StatusCode} {response.ReasonPhrase}");
-            Console.WriteLine($"--- Gemini Text API Raw Response Content ({modelId}) ---");
-            Console.WriteLine(content);
-            Console.WriteLine("--------------------------------------------------");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                try
-                {
-                    using var errorDoc = JsonDocument.Parse(content);
-                    if (errorDoc.RootElement.TryGetProperty("error", out var errorElement))
-                    {
-                        var errorMessage = errorElement.TryGetProperty("message", out var messageProp) ? messageProp.GetString() : "Unknown API Error";
-                        var errorCode = errorElement.TryGetProperty("code", out var codeProp) ? codeProp.GetInt32() : -1;
-                        var errorStatus = errorElement.TryGetProperty("status", out var statusProp) ? statusProp.GetString() : "UNKNOWN";
-                        throw new HttpRequestException(
-                            $"Gemini Text API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                            $"API Error Code: {errorCode}, Status: {errorStatus}, Message: {errorMessage}. " +
-                            $"Full response: {content}"
-                        );
-                    }
-                }
-                catch (JsonException)
-                {
-                    throw new HttpRequestException(
-                        $"Gemini Text API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                        $"Non-JSON or unexpected error response body: {content}"
-                    );
-                }
-                throw new HttpRequestException(
-                    $"Gemini Text API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                    $"Raw response: {content}"
-                );
-            }
-
-            using var doc = JsonDocument.Parse(content);
-            try
-            {
-                return doc.RootElement
-                    .GetProperty("candidates")[0]
-                    .GetProperty("content")
-                    .GetProperty("parts")[0]
-                    .GetProperty("text")
-                    .GetString();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                Console.Error.WriteLine($"JSON Parsing Error (KeyNotFound) for model {modelId}: A required property was not found in the Gemini Text API response. This indicates an unexpected response structure. Raw response: {content}");
-                throw new Exception($"Failed to parse Gemini Text API response for model {modelId}: Missing expected JSON property. See console for raw API response.", ex);
-            }
-            catch (IndexOutOfRangeException ex)
-            {
-                Console.Error.WriteLine($"JSON Parsing Error (IndexOutOfRange) for model {modelId}: An array index was out of bounds (e.g., 'candidates' or 'parts' was empty) in the Gemini Text API response. Raw response: {content}");
-                throw new Exception($"Failed to parse Gemini Text API response for model {modelId}: Empty array encountered. See console for raw API response.", ex);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"An unexpected JSON parsing error occurred in Gemini Text API response for model {modelId}: {ex.Message}. Raw response: {content}");
-                throw new Exception($"An unexpected error occurred during Gemini Text API response parsing for model {modelId}. See console for raw API response.", ex);
-            }
-        }
-
-        // Refined CallGeminiImageAPI: Returns a single base64 string
-        private async Task<string> CallGeminiImageAPI(HttpClient client, string apiKey, string prompt)
-        {
-            var body = new
-            {
-                contents = new[]
-                {
-            new {
-                role = "user",
-                parts = new[] {
-                    new { text = prompt }
-                }
-            }
-        },
-                generationConfig = new
-                {
-                    responseModalities = new[] { "TEXT", "IMAGE" },
-                    candidateCount = 1 // Keep candidateCount as it's a standard parameter for number of candidates
-                }
-            };
-
-            var json = JsonSerializer.Serialize(body);
-            var requestContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-            const string imageModelId = "gemini-2.0-flash-preview-image-generation"; // The specific model for images
-            Console.WriteLine($"--- Sending Request to Gemini Image API ({imageModelId}) ---");
-            Console.WriteLine($"URL: https://generativelanguage.googleapis.com/v1beta/models/{imageModelId}:generateContent?key={apiKey}");
-            Console.WriteLine($"Request Body: {json}");
-            Console.WriteLine("---------------------------------------------------------");
-
-            var response = await client.PostAsync(
-                $"https://generativelanguage.googleapis.com/v1beta/models/{imageModelId}:generateContent?key={apiKey}",
-                requestContent
-            );
-
-            var content = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine($"--- Gemini Image API Response Status Code ({imageModelId}) ---");
-            Console.WriteLine($"Status: {(int)response.StatusCode} {response.ReasonPhrase}");
-            Console.WriteLine($"--- Gemini Image API Raw Response Content ({imageModelId}) ---");
-            Console.WriteLine(content);
-            Console.WriteLine("---------------------------------------------------------");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                try
-                {
-                    using var errorDoc = JsonDocument.Parse(content);
-                    if (errorDoc.RootElement.TryGetProperty("error", out var errorElement))
-                    {
-                        var errorMessage = errorElement.TryGetProperty("message", out var messageProp) ? messageProp.GetString() : "Unknown API Error";
-                        var errorCode = errorElement.TryGetProperty("code", out var codeProp) ? codeProp.GetInt32() : -1;
-                        var errorStatus = errorElement.TryGetProperty("status", out var statusProp) ? statusProp.GetString() : "UNKNOWN";
-                        throw new HttpRequestException(
-                            $"Gemini Image API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                            $"API Error Code: {errorCode}, Status: {errorStatus}, Message: {errorMessage}. " +
-                            $"Full response: {content}"
-                        );
-                    }
-                }
-                catch (JsonException)
-                {
-                    throw new HttpRequestException(
-                        $"Gemini Image API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                        $"Non-JSON or unexpected error response body: {content}"
-                    );
-                }
-                throw new HttpRequestException(
-                    $"Gemini Image API call failed with HTTP status {(int)response.StatusCode} ({response.ReasonPhrase}). " +
-                    $"Raw response: {content}"
-                );
-            }
-
-            using var doc = JsonDocument.Parse(content);
-            try
-            {
-                // Check if 'candidates' exists and is not empty
-                if (!doc.RootElement.TryGetProperty("candidates", out var candidates) || candidates.GetArrayLength() == 0)
-                {
-                    Console.WriteLine("Warning: Gemini Image API response was successful, but no 'candidates' found. Full response: " + content);
-                    return null;
-                }
-
-                // Get the first candidate
-                var firstCandidate = candidates[0];
-
-                // Check if 'content' and 'parts' exist
-                if (!firstCandidate.TryGetProperty("content", out var contentElement) ||
-                    !contentElement.TryGetProperty("parts", out var partsElement))
-                {
-                    Console.WriteLine("Warning: Gemini Image API response was successful, but 'content' or 'parts' missing from candidate. Full response: " + content);
-                    return null;
-                }
-
-                // Iterate parts to find the inlineData (image)
-                foreach (var part in partsElement.EnumerateArray())
-                {
-                    if (part.TryGetProperty("inlineData", out var inlineData) &&
-                        inlineData.TryGetProperty("mimeType", out var mimeType) &&
-                        mimeType.GetString().StartsWith("image/") && // Still good to check mimeType to ensure it's an image
-                        inlineData.TryGetProperty("data", out var base64Data))
-                    {
-                        return base64Data.GetString(); // Return the base64 string of the image
-                    }
-                }
-
-                Console.WriteLine("Warning: Gemini Image API response was successful, but no image 'inlineData.data' found within parts. Full response: " + content);
-                return null; // No image data found in the expected format
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"JSON parsing error (Gemini Flash Image Gen): {ex.Message}. Full response: {content}");
-                throw new Exception("Failed to parse Gemini Flash Image Generation API response. Check console for full response.", ex);
-            }
-        }
+        // Remove the old CallGeminiTextAPI and CallGeminiImageAPI helper methods
+        // The GoogleAIService now handles these calls with proper authentication
 
         [HttpPost("RateStory")]
         public async Task<IActionResult> RateStory([FromQuery] string storyId, [FromQuery] int rating)
@@ -476,11 +293,12 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
             bool success = await _storyDBservices.AddRatingAsync(storyId, rating);
             if (!success)
             {
+                _logger.LogWarning($"Story with ID {storyId} not found for rating.");
                 return NotFound($"Story with ID {storyId} not found.");
             }
 
+            _logger.LogInformation($"Story '{storyId}' rated {rating} successfully.");
             return Ok("Rating submitted successfully.");
         }
-
     }
 }

@@ -45,7 +45,7 @@ const StoryGenerator = () => {
           pathname: '/storyFromLibrary',
           params: {
             storyId: result.id,
-            childID,
+            childId: childID,
           },
         });
       } catch (err) {
