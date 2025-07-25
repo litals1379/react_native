@@ -205,12 +205,15 @@ const StoryFromLibrary = () => {
   const stopRecording = async () => {
     try {
       if (!recording) return;
-      await recording.stopAndUnloadAsync();
+
+      // 1. Stop and unload the recording
+      await recording.stopAndUnloadAsync(); // Ensure this completes
       const uri = recording.getURI();
       setRecording(null);
       setRecordingUri(uri);
       setIsRecording(false);
 
+      // 2. Prepare data for analysis
       const formData = new FormData();
       formData.append('text', paragraphs[currentIndex]);
       formData.append('audio', {
@@ -219,17 +222,32 @@ const StoryFromLibrary = () => {
         type: 'audio/wav',
       });
 
+      // 3. Indicate analysis is in progress
       setIsAnalyzing(true);
+
+      // 4. Await the analysis API response
       const response = await fetch('https://storytime-fp9z.onrender.com/analyze', {
         method: 'POST',
         body: formData,
       });
+
+      // Handle non-OK responses from the analysis API
+      if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Analysis API error:', response.status, errorData);
+          Alert.alert('שגיאה בניתוח', errorData.message || 'הייתה שגיאה בבדיקת ההגייה.');
+          // Crucial: Set feedback to null and stop analyzing if API call fails
+          setFeedbackVideo(null);
+          setIsAnalyzing(false);
+          return; // Exit the function gracefully
+      }
 
       const json = await response.json();
       const wrongArr = json.result;
       const words = paragraphs[currentIndex].split(/\s+/);
       const problematicWords = words.filter((_, i) => wrongArr[i] === 1);
 
+      // 5. Update report data (after successful analysis)
       setReportData(prev => ({
         ...prev,
         completedParagraphs: prev.completedParagraphs + 1,
@@ -237,11 +255,11 @@ const StoryFromLibrary = () => {
         paragraphs: prev.paragraphs.map(p =>
           p.paragraphIndex === currentIndex
             ? {
-              ...p,
-              problematicWords,
-              attempts: 1,
-              wasSuccessful: !wrongArr.includes(1)
-            }
+                ...p,
+                problematicWords,
+                attempts: 1,
+                wasSuccessful: !wrongArr.includes(1)
+              }
             : p
         )
       }));
@@ -249,15 +267,25 @@ const StoryFromLibrary = () => {
       setHighlightedWords(words.map((word, i) => ({ text: word, isWrong: wrongArr[i] === 1 })));
       setHasFeedback(true);
 
-      const characterId = parseInt(characterID); // ודא שמומר למספר
-      const feedbackSet = feedbackVideos[characterId] || {};
-      console.log('Feedback set:', feedbackSet);
-      setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
+      // 6. Determine character ID and feedback video AFTER analysis results are ready
+      const characterId = parseInt(characterID);
+      const feedbackSet = feedbackVideos[characterId];
+
+      if (feedbackSet) {
+          // Only set the feedback video if a valid source is found
+          setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
+      } else {
+          console.warn('No feedback videos found for characterID:', characterId);
+          setFeedbackVideo(null); // Ensure modal doesn't open
+      }
 
     } catch (err) {
-      console.error('Stop recording error:', err);
-      Alert.alert('שגיאה', 'הייתה שגיאה בעיבוד ההקלטה');
+      console.error('Stop recording or analysis error:', err);
+      Alert.alert('שגיאה', 'הייתה שגיאה בעיבוד או בניתוח ההקלטה: ' + (err.message || 'שגיאה לא ידועה'));
+      // Ensure cleanup in case of any error
+      setFeedbackVideo(null);
     } finally {
+      // This will always run, ensuring the loading indicator is dismissed
       setIsAnalyzing(false);
     }
   };
@@ -319,7 +347,11 @@ const StoryFromLibrary = () => {
             ? highlightedWords
             : paragraphs[currentIndex].split(/\s+/).map((word) => ({ text: word, isWrong: false }))
           ).map((wordObj, i) => (
-            <TouchableOpacity key={i} onPress={() => speakWord(wordObj.text)}>
+            <TouchableOpacity
+              key={i}
+              onPress={() => speakWord(wordObj.text)}
+              disabled={isRecording} // Add this line
+            >
               <Text style={[styles.wordText, hasFeedback && { color: wordObj.isWrong ? '#E74C3C' : '#2ECC71' }]}>
                 {wordObj.text + ' '}
               </Text>
