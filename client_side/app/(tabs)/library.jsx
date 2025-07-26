@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { styles } from './tabsStyle/library'; // סגנונות
+import { styles } from '../tabsStyle/library'; // סגנונות
 import AlertModal from '../Components/AlertModal';
 import { API_SOMEE_STORY_GET_BOOKS_READ } from '../Config/config';
 

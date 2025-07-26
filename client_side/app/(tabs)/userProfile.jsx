@@ -4,7 +4,7 @@ import { FontAwesome, AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { styles } from './tabsStyle/userProfile';
+import { styles } from '../tabsStyle/userProfile';
 import AlertModal from '../Components/AlertModal';
 import { API_SOMEE_USER_UPDATE_PROFILE_IMAGE, API_SOMEE_USER_GET_BY_ID } from '../Config/config';
 

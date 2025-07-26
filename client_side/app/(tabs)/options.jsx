@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {styles} from './tabsStyle/options'; // Assuming you have a styles file for this component
+import {styles} from '../tabsStyle/options'; // Assuming you have a styles file for this component
 
 export default function Options() {
   const router = useRouter();
