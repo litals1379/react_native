@@ -33,6 +33,7 @@ export default function HomeScreen() {
   const [modalMessage, setModalMessage] = useState('');
   const [modalEmoji, setModalEmoji] = useState('');
   const [modalType, setModalType] = useState('success');
+  const [shouldNavigate, setShouldNavigate] = useState(false);
 
   const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
   const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
@@ -92,11 +93,12 @@ export default function HomeScreen() {
       if (data) {
         await AsyncStorage.setItem('userId', data.id.toString());
         await AsyncStorage.setItem('userEmail', userData.email);
-        setModalVisible(false)
-        setModalMessage('');
-        setModalEmoji('');
+        console.log('🔑 User logged in:', data);
+        setModalMessage(`שלום, ${data.parentDetails[0].firstName}`);
+        setModalEmoji('👋');
         setModalType('success');
-        router.push('/userProfile');
+        setModalVisible(true);
+
       } else {
         await registerUser(userData);
       }
@@ -163,10 +165,11 @@ export default function HomeScreen() {
             profileImage: result.data.user.photo,
           };
 
-          setModalMessage(`שלום, ${result.data.user.givenName}`);
-          setModalEmoji('👋');
-          setModalType('success');
-          setModalVisible(true);
+          // setModalMessage(`שלום, ${result.data.user.givenName}`);
+          // setModalEmoji('👋');
+          // setModalType('success');
+          // setModalVisible(true);
+
           await loginUser(userData);
         } else {
           setModalMessage('ההתחברות נכשלה');
@@ -282,6 +285,7 @@ export default function HomeScreen() {
           setModalMessage('');
           setModalEmoji('');
           setModalType('success');
+          router.push('/userProfile');
         }}
         message={modalMessage}
         emoji={modalEmoji}
