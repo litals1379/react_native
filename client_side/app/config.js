@@ -1,4 +1,4 @@
-export const API_URL_1 = process.env.API_URL_1;
+export const API_Somee = process.env.API_Somee;
 export const API_Render_Analyzing = process.env.API_Render_Analyzing;
 export const API_SOMEE_USER = process.env.API_SOMEE_USER;
 export const API_SOMEE_USER_REGISTER = process.env.API_SOMEE_USER_REGISTER;
