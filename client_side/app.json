@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react_native",
+    "name": "StoryTime",
     "slug": "react_native",
     "version": "1.0.0",
     "orientation": "default",
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.litals1379.react_native",
@@ -71,33 +71,34 @@
         }
       ],
       "expo-secure-store",
-      "expo-audio"
+      "expo-audio",
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "API_SOMEE": "http://www.storytimetestsitetwo.somee.com/api/",
+      "API_SOMEE": "https://www.storytimetestsitetwo.somee.com/api/",
       "API_RENDER_ANALYZING": "https://storytime-fp9z.onrender.com/analyze",
-      "API_SOMEE_USER": "http://www.storytimetestsitetwo.somee.com/api/User/",
-      "API_SOMEE_USER_REGISTER": "http://www.storytimetestsitetwo.somee.com/api/User/register/",
-      "API_SOMEE_USER_LOGIN": "http://www.storytimetestsitetwo.somee.com/api/User/login",
-      "API_SOMEE_USER_GET_BY_EMAIL": "http://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/",
-      "API_SOMEE_USER_ADD_CHILD": "http://www.storytimetestsitetwo.somee.com/api/User/addChild/",
-      "API_SOMEE_USER_ALL": "http://www.storytimetestsitetwo.somee.com/api/User/all",
-      "API_SOMEE_USER_DELETE": "http://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/",
-      "API_SOMEE_USER_UPDATE": "http://www.storytimetestsitetwo.somee.com/api/User/UpdateUser/",
-      "API_SOMEE_USER_UPDATE_PROFILE_IMAGE": "http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage",
-      "API_SOMEE_USER_GET_BY_ID": "http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/",
-      "API_SOMEE_STORY_GENERATE": "http://www.storytimetestsitetwo.somee.com/api/Story/generate",
-      "API_SOMEE_STORY_GET_AVAILABLE": "http://www.storytimetestsitetwo.somee.com/api/Story/GetAvailableStoriesForChild/",
-      "API_SOMEE_STORY_GET_BY_ID": "http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/",
-      "API_SOMEE_STORY_GET_FOR_CHILD": "http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/",
-      "API_SOMEE_STORY_RATE": "http://www.storytimetestsitetwo.somee.com/api/Story/RateStory",
-      "API_SOMEE_STORY_GET_BOOKS_READ": "http://www.storytimetestsitetwo.somee.com/api/Story/GetBooksReadByChild/",
-      "API_SOMEE_READING_SESSION_REPORT": "http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport",
-      "API_SOMEE_READING_SESSION_REPORT_FILTER": "http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport/filter",
-      "API_SOMEE_RANDOM_WORDS": "http://www.storytimetestsitetwo.somee.com/api/randomwords",
+      "API_SOMEE_USER": "https://www.storytimetestsitetwo.somee.com/api/User/",
+      "API_SOMEE_USER_REGISTER": "https://www.storytimetestsitetwo.somee.com/api/User/register/",
+      "API_SOMEE_USER_LOGIN": "https://www.storytimetestsitetwo.somee.com/api/User/login",
+      "API_SOMEE_USER_GET_BY_EMAIL": "https://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/",
+      "API_SOMEE_USER_ADD_CHILD": "https://www.storytimetestsitetwo.somee.com/api/User/addChild/",
+      "API_SOMEE_USER_ALL": "https://www.storytimetestsitetwo.somee.com/api/User/all",
+      "API_SOMEE_USER_DELETE": "https://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/",
+      "API_SOMEE_USER_UPDATE": "https://www.storytimetestsitetwo.somee.com/api/User/UpdateUser/",
+      "API_SOMEE_USER_UPDATE_PROFILE_IMAGE": "https://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage",
+      "API_SOMEE_USER_GET_BY_ID": "https://www.storytimetestsitetwo.somee.com/api/User/GetUserById/",
+      "API_SOMEE_STORY_GENERATE": "https://www.storytimetestsitetwo.somee.com/api/Story/generate",
+      "API_SOMEE_STORY_GET_AVAILABLE": "https://www.storytimetestsitetwo.somee.com/api/Story/GetAvailableStoriesForChild/",
+      "API_SOMEE_STORY_GET_BY_ID": "https://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/",
+      "API_SOMEE_STORY_GET_FOR_CHILD": "https://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/",
+      "API_SOMEE_STORY_RATE": "https://www.storytimetestsitetwo.somee.com/api/Story/RateStory",
+      "API_SOMEE_STORY_GET_BOOKS_READ": "https://www.storytimetestsitetwo.somee.com/api/Story/GetBooksReadByChild/",
+      "API_SOMEE_READING_SESSION_REPORT": "https://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport",
+      "API_SOMEE_READING_SESSION_REPORT_FILTER": "https://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport/filter",
+      "API_SOMEE_RANDOM_WORDS": "https://www.storytimetestsitetwo.somee.com/api/randomwords",
       "router": {
         "origin": false
       },
