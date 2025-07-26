@@ -32,7 +32,6 @@ export const styles = StyleSheet.create({
     writingDirection: 'rtl',
     textAlign: 'right',
   },
-
   bookImage: {
     width: '100%',
     height: 200,
@@ -93,11 +92,12 @@ export const styles = StyleSheet.create({
   progressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    marginVertical: 15,
+    gap: 4,
   },
   emoji: {
     fontSize: 20,
-    marginLeft: 8,
+    marginLeft: -5,
   },
   endButton: {
     backgroundColor: '#B3E7F2',
@@ -105,8 +105,10 @@ export const styles = StyleSheet.create({
     borderColor: '#65558F',
     borderRadius: 10,
     paddingVertical: 10,
-    paddingHorizontal: 30,
-    marginVertical: 10,
+    width: "fit-content",
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    marginVertical: 40,
   },
   endButtonText: {
     fontSize: 18,
@@ -164,7 +166,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
-
   loadingText: {
     marginTop: 16,
     fontSize: 18,
@@ -177,7 +178,6 @@ export const styles = StyleSheet.create({
   justifyContent: 'center',
   alignItems: 'center',
 },
-
 feedbackBubble: {
   width: 200,
   height: 200,
@@ -192,7 +192,6 @@ feedbackBubble: {
   shadowOpacity: 0.3,
   shadowRadius: 6,
 },
-
 feedbackVideo: {
   width: '100%',
   height: '100%',

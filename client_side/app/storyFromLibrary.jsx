@@ -8,6 +8,8 @@ import { Audio, Video } from 'expo-av';
 import { styles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_SOMEE_STORY_GET_BY_ID, API_SOMEE_READING_SESSION_REPORT, API_SOMEE_STORY_RATE, API_Render_Analyzing } from './Config/config';
+import { Animated, Easing } from 'react-native';
+
 
 // ✅ ייבוא סרטונים
 const feedbackVideos = {
@@ -51,6 +53,58 @@ const StoryFromLibrary = () => {
   // ✅ נגן וידאו משוב
   const [feedbackVideo, setFeedbackVideo] = useState(null);
   const videoFeedbackRef = useRef(null);
+  const pulseScale = useRef(new Animated.Value(1)).current;
+  const pulseOpacity = useRef(new Animated.Value(0.6)).current;
+
+
+  const startPulsing = () => {
+    Animated.loop(
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(pulseScale, {
+            toValue: 2,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseScale, {
+            toValue: 1,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.sequence([
+          Animated.timing(pulseOpacity, {
+            toValue: 0,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseOpacity, {
+            toValue: 0.6,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+      ])
+    ).start();
+  };
+
+  const stopPulsing = () => {
+    pulseScale.stopAnimation();
+    pulseOpacity.stopAnimation();
+    pulseScale.setValue(1);
+    pulseOpacity.setValue(0.6);
+  };
+
+  useEffect(() => {
+    if (isSpeaking || recording) {
+      startPulsing();
+    } else {
+      stopPulsing();
+    }
+  }, [isSpeaking, recording]);
+
 
   const [reportData, setReportData] = useState({
     storyId,
@@ -275,6 +329,9 @@ const StoryFromLibrary = () => {
       if (feedbackSet) {
         // Only set the feedback video if a valid source is found
         setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
+          setTimeout(() => {
+          setFeedbackVideo(null);
+        }, 4000);
       } else {
         console.warn('No feedback videos found for characterID:', characterId);
         setFeedbackVideo(null); // Ensure modal doesn't open
@@ -428,21 +485,61 @@ const StoryFromLibrary = () => {
               </View>
             </View>
           </Modal>
-
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 16, marginTop: 20 }}>
-          <TouchableOpacity style={[styles.button, isSpeaking && styles.buttonListening]} onPress={isSpeaking ? stopStory : speakStory} disabled={isRecording}>
-            <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
-          </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 40, marginVertical: 40 }}>
+          {/* Speaking Button with pulsing background */}
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            {isSpeaking && (
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  width: 60,
+                  height: 60,
+                  borderRadius: 40,
+                  backgroundColor: '#D6C9F0',
+                  transform: [{ scale: pulseScale }],
+                  opacity: pulseOpacity,
+                }}
+              />
+            )}
+            <TouchableOpacity
+              style={[styles.button, isSpeaking && styles.buttonListening, { opacity: recording ? 0.5 : 1 }]}
+              onPress={isSpeaking ? stopStory : speakStory}
+              disabled={isRecording}
+            >
+              <Icon name={isSpeaking ? "stop" : "volume-up"} size={30} color={isSpeaking ? "#C0392B" : "#65558F"} />
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity style={[styles.button, recording && styles.buttonListening]} onPress={toggleRecording} disabled={isSpeaking}>
-            <Icon name={recording ? "stop" : "microphone"} size={30} color={recording ? "#C0392B" : "#65558F"} />
-          </TouchableOpacity>
+          {/* Recording Button with pulsing background */}
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            {recording && (
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  width: 60,
+                  height: 60,
+                  borderRadius: 40,
+                  backgroundColor: '#F6B8B8',
+                  transform: [{ scale: pulseScale }],
+                  opacity: pulseOpacity,
+                }}
+              />
+            )}
+            <TouchableOpacity
+              style={[styles.button, recording && styles.buttonListening, { opacity: isSpeaking ? 0.5 : 1 }]}
+              onPress={toggleRecording}
+              disabled={isSpeaking}
+            >
+              <Icon name={recording ? "stop" : "microphone"} size={30} color={recording ? "#C0392B" : "#65558F"} />
+            </TouchableOpacity>
+          </View>
         </View>
+
 
         {currentIndex === paragraphs.length - 1 && (
-          <TouchableOpacity onPress={() => { handleEndStory(); setShowEndModal(true); }} disabled={isRecording || isSpeaking} style={[styles.endButton, { marginTop: 20 }]}>
+          <TouchableOpacity onPress={() => { handleEndStory(); setShowEndModal(true); }} disabled={isRecording || isSpeaking} style={[styles.endButton]}>
             <Text style={styles.endButtonText}>סיים את הסיפור</Text>
           </TouchableOpacity>
         )}

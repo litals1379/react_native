@@ -80,6 +80,7 @@ namespace Server_Side
 
             app.UseCors("corspolicy");
             app.UseRouting();
+            app.UseHttpsRedirection(); // added to check
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

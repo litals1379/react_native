@@ -46,7 +46,8 @@ export const styles = StyleSheet.create({
   },
   colorsList: {
     flexDirection: "row",
-    paddingVertical: 5,
+    marginRight: 50,
+    paddingVertical: 12,
   },
   colorOption: {
     width: 20,

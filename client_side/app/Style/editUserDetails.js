@@ -63,5 +63,29 @@ export const styles = StyleSheet.create({
       textAlign: 'center',
       writingDirection: 'rtl',
     },
+    stepperContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginVertical: 8,
+    },
+
+    stepperButton: {
+      backgroundColor: '#B3E7F2',
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+      marginHorizontal: 10,
+    },
+
+    stepperText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+
+    readingLevelText: {
+      fontSize: 18,
+      fontWeight: '500',
+    },
   });
   

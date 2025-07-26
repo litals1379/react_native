@@ -21,7 +21,7 @@ export default function EditUserDetailsScreen() {
   const [showDatePickerIndex, setShowDatePickerIndex] = useState(null);
 
   // שליפת המשתמש מתוך AsyncStorage והשוואה למשתמשים ב-Context
- useEffect(() => {
+  useEffect(() => {
     const loadUser = async () => {
       const userId = await AsyncStorage.getItem('userId');
       if (userId && users.length > 0) {
@@ -31,6 +31,27 @@ export default function EditUserDetailsScreen() {
     };
     loadUser();
   }, []);
+
+  // Helper function to update child reading level
+  const updateChildReadingLevel = (childIndex, increment) => {
+    setUser(prevUser => {
+      const updatedChildren = [...prevUser.children];
+      const currentLevel = updatedChildren[childIndex].readingLevel || 1;
+      const newLevel = increment 
+        ? Math.min(4, currentLevel + 1) 
+        : Math.max(1, currentLevel - 1);
+      
+      updatedChildren[childIndex] = {
+        ...updatedChildren[childIndex],
+        readingLevel: newLevel
+      };
+      
+      return {
+        ...prevUser,
+        children: updatedChildren
+      };
+    });
+  };
 
   const handleSave = () => {
     if (!user) return;
@@ -114,16 +135,25 @@ export default function EditUserDetailsScreen() {
             }}
           />
           <Text style={styles.label}>רמת קריאה</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={child.readingLevel?.toString()}
-            onChangeText={(text) => {
-              const updated = [...user.children];
-              updated[index].readingLevel = parseInt(text) || 0;
-              setUser({ ...user, children: updated });
-            }}
-          />
+          <View style={styles.stepperContainer}>
+            <TouchableOpacity
+              style={styles.stepperButton}
+              onPress={() => updateChildReadingLevel(index, false)}
+            >
+              <Text style={styles.stepperText}>−</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.readingLevelText}>
+              {child.readingLevel || 1}
+            </Text>
+
+            <TouchableOpacity
+              style={styles.stepperButton}
+              onPress={() => updateChildReadingLevel(index, true)}
+            >
+              <Text style={styles.stepperText}>+</Text>
+            </TouchableOpacity>
+          </View>
 
           <Text style={styles.label}>תאריך לידה</Text>
           {Platform.OS === 'web' ? (

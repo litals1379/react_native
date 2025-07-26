@@ -11,11 +11,11 @@ const colorsList = [
 
 export default function CustomHeader({ showPicker, setShowPicker, selectedColor, setSelectedColor }) {
   const router = useRouter();
-  const slideAnim = useRef(new Animated.Value(0)).current; // 0 = hidden, 1 = visible
+  const slideAnim = useRef(new Animated.Value(0)).current;
   const segments = useSegments();
   const currentRoute = '/' + segments.join('/');
 
-  // Custom handler to animate out before hiding
+  // Custom handler to animate in/out
   const handleColorPickerToggle = () => {
     if (showPicker) {
       // Animate out, then hide
@@ -25,24 +25,27 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
         useNativeDriver: true,
       }).start(() => setShowPicker(false));
     } else {
+      // Show and animate in simultaneously
+      slideAnim.setValue(0); // Reset to start position
       setShowPicker(true);
-      Animated.timing(slideAnim, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
+      // Small delay to ensure render, then animate
+      setTimeout(() => {
+        Animated.timing(slideAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }).start();
+      }, 10);
     }
   };
 
-  // Remove useEffect for showPicker, as animation is now handled in the toggle
-
   const slideInterpolate = slideAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [100, 0], // Slide from right to left
+    outputRange: [150, 0], // Start from right (positive) and slide to final position (0)
   });
 
   const handleBackPress = () => {
-    router.back();  // חוזר לדף הקודם
+    router.back();
   };
 
   return (
@@ -55,8 +58,6 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
           </TouchableOpacity>
         )}
 
-
-
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
           <Text style={styles.storyText}>Story Time</Text>
@@ -64,35 +65,37 @@ export default function CustomHeader({ showPicker, setShowPicker, selectedColor,
 
         {/* כפתור לבחור צבע + אפשרויות בחירת צבע */}
         <View style={{ alignItems: 'flex-end', alignSelf: 'flex-end', flexDirection: 'row', position: 'relative' }}>
-          <Animated.View
-            style={{
-              transform: [{ translateX: slideInterpolate }],
-              opacity: slideAnim,
-              marginRight: '10%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              maxWidth: showPicker ? 200 : 0,
-              overflow: 'hidden',
-            }}
-          >
-            {showPicker && (
+          {showPicker && (
+            <Animated.View
+              style={{
+                transform: [{ translateX: slideInterpolate }],
+                opacity: slideAnim,
+                position: 'absolute',
+                right: 50, // Position it to the left of the color button
+                top: 0,
+                flexDirection: 'row',
+                alignItems: 'center',
+                zIndex: 1000, // Ensure it's above other elements
+              }}
+            >
               <FlatList
                 data={colorsList}
                 horizontal
                 keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={styles.colorsList}
+                contentContainerStyle={[styles.colorsList, { alignItems: 'center', justifyContent: 'center' }]}
+                showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={[styles.colorOption, { backgroundColor: item }]}
                     onPress={() => {
                       setSelectedColor(item);
-                      handleColorPickerToggle();
+                      handleColorPickerToggle(); // This will animate out and hide
                     }}
                   />
                 )}
               />
-            )}
-          </Animated.View>
+            </Animated.View>
+          )}
           <TouchableOpacity
             style={[styles.colorButton, { backgroundColor: selectedColor }]}
             onPress={handleColorPickerToggle}
