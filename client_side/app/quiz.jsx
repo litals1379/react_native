@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Speech from 'expo-speech';
 import { styles } from './Style/quiz';
 import AlertModal from './Components/AlertModal';
+import { API_SOMEE_RANDOM_WORDS } from './Config/config';
 
 export default function Quiz() {
   const TOTAL_ROUNDS = 5;
@@ -25,7 +26,7 @@ export default function Quiz() {
   }, [round]);
 
   const fetchNewWords = () => {
-    fetch('http://www.storytimetestsitetwo.somee.com/api/randomwords')
+    fetch(API_SOMEE_RANDOM_WORDS)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch words');

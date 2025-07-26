@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet,Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { styles } from './Style/allReports'; // Import your style file
+import { API_SOMEE_READING_SESSION_REPORT_FILTER, API_SOMEE_STORY_GET_BY_ID } from './Config/config';
 
 const allReports = () => {
   const { childId, childName, userId } = useLocalSearchParams();
@@ -13,7 +14,7 @@ const allReports = () => {
     const fetchReports = async () => {
       try {
         const response = await fetch(
-          `http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport/filter?userId=${userId}&childId=${childId}`
+          `${API_SOMEE_READING_SESSION_REPORT_FILTER}?userId=${userId}&childId=${childId}`
         );
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'שגיאה בטעינת הדוחות');
@@ -22,7 +23,7 @@ const allReports = () => {
         const reportsWithStories = await Promise.all(
           data.map(async (report) => {
             try {
-              const storyResponse = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${report.storyId}`);
+              const storyResponse = await fetch(`${API_SOMEE_STORY_GET_BY_ID}${report.storyId}`);
               const storyData = await storyResponse.json();
               return { ...report, storyTitle: storyData.title, storyCover: storyData.coverImg };
             } catch (e) {
@@ -52,7 +53,7 @@ const allReports = () => {
       onPress={() =>
         router.push({
           pathname: '/reportDetails',
-          params: { report: JSON.stringify(item),storyTitle: item.storyTitle },
+          params: { report: JSON.stringify(item), storyTitle: item.storyTitle },
         })
       }
     >
@@ -64,7 +65,7 @@ const allReports = () => {
       <Text>{item.summary?.emoji || ''} {item.summary?.feedbackType}</Text>
       {item.storyCover && (
         <Image source={{ uri: item.storyCover }} style={styles.storyCover} />
-        )}
+      )}
     </TouchableOpacity>
   );
 

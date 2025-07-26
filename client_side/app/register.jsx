@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './Style/register';
 import AlertModal from './Components/AlertModal';
+import { API_SOMEE_USER_REGISTER } from './Config/config';
 
 export default function Register() {
   const router = useRouter();
@@ -86,8 +87,6 @@ export default function Register() {
   const handleRegister = async () => {
     if (!validate()) return;
 
-    const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
-
     const userData = {
       parentDetails: [
         {
@@ -103,7 +102,7 @@ export default function Register() {
     };
 
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(API_SOMEE_USER_REGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

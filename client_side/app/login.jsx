@@ -20,6 +20,7 @@ import * as AuthSession from 'expo-auth-session';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as WebBrowser from 'expo-web-browser';
 import AlertModal from './Components/AlertModal';
+import { API_SOMEE_USER_LOGIN, API_SOMEE_USER_REGISTER, API_SOMEE_USER_GET_BY_EMAIL } from './Config/config';
 
 
 export default function Login() {
@@ -36,13 +37,13 @@ export default function Login() {
   const [shouldNavigate, setShouldNavigate] = useState(false);
 
 
-  const apiUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/login';
+  const apiUrl = API_SOMEE_USER_LOGIN;
 
   const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
   const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
   const IOS_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
-  const apiUrlRegister = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
-  const apiUrlLogin = 'http://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/';
+  const apiUrlRegister = API_SOMEE_USER_REGISTER;
+  const apiUrlLogin = API_SOMEE_USER_GET_BY_EMAIL;
 
   const CLIENT_ID = Platform.select({
     ios: IOS_CLIENT_ID,
@@ -99,7 +100,7 @@ export default function Login() {
         await AsyncStorage.setItem('userEmail', userData.email);
 
         const firstName = data.parentDetails?.[0]?.firstName || userData.username || 'משתמש';
-        
+
         console.log('🔑 First name:', firstName);
         await handleLoginSuccess(data.id, userData.email, userData.email.split('@')[0], firstName);
 
@@ -335,7 +336,7 @@ export default function Login() {
       </ScrollView>
       <AlertModal
         visible={modalVisible}
-         onClose={() => {
+        onClose={() => {
           setModalVisible(false)
           setModalMessage('');
           setModalEmoji('');

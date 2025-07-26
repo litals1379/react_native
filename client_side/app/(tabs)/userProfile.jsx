@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './tabsStyle/userProfile';
 import AlertModal from '../Components/AlertModal';
+import { API_SOMEE_USER_UPDATE_PROFILE_IMAGE, API_SOMEE_USER_GET_BY_ID } from '../Config/config';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState(null);
@@ -16,11 +17,11 @@ export default function UserProfile() {
   const [modalEmoji, setModalEmoji] = useState('');
   const [modalType, setModalType] = useState('success');
 
-  const uploadApiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/UpdateProfileImage`;
+  const uploadApiUrl = API_SOMEE_USER_UPDATE_PROFILE_IMAGE;
   const getUserId = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
-      const apiUrl = `http://www.storytimetestsitetwo.somee.com/api/User/GetUserById/${userId}`;
+      const apiUrl = `${API_SOMEE_USER_GET_BY_ID}${userId}`;
       const response = await fetch(apiUrl);
       const data = await response.json();
       setUserData(data); // עדכון הנתונים
@@ -234,7 +235,7 @@ export default function UserProfile() {
             <FontAwesome name="sign-out" size={16} color="white" />
             <Text style={styles.buttonText}> התנתקות</Text>
           </TouchableOpacity>
-        </View> 
+        </View>
         <AlertModal
           visible={modalVisible}
           onClose={() => {

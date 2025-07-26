@@ -3,16 +3,17 @@ import { View, Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } fr
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles } from './Style/storyFromLibrary'; // סגנון קיים, כולל bookImage, bookTitle וכו'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_SOMEE_USER, API_SOMEE_STORY_GET_AVAILABLE } from './Config/config';
 
 export default function StorySelection() {
   const { childID, childReadingLevel, topic, characterID } = useLocalSearchParams();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const AddStoryToReadingHistoryUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/';
+  const AddStoryToReadingHistoryUrl = API_SOMEE_USER;
 
   useEffect(() => {
-    fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetAvailableStoriesForChild/${childID}/${encodeURIComponent(topic)}`)
+    fetch(`${API_SOMEE_STORY_GET_AVAILABLE}${childID}/${encodeURIComponent(topic)}`)
       .then(async res => {
         const text = await res.text();
         try {

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import AlertModal from '../Components/AlertModal';
+import { API_SOMEE_USER_ALL, API_SOMEE_USER_DELETE, API_SOMEE_USER_UPDATE } from '../Config/config';
 
 export const UserContext = createContext();
 
@@ -13,7 +14,7 @@ export const UserProvider = ({ children }) => {
     // שליפה מהשרת
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://www.storytimetestsitetwo.somee.com/api/User/all');
+            const response = await fetch(API_SOMEE_USER_ALL);
             if (!response.ok) throw new Error('שגיאה בשליפה');
             const data = await response.json();
             setUsers(data);
@@ -25,7 +26,7 @@ export const UserProvider = ({ children }) => {
     // מחיקה מהשרת
     const DeleteUser = async (userId) => {
         try {
-            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/DeleteUser/${userId}`, {
+            const response = await fetch(`${API_SOMEE_USER_DELETE}${userId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) throw new Error('שגיאה במחיקה');
@@ -44,7 +45,7 @@ export const UserProvider = ({ children }) => {
     const EditUser = async (updatedUser) => {
         console.log("Editing user:", updatedUser);
         try {
-            const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/User/UpdateUser/${updatedUser.id}`, {
+            const response = await fetch(`${API_SOMEE_USER_UPDATE}${updatedUser.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

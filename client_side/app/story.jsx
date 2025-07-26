@@ -9,6 +9,7 @@ import { Audio, Video } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AlertModal from './Components/AlertModal';
 import { styles } from './Style/story';
+import { API_SOMEE_STORY_GET_FOR_CHILD, API_SOMEE_READING_SESSION_REPORT, API_SOMEE_STORY_RATE } from './Config/config';
 
 export default function Story() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function Story() {
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryForChild/${childID}/${encodeURIComponent(topic)}`);
+        const response = await fetch(`${API_SOMEE_STORY_GET_FOR_CHILD}${childID}/${encodeURIComponent(topic)}`);
         const text = await response.text();
         if (!response.ok) throw new Error('לא נמצא סיפור מתאים');
         const data = JSON.parse(text);
@@ -197,7 +198,7 @@ export default function Story() {
         }
       };
 
-      const response = await fetch("http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport", {
+      const response = await fetch(API_SOMEE_READING_SESSION_REPORT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalReport)
@@ -214,7 +215,7 @@ export default function Story() {
   const submitRating = async (ratingValue) => {
     if (!reportData.storyId) return;
     try {
-      const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
+      const response = await fetch(`${API_SOMEE_STORY_RATE}?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
       if (!response.ok) throw new Error(await response.text());
     } catch (error) {
       Alert.alert("שגיאה", "שליחת הדירוג נכשלה");
@@ -245,22 +246,22 @@ export default function Story() {
           </TouchableOpacity>
 
           <View style={styles.progressContainer}>
-              <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
-              <View style={styles.progressRow}>
-                <Progress.Bar
-                  progress={(currentIndex + 1) / paragraphs.length}
-                  width={160}
-                  height={10}
-                  borderRadius={8}
-                  color={getProgressColor()}
-                  unfilledColor="#E0E0E0"
-                  borderWidth={0}
-                  animated
-                  style={{ transform: [{ scaleX: -1 }] }}
-                />
-                <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
-              </View>
+            <Text style={styles.progressText}>פסקה {currentIndex + 1} מתוך {paragraphs.length}</Text>
+            <View style={styles.progressRow}>
+              <Progress.Bar
+                progress={(currentIndex + 1) / paragraphs.length}
+                width={160}
+                height={10}
+                borderRadius={8}
+                color={getProgressColor()}
+                unfilledColor="#E0E0E0"
+                borderWidth={0}
+                animated
+                style={{ transform: [{ scaleX: -1 }] }}
+              />
+              <Text style={styles.emoji}>{getEncouragementEmoji()}</Text>
             </View>
+          </View>
 
           <TouchableOpacity onPress={goToNextParagraph} disabled={isRecording || isSpeaking || currentIndex === paragraphs.length - 1}>
             <Icon name="arrow-left" size={30} color={isRecording || isSpeaking || currentIndex === paragraphs.length - 1 ? '#ccc' : styles.arrow.color} />
@@ -314,7 +315,7 @@ export default function Story() {
                 </TouchableOpacity>
               ))}
             </View>
-            <Button title="סיים" onPress={() => { setShowEndModal(false); handleEndStory();router.push('/userProfile') }} />
+            <Button title="סיים" onPress={() => { setShowEndModal(false); handleEndStory(); router.push('/userProfile') }} />
           </View>
         </View>
       </Modal>

@@ -8,6 +8,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './Style/index';
 import AlertModal from './Components/AlertModal';
+import { API_SOMEE_USER_REGISTER, API_SOMEE_USER_GET_BY_EMAIL } from './Config/config';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -36,8 +37,8 @@ export default function HomeScreen() {
   const WEB_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
   const ANDROID_CLIENT_ID = '261514200770-csdl6nnq4e1bafb1a0is32jtnl3oh7is.apps.googleusercontent.com';
   const IOS_CLIENT_ID = '261514200770-9td180ig5jk8sdetoqllfe1lt6r95pni.apps.googleusercontent.com';
-  const apiUrlRegister = 'http://www.storytimetestsitetwo.somee.com/api/User/register/';
-  const apiUrlLogin = 'http://www.storytimetestsitetwo.somee.com/api/User/GetUserByEmail/';
+  const apiUrlRegister = API_SOMEE_USER_REGISTER;
+  const apiUrlLogin = API_SOMEE_USER_GET_BY_EMAIL;
 
   const CLIENT_ID = Platform.select({
     ios: IOS_CLIENT_ID,
@@ -91,10 +92,10 @@ export default function HomeScreen() {
       if (data) {
         await AsyncStorage.setItem('userId', data.id.toString());
         await AsyncStorage.setItem('userEmail', userData.email);
-         setModalVisible(false)
-          setModalMessage('');
-          setModalEmoji('');
-          setModalType('success');
+        setModalVisible(false)
+        setModalMessage('');
+        setModalEmoji('');
+        setModalType('success');
         router.push('/userProfile');
       } else {
         await registerUser(userData);

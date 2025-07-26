@@ -7,6 +7,7 @@ import * as Speech from 'expo-speech';
 import { Audio, Video } from 'expo-av';
 import { styles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_SOMEE_STORY_GET_BY_ID, API_SOMEE_READING_SESSION_REPORT, API_SOMEE_STORY_RATE, API_Render_Analyzing } from './Config/config';
 
 // ✅ ייבוא סרטונים
 const feedbackVideos = {
@@ -31,7 +32,7 @@ const feedbackVideos = {
 
 const StoryFromLibrary = () => {
   const router = useRouter();
-  const { storyId, childId,characterID } = useLocalSearchParams();
+  const { storyId, childId, characterID } = useLocalSearchParams();
 
   const [story, setStory] = useState(null);
   const [paragraphs, setParagraphs] = useState([]);
@@ -69,7 +70,7 @@ const StoryFromLibrary = () => {
   useEffect(() => {
     const fetchStory = async () => {
       try {
-        const response = await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/GetStoryById/${storyId}`);
+        const response = await fetch(`${API_SOMEE_STORY_GET_BY_ID}${storyId}`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Unknown error');
 
@@ -226,20 +227,20 @@ const StoryFromLibrary = () => {
       setIsAnalyzing(true);
 
       // 4. Await the analysis API response
-      const response = await fetch('https://storytime-fp9z.onrender.com/analyze', {
+      const response = await fetch(API_Render_Analyzing, {
         method: 'POST',
         body: formData,
       });
 
       // Handle non-OK responses from the analysis API
       if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Analysis API error:', response.status, errorData);
-          Alert.alert('שגיאה בניתוח', errorData.message || 'הייתה שגיאה בבדיקת ההגייה.');
-          // Crucial: Set feedback to null and stop analyzing if API call fails
-          setFeedbackVideo(null);
-          setIsAnalyzing(false);
-          return; // Exit the function gracefully
+        const errorData = await response.json();
+        console.error('Analysis API error:', response.status, errorData);
+        Alert.alert('שגיאה בניתוח', errorData.message || 'הייתה שגיאה בבדיקת ההגייה.');
+        // Crucial: Set feedback to null and stop analyzing if API call fails
+        setFeedbackVideo(null);
+        setIsAnalyzing(false);
+        return; // Exit the function gracefully
       }
 
       const json = await response.json();
@@ -255,11 +256,11 @@ const StoryFromLibrary = () => {
         paragraphs: prev.paragraphs.map(p =>
           p.paragraphIndex === currentIndex
             ? {
-                ...p,
-                problematicWords,
-                attempts: 1,
-                wasSuccessful: !wrongArr.includes(1)
-              }
+              ...p,
+              problematicWords,
+              attempts: 1,
+              wasSuccessful: !wrongArr.includes(1)
+            }
             : p
         )
       }));
@@ -272,11 +273,11 @@ const StoryFromLibrary = () => {
       const feedbackSet = feedbackVideos[characterId];
 
       if (feedbackSet) {
-          // Only set the feedback video if a valid source is found
-          setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
+        // Only set the feedback video if a valid source is found
+        setFeedbackVideo(wrongArr.includes(1) ? feedbackSet.wrong : feedbackSet.correct);
       } else {
-          console.warn('No feedback videos found for characterID:', characterId);
-          setFeedbackVideo(null); // Ensure modal doesn't open
+        console.warn('No feedback videos found for characterID:', characterId);
+        setFeedbackVideo(null); // Ensure modal doesn't open
       }
 
     } catch (err) {
@@ -308,7 +309,7 @@ const StoryFromLibrary = () => {
         }
       };
 
-      await fetch("http://www.storytimetestsitetwo.somee.com/api/ReadingSessionReport", {
+      await fetch(API_SOMEE_READING_SESSION_REPORT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalReport)
@@ -322,7 +323,7 @@ const StoryFromLibrary = () => {
   const submitRating = async (ratingValue) => {
     if (!reportData.storyId) return;
     try {
-      await fetch(`http://www.storytimetestsitetwo.somee.com/api/Story/RateStory?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
+      await fetch(`${API_SOMEE_STORY_RATE}?storyId=${reportData.storyId}&rating=${ratingValue}`, { method: 'POST' });
     } catch (error) {
       Alert.alert("שגיאה", "שליחת הדירוג נכשלה");
     }
@@ -335,7 +336,7 @@ const StoryFromLibrary = () => {
   return (
     <View style={styles.container}>
       <View>
-      <Text style={styles.bookTitle}>{story.title}</Text>
+        <Text style={styles.bookTitle}>{story.title}</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {images[currentIndex] && (
@@ -359,38 +360,38 @@ const StoryFromLibrary = () => {
           ))}
         </View>
         <View style={styles.navigation}>
-  <TouchableOpacity
-    onPress={goToPreviousParagraph}
-    disabled={isRecording || isSpeaking || currentIndex === 0}
-  >
-    <Icon
-      name="arrow-right"
-      size={30}
-      color={
-        isRecording || isSpeaking || currentIndex === 0
-          ? '#ccc'
-          : '#65558F'
-      }
-    />
-  </TouchableOpacity>
+          <TouchableOpacity
+            onPress={goToPreviousParagraph}
+            disabled={isRecording || isSpeaking || currentIndex === 0}
+          >
+            <Icon
+              name="arrow-right"
+              size={30}
+              color={
+                isRecording || isSpeaking || currentIndex === 0
+                  ? '#ccc'
+                  : '#65558F'
+              }
+            />
+          </TouchableOpacity>
 
-  <TouchableOpacity
-    onPress={goToNextParagraph}
-    disabled={
-      isRecording || isSpeaking || currentIndex === paragraphs.length - 1
-    }
-  >
-    <Icon
-      name="arrow-left"
-      size={30}
-      color={
-        isRecording || isSpeaking || currentIndex === paragraphs.length - 1
-          ? '#ccc'
-          : '#65558F'
-      }
-    />
-  </TouchableOpacity>
-</View>
+          <TouchableOpacity
+            onPress={goToNextParagraph}
+            disabled={
+              isRecording || isSpeaking || currentIndex === paragraphs.length - 1
+            }
+          >
+            <Icon
+              name="arrow-left"
+              size={30}
+              color={
+                isRecording || isSpeaking || currentIndex === paragraphs.length - 1
+                  ? '#ccc'
+                  : '#65558F'
+              }
+            />
+          </TouchableOpacity>
+        </View>
 
 
         <View style={styles.progressContainer}>

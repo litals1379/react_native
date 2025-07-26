@@ -3,13 +3,14 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { styles as libraryStyles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_SOMEE_USER, API_SOMEE_STORY_GENERATE } from './Config/config';
 
 const StoryGenerator = () => {
   const { childID, childReadingLevel, topic, characterID } = useLocalSearchParams();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const AddStoryToReadingHistoryUrl = 'http://www.storytimetestsitetwo.somee.com/api/User/';
+  const AddStoryToReadingHistoryUrl = API_SOMEE_USER;
 
   useEffect(() => {
     const handleGenerateStory = async () => {
@@ -17,7 +18,7 @@ const StoryGenerator = () => {
       setError(null);
 
       try {
-        const response = await fetch('http://www.storytimetestsitetwo.somee.com/api/Story/generate', {
+        const response = await fetch(API_SOMEE_STORY_GENERATE, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
