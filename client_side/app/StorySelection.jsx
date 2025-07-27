@@ -105,10 +105,8 @@ export default function StorySelection() {
         </>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={handleGenerateNewStory}>
-        <View style={styles.endButton}>
+      <TouchableOpacity style={styles.endButton} onPress={handleGenerateNewStory}>
           <Text style={styles.endButtonText}>✨ צור סיפור חדש</Text>
-        </View>
       </TouchableOpacity>
     </View>
   );

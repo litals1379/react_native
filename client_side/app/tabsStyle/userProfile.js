@@ -187,5 +187,11 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     textDecorationLine: 'underline',
   },
-
+  header: {
+    direction: 'rtl',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   });

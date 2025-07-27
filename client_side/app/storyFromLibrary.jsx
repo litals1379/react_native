@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Progress from 'react-native-progress';
 import * as Speech from 'expo-speech';
 import { Audio, Video } from 'expo-av';
-import { styles } from './Style/storyFromLibrary'; // <--- Original Stylesheet Import
+import { styles } from './Style/storyFromLibrary';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_SOMEE_STORY_GET_BY_ID, API_SOMEE_READING_SESSION_REPORT, API_SOMEE_STORY_RATE, API_Render_Analyzing } from './Config/config'; // <--- Original Config Import
 import { Animated, Easing } from 'react-native';

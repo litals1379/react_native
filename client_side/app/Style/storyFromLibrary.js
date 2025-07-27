@@ -120,6 +120,8 @@ export const styles = StyleSheet.create({
   header: {
     direction: 'rtl',
     textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   text: {
