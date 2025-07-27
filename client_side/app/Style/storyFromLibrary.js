@@ -105,7 +105,7 @@ export const styles = StyleSheet.create({
     borderColor: '#65558F',
     borderRadius: 10,
     paddingVertical: 10,
-    width: "fit-content",
+    width: "fit-content", // This might need to be a fixed width or 'auto' for React Native
     paddingHorizontal: 20,
     alignSelf: 'center',
     marginVertical: 40,
@@ -128,8 +128,25 @@ export const styles = StyleSheet.create({
     textAlign: 'right',
   },
   button: {
-    marginVertical: 5,
-    marginHorizontal: 35,
+    // These values determine the size of your actual microphone/volume button
+    width: 60, // Example size, adjust as needed
+    height: 60, // Example size, adjust as needed
+    borderRadius: 30, // Half of width/height to make it a circle
+    backgroundColor: 'white', // Or your desired button background
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    // marginVertical: 5, // Remove these if buttonWrapper handles spacing
+    // marginHorizontal: 35, // Remove these if buttonWrapper handles spacing
+  },
+  buttonListening: {
+    // Styles for when the button is active (listening/speaking)
+    borderColor: '#65558F',
+    borderWidth: 2,
   },
   modalOverlay: {
     flex: 1,
@@ -173,29 +190,49 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   feedbackModalOverlay: {
-  flex: 1,
-  backgroundColor: 'rgba(0,0,0,0.4)',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-feedbackBubble: {
-  width: 200,
-  height: 200,
-  borderRadius: 100,
-  overflow: 'hidden',
-  backgroundColor: '#fff',
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.3,
-  shadowRadius: 6,
-},
-feedbackVideo: {
-  width: '100%',
-  height: '100%',
-  borderRadius: 100,
-}
-
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  feedbackBubble: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  feedbackVideo: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+  },
+  controlButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 40,
+    marginVertical: 40
+  },
+  buttonWrapper: {
+    position: 'relative', // *** ADD THIS ***
+    width: 60,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // *** ADD THIS NEW STYLE DEFINITION ***
+  pulseCircle: {
+    position: 'absolute',
+    width: 60, // Match initial button size or slightly larger
+    height: 60, // Match initial button size or slightly larger
+    borderRadius: 30, // Half of width/height to make it a circle
+  },
 });
