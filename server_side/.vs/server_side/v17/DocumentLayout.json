@@ -3,24 +3,60 @@
   "WorkspaceRootPath": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\controllers\\readingsessionreportcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\readingsessionreportcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\services\\readingpromptservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:services\\readingpromptservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\services\\cloudinaryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:services\\cloudinaryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\services\\googleaiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:services\\googleaiservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\models\\googlecloudsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:models\\googlecloudsettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\models\\readinglevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:models\\readinglevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\storycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\models\\storymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:models\\storymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\bl\\cloudinarysettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\cloudinarysettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\story.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:bl\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|c:\\users\\fabel\\source\\repos\\github desktop\\react_native\\server_side\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{1ED71B2C-9B0E-4E9A-B0C6-FCB56FCDB8B3}|Server_Side.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,21 +66,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 12,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Program.cs*",
-              "RelativeToolTip": "Program.cs*",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAgwFEAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-26T21:18:20.038Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -67,32 +90,176 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "StoryController.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\StoryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\StoryController.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\StoryController.cs",
+              "RelativeToolTip": "Controllers\\StoryController.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAAgwBwAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T22:24:32.667Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "GoogleCloudSettings.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\GoogleCloudSettings.cs",
+              "RelativeDocumentMoniker": "Models\\GoogleCloudSettings.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\GoogleCloudSettings.cs",
+              "RelativeToolTip": "Models\\GoogleCloudSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:20:52.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CloudinaryService.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\CloudinaryService.cs",
+              "RelativeDocumentMoniker": "Services\\CloudinaryService.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\CloudinaryService.cs",
+              "RelativeToolTip": "Services\\CloudinaryService.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAgwBoAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:24:40.178Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GoogleAIService.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\GoogleAIService.cs",
+              "RelativeDocumentMoniker": "Services\\GoogleAIService.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\GoogleAIService.cs",
+              "RelativeToolTip": "Services\\GoogleAIService.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAlwDMAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T21:58:00.982Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "StoryModels.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\StoryModels.cs",
+              "RelativeDocumentMoniker": "Models\\StoryModels.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\StoryModels.cs",
+              "RelativeToolTip": "Models\\StoryModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:21:44.424Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ReadingPromptService.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\ReadingPromptService.cs",
+              "RelativeDocumentMoniker": "Services\\ReadingPromptService.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\ReadingPromptService.cs",
+              "RelativeToolTip": "Services\\ReadingPromptService.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:23:45.07Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ReadingLevel.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\ReadingLevel.cs",
+              "RelativeDocumentMoniker": "Models\\ReadingLevel.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Models\\ReadingLevel.cs",
+              "RelativeToolTip": "Models\\ReadingLevel.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:18:21.308Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ReadingSessionReportController.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\ReadingSessionReportController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ReadingSessionReportController.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\ReadingSessionReportController.cs",
+              "RelativeToolTip": "Controllers\\ReadingSessionReportController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBgAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-26T21:19:31.179Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CloudinarySettings.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\CloudinarySettings.cs",
+              "RelativeDocumentMoniker": "BL\\CloudinarySettings.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\CloudinarySettings.cs",
+              "RelativeToolTip": "BL\\CloudinarySettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T17:20:20.869Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "UserController.cs",
               "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
               "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\UserController.cs",
               "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAIwHkAAABWAAAAAAAAAA==",
+              "ViewState": "AgIAAOoAAAAAAAAAAAAkwFsAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-26T15:50:48.778Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "StoryController.cs",
-              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\StoryController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StoryController.cs",
-              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Controllers\\StoryController.cs",
-              "RelativeToolTip": "Controllers\\StoryController.cs",
-              "ViewState": "AgIAAK0AAAAAAAAAAAAiwCMBAAAAAAAAAAAAAA==",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAAAgwEQAAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T22:24:32.667Z"
+              "WhenOpened": "2025-07-26T21:18:20.038Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 11,
+              "Title": "Story.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\Story.cs",
+              "RelativeDocumentMoniker": "BL\\Story.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\Story.cs",
+              "RelativeToolTip": "BL\\Story.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAuwDMAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:36:01.919Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\User.cs",
+              "RelativeDocumentMoniker": "BL\\User.cs",
+              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\BL\\User.cs",
+              "RelativeToolTip": "BL\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGkAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T16:16:19.035Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -101,18 +268,6 @@
               "ViewState": "AgIAAAkAAAAAAAAAAAArwBgAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-07-24T22:14:54.971Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GoogleAIService.cs",
-              "DocumentMoniker": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\GoogleAIService.cs",
-              "RelativeDocumentMoniker": "Services\\GoogleAIService.cs",
-              "ToolTip": "C:\\Users\\fabel\\source\\repos\\Github desktop\\react_native\\server_side\\Services\\GoogleAIService.cs",
-              "RelativeToolTip": "Services\\GoogleAIService.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAD4AAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T21:58:00.982Z"
             }
           ]
         }

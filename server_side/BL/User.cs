@@ -110,17 +110,13 @@ namespace Server_Side.BL
         [BsonElement("storyID")]
         public string StoryId { get; set; }
 
-        [BsonElement("feedbackID")]
-        public string FeedbackID { get; set; }
-
         [BsonElement("readDate")]
         public DateTime ReadDate { get; set; }
 
         // בנאי
-        public ReadingHistoryEntry(string storyID, string feedbackID, DateTime readDate)
+        public ReadingHistoryEntry(string storyID, DateTime readDate)
         {
             StoryId = storyID;
-            FeedbackID = feedbackID;
             ReadDate = readDate;
         }
     }

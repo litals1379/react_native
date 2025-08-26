@@ -62,7 +62,6 @@ namespace Server_Side
             builder.Services.AddSingleton<ReadingPromptService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.AddSingleton<CloudinaryService>();
-            //builder.Services.AddHttpClient();
 
             // --- Register GoogleAIService with HttpClient ---
             // This registers GoogleAIService and automatically configures HttpClient for it.
