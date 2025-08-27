@@ -24,7 +24,14 @@ export default function StorySelection() {
               title: story.title,
               coverImg: story.coverImg,
               averageRating: story.averageRating ?? 0,
+              createdAt: story.createdAt || null,
             }));
+            simplified.sort((a, b) => {
+              const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+              const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+              return db - da;
+            });
+            setStories(simplified);
             console.log("📚 Stories to display:", simplified);
             setStories(simplified);
           } else {
@@ -96,6 +103,11 @@ export default function StorySelection() {
                   )}
                   <Text style={styles.bookTitle}>{story.title}</Text>
                   <Text style={styles.bookRating}>⭐ {story.averageRating.toFixed(1)} / 5</Text>
+                  {story.createdAt && (
+                  <Text style={styles.bookRating}>
+                    📅 {new Date(story.createdAt).toLocaleDateString('he-IL')}
+                  </Text>
+                )}
                 </TouchableOpacity>
               ))}
             </ScrollView>

@@ -88,8 +88,9 @@ namespace Server_Side.DAL
             var readStoryIds = childData.ReadingHistory.Select(rh => rh.StoryId).ToHashSet();
 
             var stories = await _storiesCollection
-                .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic && !readStoryIds.Contains(s.Id))
-                .ToListAsync();
+            .Find(s => s.ReadingLevel == readingLevel && s.Topic == topic && !readStoryIds.Contains(s.Id))
+            .SortByDescending(s => s.CreatedAt)   // ← מיון מהכי חדש
+            .ToListAsync();
 
             return stories ?? new List<Story>();
         }

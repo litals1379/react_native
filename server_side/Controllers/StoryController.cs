@@ -264,7 +264,8 @@ Use 3D animation and a 16:9 aspect ratio to create [subject], a [age]-year-old w
                     ImagesUrls = imagesUrls,
                     ReadingLevel = request.Level,
                     Ratings = new List<int>(),
-                    AverageRating = 0.0
+                    AverageRating = 0.0,
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 await _storyDBservices.InsertStoryAsync(finalStory);

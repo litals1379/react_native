@@ -34,6 +34,10 @@ namespace Server_Side.BL
         [BsonElement("averageRating")]
         public double AverageRating { get; set; } = 0.0;
 
+        [BsonElement("createdAt")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
 
         public Story() { }
 
